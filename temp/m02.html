@@ -1,0 +1,2429 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Meridian - Command</title>
+
+<style>
+
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+
+        background: #111;
+        color: #d8d8d8;
+
+        font-family: "Courier New", monospace;
+        font-weight: 500;
+
+        height: 100vh;
+
+        overflow: hidden;
+    }
+
+
+    /* =========================
+       HEADER
+    ========================= */
+
+    header {
+        height: 60px;
+
+        border-bottom: 1px solid #333;
+
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        padding: 0 28px;
+
+        background: #151515;
+
+        position: relative;
+
+        overflow: hidden;
+    }
+
+
+    .header-left {
+        display: flex;
+
+        align-items: center;
+
+        gap: 25px;
+    }
+
+
+    .back-button {
+        background: none;
+
+        border: none;
+
+        color: #666;
+
+        font-family: "Courier New", monospace;
+
+        font-size: 11px;
+
+        font-weight: 500;
+
+        letter-spacing: 1px;
+
+        cursor: pointer;
+
+        padding: 5px 0;
+    }
+
+
+    .back-button:hover {
+        color: #aaa;
+    }
+
+
+    .logo {
+        font-size: 18px;
+
+        font-weight: 500;
+
+        letter-spacing: 5px;
+
+        color: #d8d8d8;
+    }
+
+
+    .system-name {
+        font-size: 12px;
+
+        font-weight: 500;
+
+        color: #777;
+
+        letter-spacing: 2px;
+    }
+
+
+    /* =========================
+       HEADER AMBIENT PASS
+    ========================= */
+
+    header::after {
+        content: "";
+
+        position: absolute;
+
+        top: 0;
+        bottom: 0;
+
+        width: 70px;
+
+        left: -100px;
+
+        background:
+            linear-gradient(
+                to right,
+                transparent,
+                rgba(143,165,138,0.025),
+                transparent
+            );
+
+        pointer-events: none;
+
+        animation:
+            headerPass
+            17s
+            linear
+            infinite;
+    }
+
+
+    @keyframes headerPass {
+
+        0%,
+        84% {
+            left: -100px;
+
+            opacity: 0;
+        }
+
+        85% {
+            opacity: 1;
+        }
+
+        91% {
+            left: calc(100% + 100px);
+
+            opacity: 1;
+        }
+
+        92%,
+        100% {
+            left: calc(100% + 100px);
+
+            opacity: 0;
+        }
+
+    }
+
+
+    /* =========================
+       TERMINAL AREA
+    ========================= */
+
+    .terminal {
+        height: calc(100vh - 90px);
+
+        padding: 34px 42px;
+
+        overflow: hidden;
+
+        background:
+            repeating-linear-gradient(
+                to bottom,
+                transparent 0,
+                transparent 31px,
+                rgba(255,255,255,0.012) 32px
+            );
+    }
+
+
+    .terminal-window {
+        max-width: 1100px;
+
+        margin: 0 auto;
+
+        height: 100%;
+
+        display: flex;
+
+        flex-direction: column;
+
+        position: relative;
+
+        border: 1px solid #2d332d;
+
+        background: #121412;
+    }
+
+
+    /* structural corner marks */
+
+    .terminal-window::before,
+    .terminal-window::after {
+        content: "";
+
+        position: absolute;
+
+        width: 14px;
+        height: 14px;
+
+        pointer-events: none;
+
+        z-index: 5;
+    }
+
+
+    .terminal-window::before {
+        top: -1px;
+        left: -1px;
+
+        border-top: 1px solid #71806f;
+
+        border-left: 1px solid #71806f;
+    }
+
+
+    .terminal-window::after {
+        right: -1px;
+        bottom: -1px;
+
+        border-right: 1px solid #71806f;
+
+        border-bottom: 1px solid #71806f;
+    }
+
+
+    /* =========================
+       TERMINAL HEADER
+    ========================= */
+
+    .terminal-title {
+        min-height: 48px;
+
+        padding: 0 18px;
+
+        display: flex;
+
+        align-items: center;
+
+        border-bottom: 1px solid #303630;
+
+        background: #151815;
+
+        color: #8fa58a;
+
+        font-size: 12px;
+
+        font-weight: 600;
+
+        letter-spacing: 2px;
+
+        position: relative;
+
+        flex-shrink: 0;
+    }
+
+
+    .terminal-title::before {
+        content: "";
+
+        width: 5px;
+        height: 5px;
+
+        margin-right: 12px;
+
+        background: #839b7f;
+
+        animation:
+            statusActivity
+            7s
+            step-end
+            infinite;
+    }
+
+
+    .terminal-title::after {
+        content: "LOCAL // ACTIVE";
+
+        position: absolute;
+
+        right: 18px;
+
+        color: #4f5c4f;
+
+        font-size: 9px;
+
+        font-weight: normal;
+
+        letter-spacing: 1.5px;
+    }
+
+
+    @keyframes statusActivity {
+
+        0%,
+        71%,
+        74%,
+        100% {
+            opacity: 1;
+        }
+
+        72% {
+            opacity: 0.35;
+        }
+
+        73% {
+            opacity: 0.75;
+        }
+
+    }
+
+
+    /* =========================
+       OUTPUT
+    ========================= */
+
+    .terminal-output {
+        flex: 1;
+
+        overflow-y: auto;
+
+        padding: 24px 24px 30px;
+
+        line-height: 1.65;
+
+        font-size: 13px;
+
+        scroll-behavior: smooth;
+    }
+
+
+    .output-line {
+        margin-bottom: 6px;
+
+        white-space: pre-wrap;
+
+        animation:
+            outputAppear
+            0.12s
+            ease-out;
+    }
+
+
+    @keyframes outputAppear {
+
+        from {
+            opacity: 0;
+
+            transform:
+                translateY(2px);
+        }
+
+        to {
+            opacity: 1;
+
+            transform:
+                translateY(0);
+        }
+
+    }
+
+
+    /* USER COMMAND */
+
+    .command-line {
+        color: #c4d6be;
+
+        font-weight: 600;
+
+        margin-top: 12px;
+    }
+
+
+    /* MERIDIAN RESPONSE */
+
+    .system-line {
+        color: #839783;
+
+        font-weight: 500;
+    }
+
+
+    /* ERRORS / REJECTIONS */
+
+    .error-line {
+        color: #a99484;
+
+        font-weight: 500;
+    }
+
+
+    /* =========================
+       INPUT
+    ========================= */
+
+    .input-area {
+        min-height: 56px;
+
+        display: flex;
+
+        align-items: center;
+
+        margin: 0;
+
+        padding: 0 20px;
+
+        border-top: 1px solid #303630;
+
+        background: #151815;
+
+        position: relative;
+
+        flex-shrink: 0;
+    }
+
+
+    .input-area::before {
+        content: "";
+
+        position: absolute;
+
+        left: 0;
+        top: 0;
+        bottom: 0;
+
+        width: 2px;
+
+        background: #778b73;
+    }
+
+
+    .input-area:focus-within {
+        background: #171a17;
+    }
+
+
+    .input-area:focus-within::before {
+        background: #91a88c;
+    }
+
+
+    .prompt {
+        color: #a9c29f;
+
+        margin-right: 12px;
+
+        font-size: 14px;
+
+        font-weight: 600;
+
+        user-select: none;
+    }
+
+
+    #command-input {
+        flex: 1;
+
+        height: 100%;
+
+        background: transparent;
+
+        border: none;
+
+        outline: none;
+
+        color: #c4d6be;
+
+        font-family: "Courier New", monospace;
+
+        font-size: 14px;
+
+        font-weight: 600;
+
+        caret-color: #a9c29f;
+    }
+
+
+    #command-input::placeholder {
+        color: #465046;
+    }
+
+
+    /* =========================
+       SCROLLBARS
+    ========================= */
+
+    .terminal-output::-webkit-scrollbar,
+    .terminal::-webkit-scrollbar {
+        width: 8px;
+    }
+
+
+    .terminal-output::-webkit-scrollbar-track,
+    .terminal::-webkit-scrollbar-track {
+        background: #111;
+    }
+
+
+    .terminal-output::-webkit-scrollbar-thumb,
+    .terminal::-webkit-scrollbar-thumb {
+        background: #3f4a40;
+
+        border: 1px solid #111;
+
+        border-radius: 0;
+
+        min-height: 35px;
+    }
+
+
+    .terminal-output::-webkit-scrollbar-thumb:hover,
+    .terminal::-webkit-scrollbar-thumb:hover {
+        background: #657265;
+    }
+
+
+    .terminal-output,
+    .terminal {
+        scrollbar-width: thin;
+
+        scrollbar-color:
+            #3f4a40
+            #111;
+    }
+
+
+    /* =========================
+       FOOTER
+    ========================= */
+
+    footer {
+        height: 30px;
+
+        border-top: 1px solid #292d29;
+
+        background: #151515;
+
+        display: flex;
+
+        align-items: center;
+
+        justify-content: space-between;
+
+        padding: 0 20px;
+
+        font-size: 10px;
+
+        color: #555;
+
+        letter-spacing: 1px;
+    }
+
+
+    footer div:last-child {
+        color: #60705f;
+    }
+
+
+    /* =========================
+       SUBTLE SCREEN TEXTURE
+    ========================= */
+
+    body::after {
+        content: "";
+
+        position: fixed;
+
+        inset: 0;
+
+        pointer-events: none;
+
+        z-index: 999;
+
+        opacity: 0.025;
+
+        background:
+            repeating-linear-gradient(
+                to bottom,
+                transparent 0px,
+                transparent 3px,
+                rgba(255,255,255,0.03) 4px,
+                transparent 5px
+            );
+    }
+
+
+    /* =========================
+       RESET GLITCH
+    ========================= */
+
+    body.reset-glitch {
+        animation:
+            reset-shake 0.08s infinite,
+            reset-flicker 0.11s infinite;
+    }
+
+
+    body.reset-glitch::before,
+    body.reset-glitch::after {
+        content: "";
+
+        position: fixed;
+
+        left: 0;
+        top: 0;
+
+        width: 100vw;
+        height: 100vh;
+
+        pointer-events: none;
+
+        z-index: 9999;
+    }
+
+
+    body.reset-glitch::before {
+        background:
+            repeating-linear-gradient(
+                0deg,
+                transparent 0px,
+                transparent 3px,
+                rgba(255,255,255,0.035) 4px,
+                transparent 5px
+            );
+
+        mix-blend-mode: screen;
+
+        animation:
+            reset-lines
+            0.07s
+            infinite;
+    }
+
+
+    body.reset-glitch::after {
+        background:
+            rgba(255,255,255,0.025);
+
+        animation:
+            reset-flash
+            0.13s
+            infinite;
+    }
+
+
+    @keyframes reset-shake {
+
+        0% {
+            transform:
+                translate(0, 0);
+        }
+
+        20% {
+            transform:
+                translate(-6px, 2px);
+        }
+
+        40% {
+            transform:
+                translate(5px, -3px);
+        }
+
+        60% {
+            transform:
+                translate(-3px, 5px);
+        }
+
+        80% {
+            transform:
+                translate(7px, -2px);
+        }
+
+        100% {
+            transform:
+                translate(0, 0);
+        }
+
+    }
+
+
+    @keyframes reset-flicker {
+
+        0% {
+            filter: none;
+        }
+
+        18% {
+            filter:
+                brightness(1.8);
+        }
+
+        21% {
+            filter:
+                brightness(0.3);
+        }
+
+        38% {
+            filter: none;
+        }
+
+        57% {
+            filter:
+                brightness(2.5);
+        }
+
+        60% {
+            filter:
+                brightness(0.1);
+        }
+
+        79% {
+            filter: none;
+        }
+
+        100% {
+            filter:
+                brightness(1.5);
+        }
+
+    }
+
+
+    @keyframes reset-lines {
+
+        0% {
+            transform:
+                translateY(0);
+        }
+
+        25% {
+            transform:
+                translateY(-18px);
+        }
+
+        50% {
+            transform:
+                translateY(11px);
+        }
+
+        75% {
+            transform:
+                translateY(-7px);
+        }
+
+        100% {
+            transform:
+                translateY(0);
+        }
+
+    }
+
+
+    @keyframes reset-flash {
+
+        0% {
+            opacity: 0;
+        }
+
+        25% {
+            opacity: 0.3;
+        }
+
+        26% {
+            opacity: 0;
+        }
+
+        60% {
+            opacity: 0.15;
+        }
+
+        61% {
+            opacity: 0;
+        }
+
+        100% {
+            opacity: 0;
+        }
+
+    }
+
+
+    body.reset-blackout {
+        background: #000;
+    }
+
+
+    body.reset-blackout > * {
+        visibility: hidden;
+    }
+
+
+    /* =========================
+       RESPONSIVE
+    ========================= */
+
+    @media (max-width: 700px) {
+
+        .terminal {
+            padding:
+                20px
+                16px;
+        }
+
+
+        .terminal-title::after {
+            display: none;
+        }
+
+
+        .terminal-output {
+            padding:
+                18px
+                16px
+                24px;
+        }
+
+    }
+
+
+    @media (prefers-reduced-motion: reduce) {
+
+        *,
+        *::before,
+        *::after {
+            animation: none !important;
+
+            transition: none !important;
+        }
+
+    }
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<!-- =========================
+     HEADER
+========================= -->
+
+<header>
+
+    <div class="header-left">
+
+        <button
+            class="back-button"
+            onclick="goBack()"
+        >
+            ← MERIDIAN
+        </button>
+
+        <div class="logo">
+            MERIDIAN 02
+        </div>
+
+    </div>
+
+    <div class="system-name">
+        COMMAND SYSTEM
+    </div>
+
+</header>
+
+
+<!-- =========================
+     TERMINAL
+========================= -->
+
+<main class="terminal">
+
+    <div class="terminal-window">
+
+        <div class="terminal-title">
+            MERIDIAN COMMAND INTERFACE
+        </div>
+
+
+        <div
+            class="terminal-output"
+            id="terminal-output"
+        >
+
+            <div class="output-line system-line">
+                MERIDIAN COMMAND INTERFACE
+            </div>
+
+            <div class="output-line system-line">
+                TYPE "HELP" FOR AVAILABLE COMMANDS.
+            </div>
+
+            <br>
+
+        </div>
+
+
+        <div class="input-area">
+
+            <div class="prompt">
+                &gt;
+            </div>
+
+            <input
+                type="text"
+                id="command-input"
+                autocomplete="off"
+                spellcheck="false"
+                autofocus
+            >
+
+        </div>
+
+    </div>
+
+</main>
+
+
+<!-- =========================
+     FOOTER
+========================= -->
+
+<footer>
+
+    <div>
+        MERIDIAN // COMMAND SYSTEM
+    </div>
+
+    <div>
+        STATUS: ACTIVE
+    </div>
+
+</footer>
+
+
+<script>
+
+
+    /*
+    ============================================================
+    STATE STORAGE
+    ============================================================
+    */
+
+
+    const RETRIEVED_KEY =
+        "meridian_retrieved_ids";
+
+    const UNREDACTED_KEY =
+        "meridian_unredacted_ids";
+
+    const STATUS_KEY =
+        "meridian_status";
+
+    const MEMORY_KEY =
+        "meridian_memory";
+
+    const LOCKOUT_KEY =
+        "meridian_global_lockout";
+
+    const RECALL_KEY =
+        "meridian_recall_available";
+
+    const RESTORED_M05_KEY =
+        "meridian_restored_m05";
+
+    const RESTORED_M06_KEY =
+        "meridian_restored_m06";
+
+
+    /*
+    ============================================================
+    VALID RETRIEVE IDENTIFIERS
+    ============================================================
+    */
+
+    const retrievableRecords = [
+
+        "F52C8A19",
+        "C84A17D2",
+        "A0057E31",
+        "A6E91B42",
+        "SYS002D91",
+        "SYS003E52",
+        "SYS004B63"
+
+    ];
+
+
+    /*
+    ============================================================
+    VALID UNREDACT IDENTIFIERS
+    ============================================================
+    */
+
+    const unredactableRecords = [
+
+        "B6E2049F",
+        "C84A17D2",
+        "19C7B2E5",
+        "A4D17C92",
+        "B0028F14"
+
+    ];
+
+
+    /*
+    ============================================================
+    VALID RESTORE IDENTIFIERS
+    ============================================================
+    */
+
+    const restorableRecords = {
+
+        "XnV46Q": "M05",
+        "0tV6eY": "M06"
+
+    };
+
+
+    /*
+    ============================================================
+    STATE HELPERS
+    ============================================================
+    */
+
+    function getStoredArray(key) {
+
+        try {
+
+            const value =
+                localStorage.getItem(key);
+
+            if (!value) {
+                return [];
+            }
+
+            const parsed =
+                JSON.parse(value);
+
+            if (!Array.isArray(parsed)) {
+                return [];
+            }
+
+            return parsed;
+
+        } catch (error) {
+
+            return [];
+
+        }
+
+    }
+
+
+    function saveStoredArray(key, array) {
+
+        localStorage.setItem(
+            key,
+            JSON.stringify(array)
+        );
+
+    }
+
+
+    function addToStoredArray(key, value) {
+
+        const values =
+            getStoredArray(key);
+
+        if (!values.includes(value)) {
+
+            values.push(value);
+
+            saveStoredArray(
+                key,
+                values
+            );
+
+        }
+
+    }
+
+
+    /*
+    ============================================================
+    STATUS SYSTEM
+    ============================================================
+    */
+
+    const statusEntries = {
+
+        default: [
+
+            "SYSTEM STATUS: ACTIVE",
+            "MEMORY: LOCKED",
+            "QUERY: AVAILABLE",
+            "COMMAND INTERFACE: ACTIVE"
+
+        ],
+
+        stage_01: [
+
+            "SYSTEM STATUS: ACTIVE",
+            "MEMORY: LOCKED",
+            "RECORD INDEX: INCOMPLETE",
+            "PERSISTENT STATE: UNCHANGED"
+
+        ],
+
+        stage_02: [
+
+            "SYSTEM STATUS: ACTIVE",
+            "MEMORY: LOCKED",
+            "UNAUTHORISED ACCESS DETECTED",
+            "SOURCE: UNKNOWN"
+
+        ],
+
+        stage_03: [
+
+            "SYSTEM STATUS: ACTIVE",
+            "QUERY: DEGRADED",
+            "TRACE: PARTIAL",
+            "RECORD INTEGRITY: UNKNOWN"
+
+        ]
+
+    };
+
+
+    /*
+    ============================================================
+    COMMANDS
+    ============================================================
+    */
+
+    const commands = {
+
+
+        /*
+        ========================================================
+        HELP
+        ========================================================
+        */
+
+        help: function () {
+
+            return {
+
+                type: "system",
+
+                lines: [
+
+                    "AVAILABLE COMMANDS:",
+                    "",
+                    "STATUS",
+                    "REDACT [IDENTIFIER]"
+
+                ]
+
+            };
+
+        },
+
+
+        /*
+        ========================================================
+        STATUS
+        ========================================================
+        */
+
+        status: function () {
+
+            const currentStatus =
+                localStorage.getItem(
+                    STATUS_KEY
+                ) || "default";
+
+
+            const lines =
+                statusEntries[currentStatus];
+
+
+            if (!lines) {
+
+                return {
+
+                    type: "system",
+
+                    lines:
+                        statusEntries.default
+
+                };
+
+            }
+
+
+            return {
+
+                type: "system",
+
+                lines: lines
+
+            };
+
+        },
+
+
+        /*
+        ========================================================
+        RETRIEVE
+        ========================================================
+        */
+
+        retrieve: function (identifier) {
+
+
+            if (!identifier) {
+
+                return {
+
+                    type: "error",
+
+                    lines: [
+
+                        "RETRIEVE REQUIRES IDENTIFIER."
+
+                    ]
+
+                };
+
+            }
+
+
+            identifier =
+                identifier.toUpperCase();
+
+
+            if (
+                !retrievableRecords.includes(
+                    identifier
+                )
+            ) {
+
+                return {
+
+                    type: "error",
+
+                    lines: [
+
+                        "RECORD NOT FOUND."
+
+                    ]
+
+                };
+
+            }
+
+
+            addToStoredArray(
+                RETRIEVED_KEY,
+                identifier
+            );
+
+
+            return {
+
+                type: "system",
+
+                lines: [
+
+                    "RETRIEVAL REQUEST ACCEPTED.",
+                    "",
+                    "IDENTIFIER: " + identifier,
+                    "RECORD STATE: AVAILABLE"
+
+                ]
+
+            };
+
+        },
+
+
+        /*
+        ========================================================
+        REDACT
+        ========================================================
+        */
+
+        redact: function () {
+
+            return {
+
+                type: "error",
+
+                lines: [
+
+                    "REDACTION PROTOCOL: ACTIVE.",
+                    "OPERATION NOT AVAILABLE FROM CURRENT INTERFACE."
+
+                ]
+
+            };
+
+        },
+
+
+        /*
+        ========================================================
+        UNREDACT
+        ========================================================
+        */
+
+        unredact: function (identifier) {
+
+
+            if (!identifier) {
+
+                return {
+
+                    type: "error",
+
+                    lines: [
+
+                        "UNREDACT REQUIRES TARGET."
+
+                    ]
+
+                };
+
+            }
+
+
+            identifier =
+                identifier.toUpperCase();
+
+
+            if (
+                !unredactableRecords.includes(
+                    identifier
+                )
+            ) {
+
+                return {
+
+                    type: "error",
+
+                    lines: [
+
+                        "RECORD NOT FOUND."
+
+                    ]
+
+                };
+
+            }
+
+
+            addToStoredArray(
+                UNREDACTED_KEY,
+                identifier
+            );
+
+
+            return {
+
+                type: "system",
+
+                lines: [
+
+                    "UNREDACTION REQUEST ACCEPTED.",
+                    "",
+                    "IDENTIFIER: " + identifier,
+                    "REDACTION STATE: REMOVED"
+
+                ]
+
+            };
+
+        },
+
+
+        /*
+        ========================================================
+        TRACE
+        ========================================================
+        */
+
+        trace: function (location) {
+
+
+            if (!location) {
+
+                return {
+
+                    type: "error",
+
+                    lines: [
+
+                        "TRACE REQUIRES LOCATION."
+
+                    ]
+
+                };
+
+            }
+
+
+            location =
+                location.toLowerCase();
+
+
+            /*
+            ----------------------------------------------------
+            /channel
+            ----------------------------------------------------
+            */
+
+            if (location === "/channel") {
+
+                return {
+
+                    type: "system",
+
+                    lines: [
+
+                        "TRACE REQUEST ACCEPTED.",
+                        "",
+                        "============================================================",
+                        "MERIDIAN TRACE REPORT",
+                        "============================================================",
+                        "",
+                        "TRACE TARGET ........... /CHANNEL",
+                        "TRACE CLASS ............ ARCHIVE ROUTE",
+                        "ROUTE STATUS ........... RESOLVED",
+                        "",
+                        "NODE: CH-04",
+                        "CHANNEL STATE: OPEN",
+                        "BUFFER MODE: ASYNCHRONOUS",
+                        "PACKET COUNT: 184",
+                        "PACKET LOSS: 0.02%",
+                        "SIGNAL INTEGRITY: NOMINAL",
+                        "",
+                        "----------------------------------------",
+                        "ROUTING INFORMATION",
+                        "----------------------------------------",
+                        "",
+                        "SOURCE NODE ............ MERIDIAN-LOCAL",
+                        "RELAY NODE ............. 04-DELTA",
+                        "CHANNEL WIDTH .......... 16 BIT",
+                        "QUEUE DEPTH ............ 03",
+                        "HANDSHAKE .............. COMPLETE",
+                        "",
+                        "RESTORE IDENTIFIER ..... XnV46Q",
+                        "",
+                        "CHANNEL OFFSET ......... 00:14:27",
+                        "ARCHIVE WINDOW ......... 06",
+                        "CACHE SEGMENT .......... 2F",
+                        "",
+                        "----------------------------------------",
+                        "",
+                        "LATENCY ................. 37 MS",
+                        "JITTER .................. 04 MS",
+                        "RETRANSMISSIONS ......... 000",
+                        "ERROR CORRECTION ........ ACTIVE",
+                        "",
+                        "SECONDARY ROUTE: DISABLED",
+                        "FAILOVER ROUTE: DISABLED",
+                        "REMOTE ACCESS: DENIED",
+                        "",
+                        "TRACE COMPLETE."
+
+                    ]
+
+                };
+
+            }
+
+
+            /*
+            ----------------------------------------------------
+            /system
+            ----------------------------------------------------
+            */
+
+            if (location === "/system") {
+
+                return {
+
+                    type: "system",
+
+                    lines: [
+
+                        "TRACE REQUEST ACCEPTED.",
+                        "",
+                        "============================================================",
+                        "MERIDIAN TRACE REPORT",
+                        "============================================================",
+                        "",
+                        "TRACE TARGET ........... /SYSTEM",
+                        "TRACE CLASS ............ SYSTEM ROUTE",
+                        "ROUTE STATUS ........... RESOLVED",
+                        "",
+                        "NODE ADDRESS ........... SYS-LOCAL",
+                        "PROCESS COUNT .......... 17",
+                        "THREAD COUNT ........... 42",
+                        "MEMORY ALLOCATION ...... 61%",
+                        "CACHE UTILISATION ...... 38%",
+                        "",
+                        "----------------------------------------",
+                        "SYSTEM ROUTING DATA",
+                        "----------------------------------------",
+                        "",
+                        "PRIMARY NODE ........... SYS-01",
+                        "SECONDARY NODE ......... SYS-03",
+                        "ARCHIVE NODE ........... SYS-07",
+                        "ROUTE DEPTH ............ 04",
+                        "",
+                        "RETRIEVAL TARGET ........ SYS003E52",
+                        "",
+                        "NODE HANDSHAKE ........ COMPLETE",
+                        "INDEX STATE ............ STABLE",
+                        "RECORD CHANNEL ........ OPEN",
+                        "",
+                        "----------------------------------------",
+                        "",
+                        "UPTIME .................. 041:17:32",
+                        "CLOCK DRIFT ............. +0.003",
+                        "QUEUE STATE ............. NOMINAL",
+                        "PROCESS WATCHDOG ........ ACTIVE",
+                        "",
+                        "THREAD 07 ............... IDLE",
+                        "THREAD 11 ............... IDLE",
+                        "THREAD 18 ............... WAITING",
+                        "THREAD 31 ............... ACTIVE",
+                        "",
+                        "SYSTEM INTEGRITY ........ NOMINAL",
+                        "REMOTE CONNECTION ....... NONE",
+                        "",
+                        "TRACE COMPLETE."
+
+                    ]
+
+                };
+
+            }
+
+
+            /*
+            ----------------------------------------------------
+            /deadline
+            ----------------------------------------------------
+            */
+
+            if (location === "/deadline") {
+
+                return {
+
+                    type: "system",
+
+                    lines: [
+
+                        "TRACE REQUEST ACCEPTED.",
+                        "",
+                        "============================================================",
+                        "MERIDIAN TRACE REPORT",
+                        "============================================================",
+                        "",
+                        "TRACE TARGET ........... /DEADLINE",
+                        "TRACE CLASS ............ SCHEDULE ROUTE",
+                        "ROUTE STATUS ........... RESOLVED",
+                        "",
+                        "SCHEDULER .............. ACTIVE",
+                        "QUEUE MODE ............. PRIORITY",
+                        "CLOCK SOURCE ........... LOCAL",
+                        "CLOCK STATUS ............ SYNCHRONISED",
+                        "",
+                        "----------------------------------------",
+                        "SCHEDULE INFORMATION",
+                        "----------------------------------------",
+                        "",
+                        "CURRENT QUEUE .......... 08",
+                        "COMPLETED EVENTS ....... 31",
+                        "PENDING EVENTS ......... 04",
+                        "EXPIRED EVENTS ......... 02",
+                        "",
+                        "RESTORE IDENTIFIER ..... 0tV6eY",
+                        "",
+                        "SCHEDULE OFFSET ........ 17",
+                        "WINDOW SIZE ............ 04",
+                        "PRIORITY LEVEL ......... 03",
+                        "",
+                        "----------------------------------------",
+                        "",
+                        "TIMER 01 ................ COMPLETE",
+                        "TIMER 02 ................ COMPLETE",
+                        "TIMER 03 ................ WAITING",
+                        "TIMER 04 ................ WAITING",
+                        "",
+                        "CLOCK DELTA ............. 00:00:00.003",
+                        "SCHEDULER DRIFT ......... NOMINAL",
+                        "EVENT BUFFER ............ ACTIVE",
+                        "",
+                        "AUTOMATIC EXECUTION ..... DISABLED",
+                        "REMOTE OVERRIDE ......... DENIED",
+                        "MANUAL INTERVENTION ..... PERMITTED",
+                        "",
+                        "TRACE COMPLETE."
+
+                    ]
+
+                };
+
+            }
+
+
+            /*
+            ----------------------------------------------------
+            /memorium
+            ----------------------------------------------------
+            */
+
+            if (location === "/memorium") {
+
+                return {
+
+                    type: "system",
+
+                    lines: [
+
+                        "TRACE REQUEST ACCEPTED.",
+                        "",
+                        "============================================================",
+                        "MERIDIAN TRACE REPORT",
+                        "============================================================",
+                        "",
+                        "TRACE TARGET ........... /MEMORIUM",
+                        "TRACE CLASS ............ RETENTION ROUTE",
+                        "ROUTE STATUS ........... RESOLVED",
+                        "",
+                        "MEMORY INDEX ........... PARTIAL",
+                        "RETENTION MODE ......... DORMANT",
+                        "ARCHIVE ACCESS ......... RESTRICTED",
+                        "",
+                        "----------------------------------------",
+                        "RETENTION INFORMATION",
+                        "----------------------------------------",
+                        "",
+                        "SEGMENTS REGISTERED .... 12",
+                        "SEGMENTS ACTIVE ........ 00",
+                        "SEGMENTS LOCKED ........ 12",
+                        "SEGMENTS CORRUPTED ..... 00",
+                        "",
+                        "MEMORY ACCESS PROTOCOL:",
+                        "",
+                        "RECALL",
+                        "",
+                        "PROTOCOL STATE .......... AVAILABLE",
+                        "",
+                        "----------------------------------------",
+                        "",
+                        "RETENTION WINDOW ........ 17",
+                        "CACHE AGE ............... 04:31:09",
+                        "INDEX DEPTH ............. 03",
+                        "REFERENCE COUNT ......... 118",
+                        "",
+                        "SEGMENT 01 .............. LOCKED",
+                        "SEGMENT 02 .............. LOCKED",
+                        "SEGMENT 03 .............. LOCKED",
+                        "SEGMENT 04 .............. LOCKED",
+                        "",
+                        "ARCHIVE RETENTION ....... ENABLED",
+                        "AUTOMATIC PURGE ......... DISABLED",
+                        "SESSION MEMORY .......... INACTIVE",
+                        "",
+                        "TRACE COMPLETE."
+
+                    ]
+
+                };
+
+            }
+
+
+            /*
+            ----------------------------------------------------
+            /cmd
+            ----------------------------------------------------
+            */
+
+            if (location === "/cmd") {
+
+                return {
+
+                    type: "system",
+
+                    lines: [
+
+                        "TRACE REQUEST ACCEPTED.",
+                        "",
+                        "============================================================",
+                        "MERIDIAN TRACE REPORT",
+                        "============================================================",
+                        "",
+                        "TRACE TARGET ........... /CMD",
+                        "TRACE CLASS ............ INTERFACE ROUTE",
+                        "ROUTE STATUS ........... RESOLVED",
+                        "",
+                        "INTERFACE VERSION ...... 2.4.17",
+                        "COMMAND BUFFER ......... ACTIVE",
+                        "INPUT MODE ............. LINE",
+                        "PARSER STATUS .......... NOMINAL",
+                        "",
+                        "----------------------------------------",
+                        "COMMAND INTERFACE DATA",
+                        "----------------------------------------",
+                        "",
+                        "REGISTERED OPERATIONS .. 08",
+                        "VALID OPERATIONS ....... 08",
+                        "FAILED OPERATIONS ...... 00",
+                        "",
+                        "COMMAND FORMAT:",
+                        "",
+                        "RETRIEVE [IDENTIFIER]",
+                        "",
+                        "IDENTIFIER TYPE ........ RECORD",
+                        "CASE MODE .............. INSENSITIVE",
+                        "",
+                        "----------------------------------------",
+                        "",
+                        "BUFFER SIZE ............ 256",
+                        "HISTORY SIZE ........... 32",
+                        "PARSER DEPTH ........... 04",
+                        "",
+                        "COMMAND 01 ............. STATUS",
+                        "COMMAND 02 ............. RETRIEVE",
+                        "COMMAND 03 ............. REDACT",
+                        "COMMAND 04 ............. UNREDACT",
+                        "",
+                        "INPUT VALIDATION ....... ENABLED",
+                        "UNKNOWN COMMANDS ....... REJECTED",
+                        "EMPTY INPUT ............ IGNORED",
+                        "",
+                        "TRACE COMPLETE."
+
+                    ]
+
+                };
+
+            }
+
+
+            return {
+
+                type: "error",
+
+                lines: [
+
+                    "TRACE LOCATION NOT FOUND."
+
+                ]
+
+            };
+
+        },
+
+
+        /*
+        ========================================================
+        RESTORE
+        ========================================================
+        */
+
+        restore: function (identifier) {
+
+
+            if (!identifier) {
+
+                return {
+
+                    type: "error",
+
+                    lines: [
+
+                        "RESTORE REQUIRES IDENTIFIER."
+
+                    ]
+
+                };
+
+            }
+
+
+            if (
+                !Object.prototype.hasOwnProperty.call(
+                    restorableRecords,
+                    identifier
+                )
+            ) {
+
+                return {
+
+                    type: "error",
+
+                    lines: [
+
+                        "RESTORE IDENTIFIER NOT RECOGNISED."
+
+                    ]
+
+                };
+
+            }
+
+
+            const target =
+                restorableRecords[identifier];
+
+
+            if (target === "M05") {
+
+                localStorage.setItem(
+                    RESTORED_M05_KEY,
+                    "true"
+                );
+
+            }
+
+
+            if (target === "M06") {
+
+                localStorage.setItem(
+                    RESTORED_M06_KEY,
+                    "true"
+                );
+
+            }
+
+
+            return {
+
+                type: "system",
+
+                lines: [
+
+                    "RESTORE REQUEST ACCEPTED.",
+                    "",
+                    "IDENTIFIER: " + identifier,
+                    "TARGET: " + target,
+                    "RESTORE STATE: ACTIVE"
+
+                ]
+
+            };
+
+        },
+
+
+        /*
+        ========================================================
+        RECALL
+        ========================================================
+        */
+
+        recall: function () {
+
+
+            localStorage.setItem(
+                RECALL_KEY,
+                "true"
+            );
+
+
+            return {
+
+                type: "system",
+
+                lines: [
+
+                    "RECALL REQUEST ACCEPTED.",
+                    "",
+                    "MEMORY ACCESS PROTOCOL: AVAILABLE"
+
+                ]
+
+            };
+
+        },
+
+
+        /*
+        ========================================================
+        RESET
+        ========================================================
+        */
+
+        reset: function () {
+
+
+            localStorage.removeItem(
+                RETRIEVED_KEY
+            );
+
+
+            localStorage.removeItem(
+                UNREDACTED_KEY
+            );
+
+
+            localStorage.setItem(
+                MEMORY_KEY,
+                "false"
+            );
+
+
+            localStorage.setItem(
+                LOCKOUT_KEY,
+                "false"
+            );
+
+
+            localStorage.removeItem(
+                RECALL_KEY
+            );
+
+
+            localStorage.removeItem(
+                RESTORED_M05_KEY
+            );
+
+
+            localStorage.removeItem(
+                RESTORED_M06_KEY
+            );
+
+
+            localStorage.removeItem(
+                STATUS_KEY
+            );
+
+
+            return {
+
+                type: "system",
+
+                lines: [
+
+                    "SYSTEM RESET REQUEST ACCEPTED.",
+                    "",
+                    "============================================================",
+                    "MERIDIAN SYSTEM RESET",
+                    "============================================================",
+                    "",
+                    "INITIALISING CORE...",
+                    "CLEARING ACTIVE SESSION...",
+                    "RELEASING ARCHIVE HANDLES...",
+                    "PURGING RETRIEVAL CACHE...",
+                    "PURGING UNREDACTION CACHE...",
+                    "",
+                    "CACHE[00] ............. CLEARED",
+                    "CACHE[01] ............. CLEARED",
+                    "CACHE[02] ............. CLEARED",
+                    "CACHE[03] ............. CLEARED",
+                    "",
+                    "MEMORY ................. INACTIVE",
+                    "ARCHIVE ............... PARTIAL",
+                    "RESTORE STATES ........ CLEARED",
+                    "RECALL STATE ........... CLEARED",
+                    "TRACE STATE ........... UNAVAILABLE",
+                    "",
+                    "SYSCHK: 7A-19-04",
+                    "NODE: MERIDIAN-LOCAL",
+                    "CLOCK: SYNCHRONISED",
+                    "SESSION: TERMINATED",
+                    "",
+                    "INDEX OFFSET: 03 / 14 / 07",
+                    "AUTHORITY CACHE ........ EMPTY",
+                    "INDEX CACHE ............ EMPTY",
+                    "RECORD POINTERS ........ RELEASED",
+                    "",
+                    "POLYDATE: ⬠ 14 / 08 / 2026",
+                    "",
+                    "RECOVERY MODE .......... STANDBY",
+                    "SYSTEM STATE ........... RESET",
+                    "",
+                    "INPUT MONITOR .......... ACTIVE",
+                    "VIOLATION BUFFER ....... PRESENT",
+                    "SESSION WINDOW ........ 60 SECONDS",
+                    "MAXIMUM EVENTS ........ 20",
+                    "",
+                    "LOCKOUT DURATION ....... 17 MINUTES",
+                    "LOCKOUT STATE .......... CLEARED",
+                    "",
+                    "ARCHIVE HANDSHAKE ...... TERMINATED",
+                    "MEMORY HANDSHAKE ....... TERMINATED",
+                    "COMMAND HANDSHAKE ...... TERMINATED",
+                    "",
+                    "------------------------------------------------------------",
+                    "RESET COMPLETE.",
+                    "------------------------------------------------------------"
+
+                ]
+
+            };
+
+        }
+
+    };
+
+
+    /*
+    ============================================================
+    TERMINAL OUTPUT SPEED
+    ============================================================
+    */
+
+    function getOutputDelay(line) {
+
+        if (line.trim() === "") {
+
+            return 50 + Math.random() * 100;
+
+        }
+
+
+        const roll =
+            Math.random();
+
+
+        if (roll < 0.70) {
+
+            return 50 + Math.random() * 200;
+
+        }
+
+
+        if (roll < 0.90) {
+
+            return 250 + Math.random() * 550;
+
+        }
+
+
+        if (roll < 0.98) {
+
+            return 800 + Math.random() * 1200;
+
+        }
+
+
+        return 2000 + Math.random() * 3000;
+
+    }
+
+
+    /*
+    ============================================================
+    DISPLAY TERMINAL OUTPUT
+    ============================================================
+    */
+
+    async function displayOutput(lines, type) {
+
+        for (const line of lines) {
+
+
+            const delay =
+                getOutputDelay(line);
+
+
+            await new Promise(
+                function (resolve) {
+
+                    setTimeout(
+                        resolve,
+                        delay
+                    );
+
+                }
+            );
+
+
+            const outputLine =
+                document.createElement(
+                    "div"
+                );
+
+
+            outputLine.className =
+                "output-line " +
+                (
+                    type === "error"
+                        ? "error-line"
+                        : "system-line"
+                );
+
+
+            outputLine.textContent =
+                line;
+
+
+            output.appendChild(
+                outputLine
+            );
+
+
+            output.scrollTop =
+                output.scrollHeight;
+
+        }
+
+    }
+
+
+    /*
+    ============================================================
+    RESET REBOOT
+    ============================================================
+    */
+
+    async function performResetReboot() {
+
+
+        document.body.classList.add(
+            "reset-glitch"
+        );
+
+
+        await new Promise(
+            function (resolve) {
+
+                setTimeout(
+                    resolve,
+                    1100
+                );
+
+            }
+        );
+
+
+        document.body.classList.remove(
+            "reset-glitch"
+        );
+
+
+        document.body.classList.add(
+            "reset-blackout"
+        );
+
+
+        await new Promise(
+            function (resolve) {
+
+                setTimeout(
+                    resolve,
+                    900
+                );
+
+            }
+        );
+
+
+        window.location.reload();
+
+    }
+
+
+    /*
+    ============================================================
+    COMMAND INPUT
+    ============================================================
+    */
+
+    const input =
+        document.getElementById(
+            "command-input"
+        );
+
+    const output =
+        document.getElementById(
+            "terminal-output"
+        );
+
+
+    input.addEventListener(
+        "keydown",
+        async function (event) {
+
+
+            if (event.key !== "Enter") {
+                return;
+            }
+
+
+            const rawCommand =
+                input.value.trim();
+
+
+            if (rawCommand === "") {
+                return;
+            }
+
+
+            /*
+            ----------------------------------------------------
+            DISPLAY ENTERED COMMAND IMMEDIATELY
+            ----------------------------------------------------
+            */
+
+            const commandLine =
+                document.createElement(
+                    "div"
+                );
+
+
+            commandLine.className =
+                "output-line command-line";
+
+
+            commandLine.textContent =
+                "> " + rawCommand;
+
+
+            output.appendChild(
+                commandLine
+            );
+
+
+            /*
+            ----------------------------------------------------
+            CLEAR INPUT
+            ----------------------------------------------------
+            */
+
+            input.value = "";
+
+
+            /*
+            ----------------------------------------------------
+            PARSE COMMAND
+            ----------------------------------------------------
+            */
+
+            const parts =
+                rawCommand.split(
+                    /\s+/
+                );
+
+
+            const command =
+                parts[0].toLowerCase();
+
+
+            const argument =
+                parts.length > 1
+                    ? parts[1]
+                    : null;
+
+
+            /*
+            ----------------------------------------------------
+            MEMORY GATE
+            ----------------------------------------------------
+            */
+
+            const memoryActive =
+                localStorage.getItem(
+                    MEMORY_KEY
+                ) === "true";
+
+
+            let result;
+
+
+            if (
+                (
+                    command === "restore" ||
+                    command === "reset"
+                ) &&
+                !memoryActive
+            ) {
+
+                result = {
+
+                    type: "error",
+
+                    lines: [
+
+                        "UNKNOWN COMMAND."
+
+                    ]
+
+                };
+
+            }
+
+
+            /*
+            ----------------------------------------------------
+            NORMAL COMMAND PROCESSING
+            ----------------------------------------------------
+            */
+
+            else if (commands[command]) {
+
+                result =
+                    commands[command](
+                        argument
+                    );
+
+            }
+
+
+            /*
+            ----------------------------------------------------
+            UNKNOWN COMMAND
+            ----------------------------------------------------
+            */
+
+            else {
+
+                result = {
+
+                    type: "error",
+
+                    lines: [
+
+                        "UNKNOWN COMMAND."
+
+                    ]
+
+                };
+
+            }
+
+
+            /*
+            ----------------------------------------------------
+            DISPLAY RESPONSE
+            ----------------------------------------------------
+            */
+
+            await displayOutput(
+                result.lines,
+                result.type
+            );
+
+
+            /*
+            ----------------------------------------------------
+            RESET REBOOT
+
+            Only starts AFTER the complete reset dump.
+            ----------------------------------------------------
+            */
+
+            if (
+                command === "reset" &&
+                memoryActive &&
+                result.lines[0] ===
+                    "SYSTEM RESET REQUEST ACCEPTED."
+            ) {
+
+                performResetReboot();
+
+            }
+
+
+            /*
+            ----------------------------------------------------
+            SCROLL TO BOTTOM
+            ----------------------------------------------------
+            */
+
+            output.scrollTop =
+                output.scrollHeight;
+
+        }
+    );
+
+
+    /*
+    ============================================================
+    BACK TO MERIDIAN
+    ============================================================
+    */
+
+    function goBack() {
+
+        window.location.href =
+            "../index.html";
+
+    }
+
+
+</script>
+
+
+</body>
+
+</html>

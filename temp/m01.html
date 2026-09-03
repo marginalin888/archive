@@ -1,0 +1,3226 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Meridian - Records</title>
+
+
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+
+
+        body {
+
+            margin: 0;
+
+            background: #111;
+
+            color: #d8d8d8;
+
+            font-family: "Courier New", monospace;
+
+            height: 100vh;
+
+            overflow: hidden;
+
+        }
+
+
+
+        /* =========================
+           HEADER
+        ========================= */
+
+        header {
+
+            height: 60px;
+
+            border-bottom: 1px solid #333;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            padding: 0 28px;
+
+            background: #151515;
+
+        }
+
+
+
+        .header-left {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 25px;
+
+        }
+
+
+
+        .back-button {
+
+            background: none;
+
+            border: none;
+
+            color: #666;
+
+            font-family: "Courier New", monospace;
+
+            font-size: 11px;
+
+            letter-spacing: 1px;
+
+            cursor: pointer;
+
+            padding: 5px 0;
+
+        }
+
+
+
+        .back-button:hover {
+            color: #aaa;
+        }
+
+
+
+        .logo {
+
+            font-size: 18px;
+
+            letter-spacing: 5px;
+
+        }
+
+
+
+        .system-name {
+
+            font-size: 12px;
+
+            color: #777;
+
+            letter-spacing: 2px;
+
+        }
+
+
+
+        /* =========================
+           MAIN INTERFACE
+        ========================= */
+
+        .interface {
+
+            display: flex;
+
+            height: calc(100vh - 90px);
+
+        }
+
+
+
+        /* =========================
+           RECORD LIST
+        ========================= */
+
+        .record-list {
+
+            width: 280px;
+
+            border-right: 1px solid #333;
+
+            background: #141414;
+
+            overflow-y: auto;
+
+        }
+
+
+
+        .list-header {
+
+            padding: 20px 22px;
+
+            border-bottom: 1px solid #292929;
+
+            font-size: 12px;
+
+            letter-spacing: 3px;
+
+            color: #777;
+
+        }
+
+
+
+        .record {
+
+            padding: 16px 22px;
+
+            border-bottom: 1px solid #242424;
+
+            cursor: pointer;
+
+            transition: background 0.15s ease;
+
+        }
+
+
+
+        .record:hover {
+            background: #1c1c1c;
+        }
+
+
+
+        .record.active {
+
+            background: #222;
+
+            border-left: 2px solid #aaa;
+
+            padding-left: 20px;
+
+        }
+
+
+
+        .record-number {
+
+            font-size: 13px;
+
+            color: #aaa;
+
+            letter-spacing: 1px;
+
+        }
+
+
+
+        /* =========================
+           RECORD VIEWER
+        ========================= */
+
+        .viewer {
+
+            flex: 1;
+
+            padding: 45px 55px;
+
+            overflow-y: auto;
+
+        }
+
+
+
+        .empty-state {
+
+            height: 100%;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            color: #555;
+
+            font-size: 13px;
+
+            letter-spacing: 2px;
+
+        }
+
+
+
+        .record-view {
+
+            max-width: 850px;
+
+            margin: 0 auto;
+
+        }
+
+
+
+        .record-heading {
+
+            font-size: 22px;
+
+            letter-spacing: 3px;
+
+            margin-bottom: 25px;
+
+        }
+
+
+
+        .record-id {
+
+            float: right;
+
+            font-size: 12px;
+
+            color: #666;
+
+            letter-spacing: 2px;
+
+            padding-top: 5px;
+
+        }
+
+
+
+        .metadata {
+
+            display: grid;
+
+            grid-template-columns: 120px 1fr;
+
+            gap: 8px 20px;
+
+            font-size: 13px;
+
+            padding-bottom: 25px;
+
+            border-bottom: 1px solid #333;
+
+        }
+
+
+
+        .metadata-label {
+            color: #666;
+        }
+
+
+
+        .metadata-value {
+            color: #aaa;
+        }
+
+
+
+        .record-content {
+
+            margin-top: 35px;
+
+            line-height: 1.8;
+
+            font-size: 15px;
+
+            color: #c8c8c8;
+
+            white-space: pre-line;
+
+        }
+
+
+
+        /* =========================
+           POLYDATE
+        ========================= */
+
+        .polydate {
+
+            margin-top: 45px;
+
+            padding-top: 18px;
+
+            border-top: 1px solid #292929;
+
+            color: #666;
+
+            font-size: 13px;
+
+            letter-spacing: 2px;
+
+            text-align: right;
+
+        }
+
+
+
+        /* =========================
+           REDACTION
+        ========================= */
+
+        .redacted-line {
+
+            display: block;
+
+            height: 1.8em;
+
+            width: 100%;
+
+            background: #eeeeee;
+
+            color: transparent;
+
+            margin: 2px 0;
+
+            user-select: none;
+
+        }
+
+
+
+        .redacted-short {
+
+            display: inline-block;
+
+            height: 1.25em;
+
+            width: 150px;
+
+            background: #eeeeee;
+
+            color: transparent;
+
+            vertical-align: middle;
+
+            user-select: none;
+
+        }
+
+
+
+        .redacted-medium {
+
+            display: inline-block;
+
+            height: 1.25em;
+
+            width: 280px;
+
+            background: #eeeeee;
+
+            color: transparent;
+
+            vertical-align: middle;
+
+            user-select: none;
+
+        }
+
+
+
+        .redacted-long {
+
+            display: inline-block;
+
+            height: 1.25em;
+
+            width: 430px;
+
+            background: #eeeeee;
+
+            color: transparent;
+
+            vertical-align: middle;
+
+            user-select: none;
+
+        }
+
+
+
+        /* =========================
+           SCROLLBARS
+        ========================= */
+
+        .record-list::-webkit-scrollbar,
+        .viewer::-webkit-scrollbar {
+
+            width: 10px;
+
+        }
+
+
+
+        .record-list::-webkit-scrollbar-track,
+        .viewer::-webkit-scrollbar-track {
+
+            background: #141414;
+
+        }
+
+
+
+        .record-list::-webkit-scrollbar-thumb,
+        .viewer::-webkit-scrollbar-thumb {
+
+            background: #444;
+
+            border-radius: 5px;
+
+            border: 2px solid #141414;
+
+            min-height: 40px;
+
+        }
+
+
+
+        .record-list::-webkit-scrollbar-thumb:hover,
+        .viewer::-webkit-scrollbar-thumb:hover {
+
+            background: #666;
+
+        }
+
+
+
+        .record-list,
+        .viewer {
+
+            scrollbar-width: thin;
+
+            scrollbar-color: #444 #141414;
+
+        }
+/* =========================================================
+   M01 INTERFACE POLISH
+========================================================= */
+
+
+/* ---------------------------------------------------------
+   SUBTLE SCREEN TEXTURE
+
+   No glow. Just a very faint CRT/terminal-like texture.
+--------------------------------------------------------- */
+
+body::after {
+    content: "";
+
+    position: fixed;
+
+    inset: 0;
+
+    pointer-events: none;
+
+    z-index: 1000;
+
+    opacity: 0.035;
+
+    background:
+        repeating-linear-gradient(
+            to bottom,
+            transparent 0px,
+            transparent 3px,
+            rgba(255,255,255,0.025) 4px,
+            transparent 5px
+        );
+}
+
+
+/* ---------------------------------------------------------
+   HEADER
+
+   Very occasional scan travelling across the header.
+--------------------------------------------------------- */
+
+header {
+    position: relative;
+
+    overflow: hidden;
+}
+
+
+header::after {
+    content: "";
+
+    position: absolute;
+
+    top: 0;
+    bottom: 0;
+
+    left: -15%;
+
+    width: 10%;
+
+    pointer-events: none;
+
+    background:
+        linear-gradient(
+            to right,
+            transparent,
+            rgba(255,255,255,0.025),
+            transparent
+        );
+
+    animation:
+        headerScan
+        18s
+        linear
+        infinite;
+}
+
+
+@keyframes headerScan {
+
+    0%,
+    82% {
+        left: -15%;
+        opacity: 0;
+    }
+
+    83% {
+        opacity: 1;
+    }
+
+    89% {
+        left: 110%;
+        opacity: 1;
+    }
+
+    90%,
+    100% {
+        left: 110%;
+        opacity: 0;
+    }
+
+}
+
+
+/* ---------------------------------------------------------
+   LOGO
+
+   Almost imperceptible terminal flicker.
+--------------------------------------------------------- */
+
+.logo {
+    animation:
+        logoFlicker
+        14s
+        linear
+        infinite;
+}
+
+
+@keyframes logoFlicker {
+
+    0%,
+    92%,
+    93%,
+    100% {
+        opacity: 1;
+    }
+
+    92.2% {
+        opacity: 0.82;
+    }
+
+    92.35% {
+        opacity: 1;
+    }
+
+    92.55% {
+        opacity: 0.91;
+    }
+
+}
+
+
+/* ---------------------------------------------------------
+   RECORD SIDEBAR
+--------------------------------------------------------- */
+
+.record {
+    position: relative;
+
+    transition:
+        background 0.15s ease,
+        padding-left 0.15s ease,
+        color 0.15s ease;
+}
+
+
+/*
+ * Tiny indicator on hover.
+ */
+
+.record::before {
+    content: "";
+
+    position: absolute;
+
+    left: 0;
+    top: 0;
+
+    width: 2px;
+    height: 100%;
+
+    background: #666;
+
+    transform: scaleY(0);
+
+    transform-origin: center;
+
+    transition:
+        transform 0.15s ease,
+        background 0.15s ease;
+}
+
+
+.record:hover {
+    background: #1c1c1c;
+
+    padding-left: 24px;
+}
+
+
+.record:hover::before {
+    transform: scaleY(0.45);
+}
+
+
+/*
+ * Active record.
+ */
+
+.record.active {
+    background: #202020;
+
+    border-left: none;
+
+    padding-left: 24px;
+}
+
+
+.record.active::before {
+    background: #aaa;
+
+    transform: scaleY(1);
+}
+
+
+.record.active .record-number {
+    color: #ddd;
+}
+
+
+/* ---------------------------------------------------------
+   RECORD NUMBER
+--------------------------------------------------------- */
+
+.record-number {
+    transition:
+        color 0.15s ease,
+        letter-spacing 0.15s ease;
+}
+
+
+.record:hover .record-number {
+    color: #c4c4c4;
+}
+
+
+/* ---------------------------------------------------------
+   VIEWER
+--------------------------------------------------------- */
+
+.viewer {
+    position: relative;
+}
+
+
+/*
+ * Very faint top/bottom depth.
+ *
+ * This is NOT a glow — just slightly darkens the edges
+ * of the scrollable document area.
+ */
+
+.viewer::before {
+    content: "";
+
+    position: fixed;
+
+    pointer-events: none;
+
+    z-index: 5;
+
+    opacity: 0.3;
+}
+
+
+/* ---------------------------------------------------------
+   RECORD OPEN ANIMATION
+--------------------------------------------------------- */
+
+.record-view {
+    animation:
+        recordOpen
+        0.24s
+        ease-out;
+}
+
+
+@keyframes recordOpen {
+
+    from {
+        opacity: 0;
+
+        transform:
+            translateY(3px);
+    }
+
+    to {
+        opacity: 1;
+
+        transform:
+            translateY(0);
+    }
+
+}
+
+
+/* ---------------------------------------------------------
+   HEADING
+--------------------------------------------------------- */
+
+.record-heading {
+    position: relative;
+
+    padding-bottom: 4px;
+}
+
+
+.record-heading::after {
+    content: "";
+
+    position: absolute;
+
+    left: 0;
+
+    bottom: -7px;
+
+    width: 24px;
+
+    height: 1px;
+
+    background: #555;
+}
+
+
+/* ---------------------------------------------------------
+   RECORD ID
+--------------------------------------------------------- */
+
+.record-id {
+    transition:
+        color 0.2s ease;
+}
+
+
+.record-view:hover .record-id {
+    color: #777;
+}
+
+
+/* ---------------------------------------------------------
+   METADATA
+--------------------------------------------------------- */
+
+.metadata-value {
+    transition:
+        color 0.15s ease;
+}
+
+
+.metadata:hover .metadata-value {
+    color: #b5b5b5;
+}
+
+
+/* ---------------------------------------------------------
+   RECORD CONTENT
+--------------------------------------------------------- */
+
+.record-content {
+    text-rendering:
+        optimizeLegibility;
+}
+
+
+/* ---------------------------------------------------------
+   POLYDATE
+
+   Extremely subtle.
+--------------------------------------------------------- */
+
+.polydate {
+    animation:
+        polydatePulse
+        9s
+        ease-in-out
+        infinite;
+}
+
+
+@keyframes polydatePulse {
+
+    0%,
+    100% {
+        color: #666;
+    }
+
+    50% {
+        color: #707070;
+    }
+
+}
+
+
+/* ---------------------------------------------------------
+   REDACTION TEXTURE
+
+   Still looks like a proper redaction block, but no longer
+   like a perfectly flat CSS rectangle.
+--------------------------------------------------------- */
+
+.redacted-line,
+.redacted-short,
+.redacted-medium,
+.redacted-long {
+
+    background:
+        repeating-linear-gradient(
+            90deg,
+            #e8e8e8 0px,
+            #e8e8e8 7px,
+            #ededed 8px,
+            #ededed 11px
+        );
+}
+
+
+/* ---------------------------------------------------------
+   CLEANER SCROLLBARS
+--------------------------------------------------------- */
+
+.record-list::-webkit-scrollbar,
+.viewer::-webkit-scrollbar {
+    width: 8px;
+}
+
+
+.record-list::-webkit-scrollbar-track,
+.viewer::-webkit-scrollbar-track {
+    background: #141414;
+}
+
+
+.record-list::-webkit-scrollbar-thumb,
+.viewer::-webkit-scrollbar-thumb {
+    background: #3b3b3b;
+
+    border-radius: 0;
+
+    border: 2px solid #141414;
+
+    min-height: 40px;
+}
+
+
+.record-list::-webkit-scrollbar-thumb:hover,
+.viewer::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+
+.record-list,
+.viewer {
+    scrollbar-width: thin;
+
+    scrollbar-color:
+        #3b3b3b
+        #141414;
+}
+
+
+/* ---------------------------------------------------------
+   EMPTY STATE
+--------------------------------------------------------- */
+
+.empty-state {
+    animation:
+        emptyStatePulse
+        5s
+        ease-in-out
+        infinite;
+}
+
+
+@keyframes emptyStatePulse {
+
+    0%,
+    100% {
+        opacity: 0.7;
+    }
+
+    50% {
+        opacity: 1;
+    }
+
+}
+
+
+/* ---------------------------------------------------------
+   ACCESSIBILITY
+
+   Disable motion for users who request reduced motion.
+--------------------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+
+    *,
+    *::before,
+    *::after {
+        animation: none !important;
+
+        transition: none !important;
+    }
+
+}
+    </style>
+
+</head>
+
+
+
+<body>
+
+
+
+    <!-- =========================
+         HEADER
+    ========================= -->
+
+    <header>
+
+        <div class="header-left">
+
+            <button
+                class="back-button"
+                onclick="goBack()"
+            >
+
+                ← MERIDIAN
+
+            </button>
+
+
+
+            <div class="logo">
+
+                MERIDIAN 01
+
+            </div>
+
+        </div>
+
+
+
+        <div class="system-name">
+
+            RECORD SYSTEM
+
+        </div>
+
+    </header>
+
+
+
+
+
+    <!-- =========================
+         MAIN INTERFACE
+    ========================= -->
+
+    <div class="interface">
+
+
+
+        <!-- RECORD LIST -->
+
+        <aside class="record-list">
+
+            <div class="list-header">
+
+                RECORDS
+
+            </div>
+
+        </aside>
+
+
+
+
+
+        <!-- RECORD VIEWER -->
+
+        <main class="viewer">
+
+            <div class="empty-state">
+
+                SELECT A RECORD
+
+            </div>
+
+        </main>
+
+    </div>
+
+
+
+
+
+    <script>
+
+
+
+        /*
+        ============================================================
+        RECORD DATA
+        ============================================================
+        */
+
+        const records = {
+
+
+
+            /* =====================================================
+               C1-001
+            ===================================================== */
+
+            1: {
+
+                title: "C1-001",
+
+                subject: "CANDIDATE 01",
+
+                date: "████████████",
+
+                status: "SAVED/NORMAL",
+
+                id: "7A3F91C2",
+
+                redacted: false,
+
+                hidden: false,
+
+                memlocked: false,
+
+                polydate: null,
+
+
+
+                content: `okay
+i have no idea what this is
+
+i found this page after following something i found and i
+initially thought it was just some kind of archive
+
+it calls itself "MERIDIAN"
+
+there's basically nothing explaining what that means
+
+there are four things on the main page:
+
+01 RECORD
+02 COMMAND
+03 QUERY
+04 MEMORY
+
+01 is the only one that actually does anything right now
+
+the records are weird. they're numbered and some of them have
+parts missing, but i can't tell whether that's deliberate or
+if something is broken
+
+there's also a thing called SYSTEM STATUS
+
+it doesn't seem to do much
+
+i clicked it a few times and got the same information each time
+
+the interface looks older than i expected
+
+not old exactly. just like it's been maintained for a long time
+without anyone bothering to make it look different
+
+there's a little maintenance message in one of the pages but
+it doesn't say when the maintenance happened
+
+i'm going to leave the rest alone for now
+
+i think i'm just going to see how much of this i can figure out
+before i start touching things`
+
+            },
+
+
+
+            /* =====================================================
+               C1-002
+            ===================================================== */
+
+            2: {
+
+                title: "C1-002",
+
+                subject: "CANDIDATE 01",
+
+                date: "████████████",
+
+                status: "SAVED/NORMAL",
+
+                id: "D91B4E70",
+
+                redacted: false,
+
+                hidden: false,
+
+                memlocked: false,
+
+                polydate: null,
+
+
+
+                content: `there's more here than i thought
+
+i went through the records again
+
+some are normal enough. mostly just notes about whatever this
+system is supposed to be doing
+
+others are missing pieces
+
+i can't tell if the missing sections are deliberate
+
+there are also references to commands that aren't available
+from the main page
+
+i haven't worked out what those are yet
+
+i tried a few obvious things but didn't get anywhere
+
+the system also seems to have some kind of session number
+
+i don't know what it's for
+
+it changed once when i came back to the page and then stayed
+the same
+
+probably nothing
+
+there's another page mentioning a "maintenance window"
+
+again, probably nothing
+
+the only thing i actually find strange is how much of this
+seems to have already been written
+
+i expected an empty archive
+
+instead it feels like i'm opening something that was already
+being used
+
+i'm leaving everything as i found it
+
+there's no point changing things when i don't know what they do`
+
+            },
+
+
+
+            /* =====================================================
+               C1-003
+               HIDDEN
+            ===================================================== */
+
+            3: {
+
+                title: "C1-003",
+
+                subject: "CANDIDATE 01",
+
+                date: "████████████",
+
+                status: "SAVED/NORMAL",
+
+                id: "F52C8A19",
+
+                redacted: false,
+
+                hidden: true,
+
+                memlocked: false,
+
+                polydate: "△ 18/11/2026",
+
+
+
+                content: `i finally tried looking for some kind of documentation
+
+there's a HELP command
+
+that would have been useful to know earlier
+
+it gives a list of the commands the system recognises
+
+some of them are things i've already seen
+
+some aren't
+
+i tried a few of the ones i hadn't seen before
+
+most of them just tell me that i don't have access to them
+
+there's an entry for MEMORY
+
+it says basically nothing useful
+
+just that memory contains "persistent system state"
+
+i don't know what that means
+
+there are also commands that don't seem to do anything yet
+
+i'm guessing they're either disabled or require something i haven't
+found
+
+HELP itself has a few more options than i expected
+
+HELP COMMAND gives a list of commands
+
+HELP [command] gives information about a specific one
+
+that's probably going to be useful
+
+i'm going to stop messing around with things for now
+
+i've got enough information to start actually working through this
+rather than clicking things and hoping something happens`
+
+            },
+
+
+
+            /* =====================================================
+               C1-004
+               MEMLOCKED
+            ===================================================== */
+
+            4: {
+
+                title: "C1-004",
+
+                subject: "CANDIDATE 01",
+
+                date: "████████████",
+
+                status: "SAVED/MEMLOCKED",
+
+                id: "M7F42C81",
+
+                redacted: false,
+
+                hidden: false,
+
+                memlocked: true,
+
+                polydate: null,
+
+
+
+                content: `there's something else in here
+
+i can't open it normally
+
+the system says it belongs to memory
+
+i don't really understand what that means yet
+
+i found the identifier written down separately
+
+someones name..?
+
+i'm keeping it here because it might matter later
+
+M05 access identifier:
+
+katherine
+
+there's definitely more going on than the four sections that are
+actually visible
+
+i'm starting to think the system isn't showing me everything`
+
+            },
+
+
+
+            /* =====================================================
+               C2-001
+            ===================================================== */
+
+            5: {
+
+                title: "C2-001",
+
+                subject: "CANDIDATE 02",
+
+                date: "████████████",
+
+                status: "SAVED/NORMAL",
+
+                id: "4F82C19A",
+
+                redacted: false,
+
+                hidden: false,
+
+                memlocked: false,
+
+                polydate: null,
+
+
+
+                content: `The system does not appear to be incomplete in the conventional
+sense.
+
+Its currently accessible functions are limited, but the underlying
+record structure indicates that additional material exists beyond
+the records exposed through the present interface.
+
+The initial structure is as follows:
+
+RECORD
+COMMAND
+QUERY
+MEMORY
+
+RECORD is currently accessible.
+COMMAND is present but is not exposed through the primary interface.
+QUERY appears to accept input.
+MEMORY is inaccessible.
+
+The record sequence also contains discrepancies which should not
+be dismissed as clerical errors.
+
+C1-001 exists.
+C1-002 exists.
+C1-003 is referenced but is not available through the visible list.
+
+The discrepancy was reproduced after restarting the session.
+
+The numbering therefore appears to describe something other than
+a simple sequential list of accessible records.
+
+This distinction should be retained for subsequent analysis.
+
+The available records also reference functions which cannot
+currently be accessed through the visible interface.
+
+Further investigation should therefore prioritise the relationship
+between record identifiers, visibility states and system functions.`
+
+            },
+
+
+
+            /* =====================================================
+               C2-002
+               REDACTED
+            ===================================================== */
+
+            6: {
+
+                title: "C2-002",
+
+                subject: "CANDIDATE 02",
+
+                date: "████████████",
+
+                status: "SAVED/REDACTED",
+
+                id: "B6E2049F",
+
+                redacted: true,
+
+                hidden: false,
+
+                memlocked: false,
+
+                polydate: null,
+
+
+
+                content: `A second examination of the existing records has confirmed
+multiple inconsistencies which cannot be adequately explained by
+ordinary recording error.
+
+The timestamps do not consistently correspond to the apparent
+sequence of events.
+
+Some records reference information which is absent from the
+currently accessible dataset.
+
+The record sequence itself contains omissions.
+
+For example:
+
+C1-001
+C1-002
+C1-003
+
+The referenced record is not accessible through the visible list.
+
+This condition is reproducible.
+
+A recurring temporal discrepancy has also been identified.
+
+The difference is approximately seventeen minutes between
+particular actions and their corresponding recorded state.
+
+The local system clock was checked independently.
+
+No equivalent discrepancy was observed.
+
+The seventeen-minute interval should therefore be treated as a
+property of the record system rather than a clock error.
+
+Additional functions are referenced by existing records despite
+not being exposed through the current interface.
+
+The command structure is consequently larger than the presently
+available interface suggests.
+
+Further testing should be performed without unnecessarily altering
+persistent system state.`,
+
+
+
+                redactedContent: `A second examination of the existing records has confirmed
+multiple inconsistencies which cannot be adequately explained by
+ordinary recording error.
+
+The timestamps do not consistently correspond to the apparent
+sequence of events.
+
+<div class="redacted-line"></div>
+
+Some records reference information which is absent from the
+currently accessible dataset.
+
+The record sequence itself contains omissions.
+
+For example:
+
+C1-001
+C1-002
+<span class="redacted-medium"></span>
+
+This condition is reproducible.
+
+A recurring temporal discrepancy has also been identified.
+
+The difference is approximately seventeen minutes between
+particular actions and their corresponding recorded state.
+
+The local system clock was checked independently.
+
+No equivalent discrepancy was observed.
+
+The seventeen-minute interval should therefore be treated as a
+property of the record system rather than a clock error.
+
+Additional functions are referenced by existing records despite
+not being exposed through the current interface.
+
+<div class="redacted-line"></div>
+
+Further testing should be performed without unnecessarily altering
+persistent system state.`
+
+            },
+
+
+
+            /* =====================================================
+               C2-003
+               HIDDEN + REDACTED
+            ===================================================== */
+
+            7: {
+
+                title: "C2-003",
+
+                subject: "CANDIDATE 02",
+
+                date: "████████████",
+
+                status: "SAVED/REDACTED",
+
+                id: "C84A17D2",
+
+                redacted: true,
+
+                hidden: false,
+
+                memlocked: false,
+
+                polydate: null,
+
+
+
+                content: `The retrieval function has now been examined sufficiently to
+establish that identifier specificity affects the resulting output.
+
+A general retrieval operation does not expose the complete record
+set.
+
+A specific identifier, however, can return material which is not
+present in the visible record listing.
+
+This was first confirmed using an identifier corresponding to an
+existing accessible record.
+
+A second test was performed using an identifier previously
+recorded but not represented in the visible list.
+
+The system returned a result.
+
+It remains unclear whether the returned material represents the
+requested record directly or an associated reference.
+
+Further testing is required before that distinction can be made.
+
+The identifier displayed alongside a record also does not
+correspond to its numerical position within the record list.
+
+These values should therefore be treated as separate properties.
+
+The identifier is potentially the more significant of the two,
+given that it can apparently address records independently of
+their visibility state.
+
+Repeated retrieval attempts may also modify system state.
+
+This possibility should be accounted for before conducting
+additional tests.`,
+
+
+
+                redactedContent: `The retrieval function has now been examined sufficiently to
+establish that identifier specificity affects the resulting output.
+
+A general retrieval operation does not expose the complete record
+set.
+
+A specific identifier, however, can return material which is not
+present in the visible record listing.
+
+This was first confirmed using an identifier corresponding to an
+existing accessible record.
+
+A second test was performed using an identifier previously
+recorded but not represented in the visible list.
+
+<span class="redacted-long"></span>
+
+It remains unclear whether the returned material represents the
+requested record directly or an associated reference.
+
+Further testing is required before that distinction can be made.
+
+The identifier displayed alongside a record also does not
+correspond to its numerical position within the record list.
+
+These values should therefore be treated as separate properties.
+
+The identifier is potentially the more significant of the two,
+given that it can apparently address records independently of
+their visibility state.
+
+Repeated retrieval attempts may also modify system state.
+
+This possibility should be accounted for before conducting
+additional tests.`
+
+            },
+
+
+
+            /* =====================================================
+               C2-004
+            ===================================================== */
+
+            8: {
+
+                title: "C2-004",
+
+                subject: "CANDIDATE 02",
+
+                date: "████████████",
+
+                status: "SAVED/NORMAL",
+
+                id: "83D17FA4",
+
+                redacted: false,
+
+                hidden: false,
+
+                memlocked: false,
+
+                polydate: null,
+
+
+
+                content: `The seventeen-minute discrepancy has now been reproduced
+sufficiently often that coincidence is no longer a satisfactory
+explanation.
+
+The interval appears across multiple records and corresponds to
+different types of system activity.
+
+A separate inconsistency remains present in the record sequence.
+The numbering implies the existence of material which is not
+currently exposed.
+
+The repeated examination of the interface has not produced an
+adequate explanation.
+
+This suggests that the assumption that the relevant information
+exists entirely within the system interface may be incorrect.
+
+The original source material should therefore be examined.
+
+If records are being removed, concealed or altered, the mechanism
+responsible may exist outside the visible interface.
+
+The physical documentation associated with the system has not yet
+been examined with sufficient attention.
+
+That should be corrected before further system-level testing.`
+
+            },
+
+
+
+            /* =====================================================
+               C3-001
+            ===================================================== */
+
+            9: {
+
+                title: "C3-001",
+
+                subject: "CANDIDATE 03",
+
+                date: "████████████",
+
+                status: "SAVED/NORMAL",
+
+                id: "E4A91C73",
+
+                redacted: false,
+
+                hidden: false,
+
+                memlocked: false,
+
+                polydate: null,
+
+
+
+                content: `okay this thing is definetly not supposed to be sitting here
+
+i dont know what meridian is and im not going to pretend i do
+
+there are buttons everywhere so obviously i clicked them
+
+record
+
+then query
+
+then back
+
+then record again
+
+then memory even though it literally says i cant use it
+
+nothing
+
+tried typing random stuff into query
+
+also nothing
+
+then i started trying commands
+
+some worked
+
+some didnt
+
+some just gave me errors
+
+tried random passwords too because why not
+
+none worked
+
+then i opened the records in different orders
+
+that got more interesting
+
+sometimes stuff takes a second to load
+
+sometimes it doesnt
+
+i also managed to make the screen do this weird thing where
+everything moved for a second
+
+no idea what i did
+
+only page i did it on was query but i think its random
+
+tried it again
+
+couldnt do it
+
+then i clicked basically everything again
+
+it happened again
+
+screen flickered and some of the text looked wrong
+
+after that some stuff stopped responding properly
+
+waited a bit and it went back to normal
+
+so
+
+probably shouldnt click everything at once
+
+which obviously means im going to do that again`
+
+            },
+
+
+
+            /* =====================================================
+               C3-002
+            ===================================================== */
+
+            10: {
+
+                title: "C3-002",
+
+                subject: "CANDIDATE 03",
+
+                date: "████████████",
+
+                status: "SAVED/NORMAL",
+
+                id: "C3026F18",
+
+                redacted: false,
+
+                hidden: false,
+
+                memlocked: false,
+
+                polydate: "□ 16/03/2026",
+
+
+
+                content: `ok found another weird thing
+
+it was sitting at the bottom of one of the records like it was
+supposed to be there
+
+□ 14/03/2026
+
+which looks like a date except for the square obviously
+
+i thought maybe it was some kind of marker or category thing
+
+tried putting the numbers into query
+
+nothing
+
+tried the date without the square
+
+still nothing
+
+then i noticed one of the system records mentions something called
+POLYDATE so i guess this is probably one of those
+
+no idea what the shape is for
+
+or why a date needs one
+
+its also weird that it just appears after the record instead of in
+the actual text
+
+im leaving it here because knowing this thing it'll matter later
+
+and if it doesnt then i have spent way too long staring at a square`
+
+            },
+
+
+
+            /* =====================================================
+               C3-003
+               REDACTED
+            ===================================================== */
+
+            11: {
+
+                title: "C3-003",
+
+                subject: "CANDIDATE 03",
+
+                date: "████████████",
+
+                status: "SAVED/REDACTED",
+
+                id: "19C7B2E5",
+
+                redacted: true,
+
+                hidden: false,
+
+                memlocked: false,
+
+                polydate: null,
+
+
+
+                content: `i found another command
+
+it was in one of the records
+
+tried it straight away
+
+reset
+
+thought it would just clear whatever id done
+
+it didnt
+
+system said:
+
+COMMAND CURRENTLY UNAVAILABLE
+
+tried again
+
+same thing
+
+dont think it likes me
+
+there was more in the record about it but
+
+some of it was missing
+
+i think it needs something else first
+
+probably memory
+
+cant get into memory so thats not very helpful
+
+tried a bunch of other things anyway
+
+nothing
+
+leaving this here so i dont forget the command`,
+
+
+
+                redactedContent: `i found another command
+
+it was in one of the records
+
+tried it straight away
+
+reset
+
+<span class="redacted-medium"></span>
+
+thought it would just clear whatever id done
+
+it didnt
+
+system said:
+
+<span class="redacted-long"></span>
+
+tried again
+
+same thing
+
+dont think it likes me
+
+there was more in the record about it but
+
+<div class="redacted-line"></div>
+
+i think it needs something else first
+
+probably memory
+
+cant get into memory so thats not very helpful
+
+tried a bunch of other things anyway
+
+nothing
+
+leaving this here so i dont forget the command`
+
+            },
+
+
+
+            /* =====================================================
+               A-001
+            ===================================================== */
+
+            12: {
+
+                title: "A-001",
+
+                subject: "A",
+
+                date: "████████████",
+
+                status: "SAVED/NORMAL",
+
+                id: "A1C904E7",
+
+                redacted: false,
+
+                hidden: false,
+
+                memlocked: false,
+
+                polydate: null,
+
+
+
+                content: `The record sequence is incomplete.
+
+Several identifiers appear to have been omitted from the visible
+set, although references to them remain present elsewhere.
+
+The omissions are consistent enough to indicate deliberate
+restriction rather than damage.
+
+The same restriction appears to affect functions.
+
+There are references to operations which cannot currently be
+performed.
+
+The system is therefore presenting only a partial state.
+
+There appear to be seventeen minute intervals in which the
+
+system is running *something*.
+
+It should be recorded separately until its relationship to the
+missing material is established.`
+
+            },
+
+
+
+            /* =====================================================
+               A-002
+            ===================================================== */
+
+            13: {
+
+                title: "A-002",
+
+                subject: "A",
+
+                date: "████████████",
+
+                status: "SAVED/NORMAL",
+
+                id: "A2F73D19",
+
+                redacted: false,
+
+                hidden: false,
+
+                memlocked: false,
+
+                polydate: null,
+
+
+
+                content: `The paper records are becoming more useful than the system
+interface.
+
+Most of them are scattered badly enough that finding anything
+specific takes longer than it should.
+
+One group seems to have been kept together more consistently.
+
+It is mixed in with ordinary work rather than anything labelled
+for MERIDIAN.
+
+There is enough material in the same place that it would be easy
+to overlook a single page among the rest.
+
+Probably worth checking the folder that has accumulated most of
+the work before assuming anything was removed.`
+
+            },
+
+
+
+            /* =====================================================
+               A-003
+            ===================================================== */
+
+            14: {
+
+                title: "A-003",
+
+                subject: "A",
+
+                date: "████████████",
+
+                status: "SAVED/NORMAL",
+
+                id: "A3B82F60",
+
+                redacted: false,
+
+                hidden: false,
+
+                memlocked: false,
+
+                polydate: null,
+
+
+
+                content: `The second set of notes is less useful than expected.
+
+Most of what is written down repeats material already recorded
+elsewhere.
+
+A few annotations seem to refer to where things were left rather
+than what they contain.
+
+One of them mentions a locker, but not a compartment or container.
+
+The wording is strange enough that it may refer to the structure
+itself rather than something stored normally inside it.
+
+If that note is literal, the obvious surfaces may not be the ones
+worth checking.`
+
+            },
+
+
+
+            /* =====================================================
+               A-004
+               REDACTED + MEMLOCKED
+            ===================================================== */
+
+            15: {
+
+                title: "A-004",
+
+                subject: "A",
+
+                date: "████████████",
+
+                status: "SAVED/REDACTED/MEMLOCKED",
+
+                id: "A4D17C92",
+
+                redacted: true,
+
+                hidden: false,
+
+                memlocked: true,
+
+                polydate: null,
+
+
+
+                content: `RESTORE is not currently available.
+
+The command appears to operate on material which has been removed
+from the active system state.
+
+The command syntax is recorded below.
+
+RESTORE [identifier]
+
+The identifier must correspond to the required stored object.
+
+The operation does not appear to function while MEMORY remains
+inactive.
+
+Further details are unavailable until the memory state changes.`,
+
+
+
+                redactedContent: `RESTORE is not currently available.
+
+The command appears to operate on material which has been removed
+from the active system state.
+
+The command syntax is recorded below.
+
+<span class="redacted-long"></span>
+
+The identifier must correspond to the required stored object.
+
+The operation does not appear to function while MEMORY remains
+inactive.
+
+Further details are unavailable until the memory state changes.`
+
+            },
+
+
+
+            /* =====================================================
+               A-005
+               HIDDEN
+            ===================================================== */
+
+            16: {
+
+                title: "A-005",
+
+                subject: "A",
+
+                date: "████████████",
+
+                status: "SAVED/NORMAL",
+
+                id: "A0057E31",
+
+                redacted: false,
+
+                hidden: true,
+
+                memlocked: false,
+
+                polydate: null,
+
+
+
+                content: `I've moved another set out of the archive.
+
+There isn't much point keeping everything in one place when I still don't know
+what MERIDIAN is retaining between sessions.
+
+The paper copy is staying separate for now.
+
+890
+
+I should know what that means if I need it again.
+
+Nothing important has been removed from the archive itself. This is mostly
+working material, along with a few things I don't want to lose if the visible
+records change again.
+
+Leave it there unless that becomes necessary.`
+
+            },
+
+
+
+            /* =====================================================
+               A-006
+               HIDDEN + MEMLOCKED
+            ===================================================== */
+
+            17: {
+
+                title: "A-006",
+
+                subject: "A",
+
+                date: "████████████",
+
+                status: "SAVED/NORMAL/MEMLOCKED",
+
+                id: "A6E91B42",
+
+                redacted: false,
+
+                hidden: true,
+
+                memlocked: true,
+
+                polydate: null,
+
+
+
+                content: `The behaviour during rapid input is not consistent with an
+ordinary interface error.
+
+The display changes before returning to its previous state.
+
+The movement appears to affect the text itself rather than only
+the surrounding interface.
+
+There is an associated audio component.
+
+I believe this audio component is not simply a garbled mess as
+
+first appears. Requires further investigation.
+
+There is also a repeated reference to a trace operation.
+
+The event appears to be triggered by repeated input within a
+short interval.
+
+Further examination should be performed after the memory state
+has been changed.`
+
+            },
+
+
+
+            /* =====================================================
+               B-001
+            ===================================================== */
+
+            18: {
+
+                title: "B-001",
+
+                subject: "B",
+
+                date: "████████████",
+
+                status: "SAVED/NORMAL",
+
+                id: "B0015C73",
+
+                redacted: false,
+
+                hidden: false,
+
+                memlocked: false,
+
+                polydate: null,
+
+
+
+                content: `Something about the system is wrong.
+
+Not broken.
+
+Wrong.
+
+The visible records don't agree with one another and the missing
+parts are too consistent to be accidental.
+
+Do not assume the interface is showing the whole thing.
+
+The paper notes are worth keeping separate from the system records.
+
+There is a reason the gaps are still there.`
+
+            },
+
+
+
+            /* =====================================================
+               B-002
+               REDACTED
+            ===================================================== */
+
+            19: {
+
+                title: "B-002",
+
+                subject: "B",
+
+                date: "████████████",
+
+                status: "SAVED/REDACTED",
+
+                id: "B0028F14",
+
+                redacted: true,
+
+                hidden: false,
+
+                memlocked: false,
+
+                polydate: null,
+
+
+
+                content: `The location of the missing system record can be reached by
+following the trace path recorded below.
+
+TRACE:
+
+/system
+
+The path should be entered exactly as recorded.`,
+
+
+
+                redactedContent: `The location of the missing system record can be reached by
+following the trace path recorded below.
+
+TRACE:
+
+<span class="redacted-medium"></span>
+
+
+The final location is not part of the visible record sequence.
+
+The path should be entered exactly as recorded.`
+
+            },
+
+
+
+            /* =====================================================
+               B-003
+            ===================================================== */
+
+            20: {
+
+                title: "B-003",
+
+                subject: "B",
+
+                date: "████████████",
+
+                status: "SAVED/NORMAL",
+
+                id: "B003C617",
+
+                redacted: false,
+
+                hidden: false,
+
+                memlocked: false,
+
+                polydate: null,
+
+
+
+                content: `The query system does not appear to require a complete phrase.
+
+Single terms are sufficient.
+
+Some terms return nothing.
+
+Some return references.
+
+The useful terms are likely to correspond to names, system
+functions or repeated notation.
+
+Do not assume that a failed query means the term is meaningless.
+
+Some information may only become available after the system state
+changes.`
+
+            },
+
+
+
+            /* =====================================================
+               SYS-001
+            ===================================================== */
+
+            21: {
+
+                title: "SYS-001",
+
+                subject: "MERIDIAN SYSTEM",
+
+                date: "████████████",
+
+                status: "SYSTEM/NORMAL",
+
+                id: "SYS001A74",
+
+                redacted: false,
+
+                hidden: false,
+
+                memlocked: false,
+
+                polydate: null,
+
+
+
+                content: `MERIDIAN SYSTEM LOG
+
+SYSTEM STATE: ACTIVE
+
+PRIMARY INTERFACE:
+
+01 RECORD
+02 COMMAND
+03 QUERY
+04 MEMORY
+
+CURRENTLY EXPOSED SECTIONS: 4
+
+SECTION INDEX STATUS: INCOMPLETE
+
+The displayed section index does not constitute a complete
+enumeration of system sections.
+
+Record storage is distributed across independent section states.
+
+Additional section identifiers may exist without corresponding
+entries in the active index.
+
+RECORD SYSTEM STATUS: ACTIVE
+
+COMMAND SYSTEM STATUS: RESTRICTED
+
+QUERY SYSTEM STATUS: ACTIVE
+
+MEMORY SYSTEM STATUS: LOCKED`
+
+            },
+
+
+
+            /* =====================================================
+               SYS-002
+            ===================================================== */
+
+            22: {
+
+                title: "SYS-002",
+
+                subject: "MERIDIAN SYSTEM",
+
+                date: "████████████",
+
+                status: "SYSTEM/HIDDEN",
+
+                id: "SYS002D91",
+
+                redacted: false,
+
+                hidden: true,
+
+                memlocked: false,
+
+                polydate: null,
+
+
+
+                content: `MERIDIAN SYSTEM LOG
+
+TRACE SUBSYSTEM
+
+TRACE is used to resolve a stored location from a sequence of
+system references.
+
+SYNTAX:
+
+TRACE [keyword]
+
+A path may contain multiple locations.
+
+Each location is resolved sequentially.
+
+Example:
+
+TRACE
+RECORD
+SYSTEM
+COLOUR
+5
+
+TRACE does not retrieve the contents of a record, 
+
+instead resolves the location associated with the supplied path.
+
+Incomplete paths may return partial results.
+
+Unknown locations return no result.
+
+TRACE STATUS: ACTIVE`
+
+            },
+
+
+
+            /* =====================================================
+               SYS-003
+            ===================================================== */
+
+            23: {
+
+                title: "SYS-003",
+
+                subject: "MERIDIAN SYSTEM",
+
+                date: "████████████",
+
+                status: "SYSTEM/HIDDEN",
+
+                id: "SYS003E52",
+
+                redacted: false,
+
+                hidden: true,
+
+                memlocked: false,
+
+                polydate: "△ 12/12/2026",
+
+
+
+                content: `MERIDIAN SYSTEM LOG
+
+DATE REPRESENTATION
+
+The system supports an encoded date format designated POLYDATE.
+
+POLYDATE values use a date together with an associated geometric
+identifier.
+
+Standard date notation alone does not constitute a complete
+POLYDATE.
+
+Example:
+
+□ 12/12/2026
+
+The geometric identifier is interpreted independently of the
+calendar date.
+
+POLYDATE processing is distributed across system records.
+
+The system section index currently exposes four sections.
+
+Additional sections are retained outside the active display
+sequence.
+
+POLYDATE STATUS: ACTIVE`
+
+            },
+
+
+
+            /* =====================================================
+               SYS-004
+            ===================================================== */
+
+            24: {
+
+                title: "SYS-004",
+
+                subject: "NORTHSTAR PROJECT",
+
+                date: "████████████",
+
+                status: "SYSTEM/HIDDEN",
+
+                id: "SYS004B63",
+
+                redacted: false,
+
+                hidden: true,
+
+                memlocked: false,
+
+                polydate: null,
+
+
+
+                content: `NORTHSTAR PROJECT RECORD
+
+PROJECT STATUS: ARCHIVED
+
+PROJECT DESIGNATION: NORTHSTAR
+
+CURRENT SYSTEM DESIGNATION: MERIDIAN
+
+SYSTEM CLASSIFICATION: INTERNAL
+
+ACCESS STATE: INACTIVE
+
+PROJECT NORTHSTAR was established as a distributed information
+storage and retrieval system.
+
+PRIMARY PARAMETERS:
+
+- segmented record storage
+- independent record identifiers
+- persistent system state
+- restricted record visibility
+- record retrieval by identifier
+- trace-based location mapping
+- persistent memory layer
+
+The original NORTHSTAR structure consisted of multiple
+independent sections.
+
+The section index is incomplete.
+
+NORTHSTAR records were not required to be sequentially exposed
+through the primary interface.
+
+Records may therefore exist without appearing in the active
+record listing.
+
+The MEMORY subsystem was implemented as persistent state rather
+than conventional record storage.
+
+MEMORY state affects record accessibility.
+
+NORTHSTAR was subsequently reorganised under the MERIDIAN
+designation.
+
+The original project structure remains partially present within
+the current system.
+
+TRACE may be used to locate retained NORTHSTAR records.
+
+NORTHSTAR STATUS: ARCHIVED
+
+MERIDIAN STATUS: ACTIVE`
+
+            }
+
+        };
+
+
+
+        /*
+        ============================================================
+        STATE
+        ============================================================
+        */
+
+        let selectedRecord = null;
+
+
+
+        /*
+        ============================================================
+        RETRIEVED RECORD STATE
+        ============================================================
+        */
+
+        function getRetrievedIds() {
+
+            try {
+
+                const stored =
+                    localStorage.getItem(
+                        "meridian_retrieved_ids"
+                    );
+
+                if (!stored) {
+                    return [];
+                }
+
+                const parsed =
+                    JSON.parse(stored);
+
+                return Array.isArray(parsed)
+                    ? parsed
+                    : [];
+
+            } catch (error) {
+
+                return [];
+
+            }
+
+        }
+
+
+
+        /*
+        ============================================================
+        UNREDACTED RECORD STATE
+        ============================================================
+        */
+
+        function getUnredactedIds() {
+
+            try {
+
+                const stored =
+                    localStorage.getItem(
+                        "m01_unredacted_ids"
+                    );
+
+                if (!stored) {
+                    return [];
+                }
+
+                const parsed =
+                    JSON.parse(stored);
+
+                return Array.isArray(parsed)
+                    ? parsed
+                    : [];
+
+            } catch (error) {
+
+                return [];
+
+            }
+
+        }
+
+
+
+        /*
+        ============================================================
+        MEMORY STATE
+        ============================================================
+        */
+
+        function isMemoryActive() {
+
+            return (
+                localStorage.getItem(
+                    "meridian_memory"
+                ) === "true"
+            );
+
+        }
+
+
+
+        /*
+        ============================================================
+        RECORD VISIBILITY
+        ============================================================
+        */
+
+        function isRecordVisible(record) {
+
+            /*
+            MEMLOCKED records require MEMORY to be active.
+
+            Once MEMORY is active, memlocked records are treated
+            like ordinary records and continue through the normal
+            hidden/retrieval checks below.
+            */
+
+            if (
+                record.memlocked &&
+                !isMemoryActive()
+            ) {
+
+                return false;
+
+            }
+
+
+
+            /*
+            Normal records are always visible.
+
+            This also applies to memlocked records once MEMORY
+            has been activated.
+            */
+
+            if (!record.hidden) {
+
+                return true;
+
+            }
+
+
+
+            /*
+            Hidden records require their specific identifier
+            to have been retrieved through M02.
+
+            This remains true even after MEMORY is activated.
+            */
+
+            const retrievedIds =
+                getRetrievedIds();
+
+
+
+            return retrievedIds.some(
+                id =>
+                    String(id).toUpperCase() ===
+                    String(record.id).toUpperCase()
+            );
+
+        }
+
+
+
+        /*
+        ============================================================
+        RECORD REDACTION
+        ============================================================
+        */
+
+        function isRecordUnredacted(record) {
+
+            /*
+            Records without redaction require no special state.
+            */
+
+            if (!record.redacted) {
+
+                return true;
+
+            }
+
+
+
+            /*
+            Redacted records require their specific identifier
+            to have been supplied to UNREDACT through M02.
+            */
+
+            const unredactedIds =
+                getUnredactedIds();
+
+
+
+            return unredactedIds.some(
+                id =>
+                    String(id).toUpperCase() ===
+                    String(record.id).toUpperCase()
+            );
+
+        }
+
+
+
+        /*
+        ============================================================
+        RENDER SIDEBAR
+        ============================================================
+        */
+
+        function renderSidebar() {
+
+            const recordList =
+                document.querySelector(
+                    ".record-list"
+                );
+
+
+
+            recordList.innerHTML = `
+
+                <div class="list-header">
+                    RECORDS
+                </div>
+
+            `;
+
+
+
+            Object.keys(records).forEach(key => {
+
+                const record =
+                    records[key];
+
+
+
+                /*
+                Only display records whose current
+                persistent state permits access.
+                */
+
+                if (!isRecordVisible(record)) {
+
+                    return;
+
+                }
+
+
+
+                const element =
+                    document.createElement("div");
+
+
+
+                element.className =
+                    "record";
+
+
+
+                if (
+                    selectedRecord ===
+                    Number(key)
+                ) {
+
+                    element.classList.add(
+                        "active"
+                    );
+
+                }
+
+
+
+                element.innerHTML = `
+
+                    <div class="record-number">
+                        ${record.title}
+                    </div>
+
+                `;
+
+
+
+                element.addEventListener(
+                    "click",
+                    () => {
+
+                        selectedRecord =
+                            Number(key);
+
+                        renderSidebar();
+
+                        openRecord(record);
+
+                    }
+                );
+
+
+
+                recordList.appendChild(
+                    element
+                );
+
+            });
+
+        }
+
+
+
+        /*
+        ============================================================
+        OPEN RECORD
+        ============================================================
+        */
+
+        function openRecord(record) {
+
+            /*
+            Make sure a record cannot be opened through
+            stale UI state after its access conditions change.
+            */
+
+            if (!isRecordVisible(record)) {
+
+                selectedRecord = null;
+
+
+
+                viewer.innerHTML = `
+
+                    <div class="empty-state">
+                        SELECT A RECORD
+                    </div>
+
+                `;
+
+
+
+                renderSidebar();
+
+                return;
+
+            }
+
+
+
+            let displayedContent =
+                record.content;
+
+
+
+            /*
+            Use the redacted version unless this
+            specific record has been unredacted.
+
+            MEMLOCK has no effect on redaction itself.
+            Once MEMORY is active, the record follows the
+            exact same redaction rules as any other record.
+            */
+
+            if (
+                record.redacted &&
+                !isRecordUnredacted(record)
+            ) {
+
+                displayedContent =
+                    record.redactedContent ||
+                    record.content;
+
+            }
+
+
+
+            const polydateHTML =
+                record.polydate
+
+                    ? `
+
+                        <div class="polydate">
+                            ${record.polydate}
+                        </div>
+
+                    `
+
+                    : "";
+
+
+
+            viewer.innerHTML = `
+
+                <div class="record-view">
+
+
+                    <div class="record-heading">
+
+                        ${record.title}
+
+                        <span class="record-id">
+                            ${record.id}
+                        </span>
+
+                    </div>
+
+
+
+                    <div class="metadata">
+
+
+                        <div class="metadata-label">
+                            SUBJECT
+                        </div>
+
+                        <div class="metadata-value">
+                            ${record.subject}
+                        </div>
+
+
+
+                        <div class="metadata-label">
+                            DATE
+                        </div>
+
+                        <div class="metadata-value">
+                            ${record.date}
+                        </div>
+
+
+
+                        <div class="metadata-label">
+                            STATUS
+                        </div>
+
+                        <div class="metadata-value">
+                            ${record.status}
+                        </div>
+
+
+                    </div>
+
+
+
+                    <div class="record-content">
+                        ${displayedContent}
+                    </div>
+
+
+
+                    ${polydateHTML}
+
+
+                </div>
+
+            `;
+
+        }
+
+
+
+        /*
+        ============================================================
+        INITIALISE
+        ============================================================
+        */
+
+        const viewer =
+            document.querySelector(
+                ".viewer"
+            );
+
+
+
+        renderSidebar();
+
+
+
+        /*
+        ============================================================
+        GO BACK
+        ============================================================
+        */
+
+        function goBack() {
+
+            window.location.href =
+                "../index.html";
+
+        }
+
+    </script>
+
+</body>
+
+</html>
+

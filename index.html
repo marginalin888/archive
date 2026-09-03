@@ -2,134 +2,978 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Archive</title>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Meridian — Access Terminal</title>
+
 
     <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+
+        html,
         body {
             margin: 0;
+
+            width: 100%;
+            min-height: 100%;
+        }
+
+
+        body {
             min-height: 100vh;
 
             background: #111;
+
             color: #ddd;
 
-            font-family: "Courier New", monospace;
+            font-family:
+                "Courier New",
+                monospace;
 
             display: flex;
+
             justify-content: center;
+
             align-items: center;
+
+            overflow: hidden;
+
+            animation:
+                ambientBrightness
+                12s
+                ease-in-out
+                infinite;
         }
 
+
+        /* =========================================================
+           ARCHIVE
+        ========================================================= */
+
         .archive {
+            position: relative;
+
+            z-index: 10;
+
             width: 90%;
+
             max-width: 700px;
+
             text-align: center;
         }
 
+
         h1 {
             margin: 0;
+
             font-size: 42px;
+
+            font-weight: normal;
+
             letter-spacing: 8px;
+
+            color: #ddd;
         }
+
 
         .subtitle {
             margin-top: 8px;
+
             margin-bottom: 35px;
 
             color: #777;
+
             font-size: 14px;
+
             letter-spacing: 3px;
         }
 
+
         hr {
             border: none;
+
             border-top: 1px solid #444;
+
             margin: 25px 0;
         }
+
+
+        /* =========================================================
+           SECTIONS
+        ========================================================= */
 
         .section {
             display: block;
 
+            position: relative;
+
             padding: 16px;
+
             margin: 10px 0;
 
             border: 1px solid #333;
 
+            background:
+                rgba(
+                    17,
+                    17,
+                    17,
+                    0.65
+                );
+
             color: #aaa;
+
             text-decoration: none;
 
-            transition: 0.15s;
+            transition:
+                border-color 0.15s ease,
+                background 0.15s ease,
+                color 0.15s ease,
+                transform 0.15s ease;
         }
+
 
         .section:hover {
             border-color: #777;
+
             background: #1b1b1b;
+
             color: #fff;
+
+            transform:
+                translateX(2px);
         }
 
-        .available {
+
+        .section.available {
             color: #ddd;
         }
 
-        .locked {
+
+        .section.locked {
             color: #555;
+
+            border-color: #292929;
+
             cursor: default;
+
+            pointer-events: none;
         }
+
+
+        /* =========================================================
+           M04 LOCKOUT DISPLAY
+        ========================================================= */
+
+        #memory-section.lockout-active {
+            border-color: #463737;
+
+            color: #aa8c8c;
+
+            background:
+                rgba(
+                    34,
+                    22,
+                    22,
+                    0.45
+                );
+
+            animation:
+                lockoutPulse
+                4.5s
+                ease-in-out
+                infinite;
+        }
+
+
+        #memory-section.lockout-active:hover {
+            border-color: #705151;
+
+            color: #ceb0b0;
+
+            background:
+                rgba(
+                    42,
+                    26,
+                    26,
+                    0.65
+                );
+        }
+
+
+        @keyframes lockoutPulse {
+
+            0%,
+            100% {
+                border-color: #463737;
+            }
+
+            50% {
+                border-color: #593f3f;
+            }
+
+        }
+
+
+        /* =========================================================
+           RESTORED SECTIONS
+        ========================================================= */
+
+        .restored-section {
+            display: none;
+        }
+
+
+        .restored-section.visible {
+            display: block;
+
+            animation:
+                lateSectionReveal
+                0.65s
+                ease
+                forwards;
+        }
+
+
+        @keyframes lateSectionReveal {
+
+            from {
+                opacity: 0;
+
+                transform:
+                    translateY(5px);
+            }
+
+            to {
+                opacity: 1;
+
+                transform:
+                    translateY(0);
+            }
+
+        }
+
+
+        /* =========================================================
+           FOOTER
+        ========================================================= */
 
         .footer {
             margin-top: 30px;
+
             color: #444;
+
             font-size: 12px;
+
             letter-spacing: 2px;
         }
+
+
+        /* =========================================================
+           AMBIENT EFFECTS
+        ========================================================= */
+
+        .scanlines {
+            position: fixed;
+
+            inset: 0;
+
+            z-index: 100;
+
+            pointer-events: none;
+
+            opacity: 0.055;
+
+            background:
+                repeating-linear-gradient(
+                    to bottom,
+                    transparent 0px,
+                    transparent 3px,
+                    rgba(255,255,255,0.025) 4px,
+                    transparent 5px
+                );
+        }
+
+
+        .vignette {
+            position: fixed;
+
+            inset: 0;
+
+            z-index: 90;
+
+            pointer-events: none;
+
+            background:
+                radial-gradient(
+                    ellipse at center,
+                    transparent 45%,
+                    rgba(0,0,0,0.18) 75%,
+                    rgba(0,0,0,0.38) 100%
+                );
+        }
+
+
+        @keyframes ambientBrightness {
+
+            0%,
+            100% {
+                filter:
+                    brightness(1);
+            }
+
+            40% {
+                filter:
+                    brightness(0.985);
+            }
+
+            70% {
+                filter:
+                    brightness(1.012);
+            }
+
+        }
+
+
+        .terminal-flicker {
+            position: fixed;
+
+            inset: 0;
+
+            z-index: 80;
+
+            pointer-events: none;
+
+            background:
+                rgba(
+                    255,
+                    255,
+                    255,
+                    0.018
+                );
+
+            opacity: 0;
+
+            animation:
+                terminalFlicker
+                17s
+                linear
+                infinite;
+        }
+
+
+        @keyframes terminalFlicker {
+
+            0%,
+            93%,
+            93.8%,
+            95%,
+            100% {
+                opacity: 0;
+            }
+
+            93.2% {
+                opacity: 0.45;
+            }
+
+            93.35% {
+                opacity: 0;
+            }
+
+            93.55% {
+                opacity: 0.2;
+            }
+
+            94.2% {
+                opacity: 0.1;
+            }
+
+        }
+
+
+        .section::after {
+            content: "";
+
+            position: absolute;
+
+            left: 0;
+            bottom: 0;
+
+            height: 1px;
+
+            width: 0;
+
+            background:
+                rgba(
+                    170,
+                    185,
+                    170,
+                    0.18
+                );
+
+            transition:
+                width
+                0.25s
+                ease;
+        }
+
+
+        .section:hover::after {
+            width: 100%;
+        }
+
+
+        /* =========================================================
+           RESPONSIVE
+        ========================================================= */
+
+        @media (
+            max-width: 600px
+        ) {
+
+            .archive {
+                width:
+                    calc(
+                        100% - 35px
+                    );
+            }
+
+
+            h1 {
+                font-size: 32px;
+
+                letter-spacing: 6px;
+            }
+
+
+            .section {
+                font-size: 13px;
+
+                padding:
+                    15px
+                    10px;
+            }
+
+        }
+
+
+        @media (
+            prefers-reduced-motion:
+            reduce
+        ) {
+
+            *,
+            *::before,
+            *::after {
+                animation:
+                    none
+                    !important;
+
+                transition:
+                    none
+                    !important;
+            }
+
+        }
+
     </style>
+
 </head>
+
 
 <body>
 
-    <div class="archive">
 
-        <h1>MERIDIAN</h1>
+    <main class="archive">
+
+
+        <h1>
+            MERIDIAN
+        </h1>
+
 
         <div class="subtitle">
             ACCESS TERMINAL
         </div>
 
-        <hr>
-
-        <a class="section available" href="encrypted/m01.html">
-            [01] RECORDS - ACCESS PROTECTED
-        </a>
-
-        <a class="section available" href="encrypted/m02.html">
-            [02] TERMINAL - ACCESS PROTECTED
-        </a>
-
-        <a class="section locked">
-            [03] SUBJECT RECORD — ACCESS RESTRICTED
-        </a>
-
-        <a class="section locked">
-            [04] INCIDENT REPORT — ACCESS RESTRICTED
-        </a>
-
-        <a class="section available" href="encrypted/section05.html">
-            [05] MERIDIAN 05 — ACCESS PROTECTED
-        </a>
-
-        <a class="section available" href="encrypted/section06.html">
-            [06] MERIDIAN 06 — ACCESS PROTECTED
-        </a>
 
         <hr>
 
-        <div class="footer">
+
+        <!-- =====================================================
+             CORE SECTIONS
+        ====================================================== -->
+
+
+        <a
+            class="section available"
+            href="temp/m01.html"
+        >
+            [01] RECORD — AVAILABLE
+        </a>
+
+
+        <a
+            class="section available"
+            href="temp/m02.html"
+        >
+            [02] COMMAND — AVAILABLE
+        </a>
+
+
+        <a
+            class="section available"
+            href="temp/m03.html"
+        >
+            [03] QUERY — AVAILABLE
+        </a>
+
+
+        <!--
+            M04 swaps between normal and lockout versions.
+        -->
+
+        <a
+            class="section available"
+            id="memory-section"
+            href="encrypted/m04.html"
+        >
+            [04] MEMORY — ACCESS PROTECTED
+        </a>
+
+
+        <!-- =====================================================
+             RESTORED SECTIONS
+
+             These appear ONLY if their individual RESTORE flag
+             has been set by M02.
+        ====================================================== -->
+
+
+        <div
+            class="restored-section"
+            id="m05-section"
+        >
+
+            <a
+                class="section available"
+                href="encrypted/m05.html"
+            >
+                [05] VISUAL EVIDENCE — ACCESS PROTECTED
+            </a>
+
+        </div>
+
+
+        <div
+            class="restored-section"
+            id="m06-section"
+        >
+
+            <a
+                class="section available"
+                href="encrypted/m06.html"
+            >
+                [06] SEQUENCE — ACCESS PROTECTED
+            </a>
+
+        </div>
+
+
+        <hr>
+
+
+        <div
+            class="footer"
+            id="system-footer"
+        >
             MERIDIAN SYSTEM // ACCESS TERMINAL
         </div>
 
-    </div>
+
+    </main>
+
+
+    <div class="terminal-flicker"></div>
+    <div class="vignette"></div>
+    <div class="scanlines"></div>
+
+
+    <script>
+
+
+        /*
+        ============================================================
+        STATE KEYS
+        ============================================================
+        */
+
+        const LOCKOUT_KEY =
+            "meridian_global_lockout";
+
+
+        const RESTORED_M05_KEY =
+            "meridian_restored_m05";
+
+
+        const RESTORED_M06_KEY =
+            "meridian_restored_m06";
+
+
+        /* =========================================================
+           M04 PATHS
+        ========================================================= */
+
+        const M04_NORMAL_PATH =
+            "encrypted/m04.html";
+
+
+        const M04_LOCKOUT_PATH =
+            "encrypted/m04lockout.html";
+
+
+        /* =========================================================
+           LOCKOUT STATE
+        ========================================================= */
+
+        function isGlobalLockoutActive() {
+
+            const storedValue =
+                localStorage.getItem(
+                    LOCKOUT_KEY
+                );
+
+
+            if (!storedValue) {
+
+                return false;
+
+            }
+
+
+            const lockoutUntil =
+                Number(
+                    storedValue
+                );
+
+
+            /*
+             * Support an older temporary boolean state if present.
+             */
+
+            if (
+                storedValue === "true"
+            ) {
+
+                return true;
+
+            }
+
+
+            /*
+             * "false" should definitely not count as lockout.
+             */
+
+            if (
+                storedValue === "false"
+            ) {
+
+                return false;
+
+            }
+
+
+            if (
+                !Number.isFinite(
+                    lockoutUntil
+                )
+            ) {
+
+                localStorage.removeItem(
+                    LOCKOUT_KEY
+                );
+
+
+                return false;
+
+            }
+
+
+            if (
+                Date.now() >=
+                lockoutUntil
+            ) {
+
+                localStorage.removeItem(
+                    LOCKOUT_KEY
+                );
+
+
+                return false;
+
+            }
+
+
+            return true;
+
+        }
+
+
+        /* =========================================================
+           RESTORE STATE
+        ========================================================= */
+
+        function isM05Restored() {
+
+            return (
+                localStorage.getItem(
+                    RESTORED_M05_KEY
+                ) === "true"
+            );
+
+        }
+
+
+        function isM06Restored() {
+
+            return (
+                localStorage.getItem(
+                    RESTORED_M06_KEY
+                ) === "true"
+            );
+
+        }
+
+
+        /* =========================================================
+           UPDATE M04
+        ========================================================= */
+
+        function updateMemorySection() {
+
+            const memorySection =
+                document.getElementById(
+                    "memory-section"
+                );
+
+
+            const lockoutActive =
+                isGlobalLockoutActive();
+
+
+            if (lockoutActive) {
+
+                memorySection.href =
+                    M04_LOCKOUT_PATH;
+
+
+                memorySection.textContent =
+                    "[04] MEMORY — LOCKOUT";
+
+
+                memorySection.classList.add(
+                    "lockout-active"
+                );
+
+            }
+
+            else {
+
+                memorySection.href =
+                    M04_NORMAL_PATH;
+
+
+                memorySection.textContent =
+                    "[04] MEMORY — ACCESS PROTECTED";
+
+
+                memorySection.classList.remove(
+                    "lockout-active"
+                );
+
+            }
+
+        }
+
+
+        /* =========================================================
+           UPDATE M05
+        ========================================================= */
+
+        function updateM05Section() {
+
+            const section =
+                document.getElementById(
+                    "m05-section"
+                );
+
+
+            if (
+                isM05Restored()
+            ) {
+
+                section.classList.add(
+                    "visible"
+                );
+
+            }
+
+            else {
+
+                section.classList.remove(
+                    "visible"
+                );
+
+            }
+
+        }
+
+
+        /* =========================================================
+           UPDATE M06
+        ========================================================= */
+
+        function updateM06Section() {
+
+            const section =
+                document.getElementById(
+                    "m06-section"
+                );
+
+
+            if (
+                isM06Restored()
+            ) {
+
+                section.classList.add(
+                    "visible"
+                );
+
+            }
+
+            else {
+
+                section.classList.remove(
+                    "visible"
+                );
+
+            }
+
+        }
+
+
+        /* =========================================================
+           UPDATE EVERYTHING
+        ========================================================= */
+
+        function updateTerminal() {
+
+            updateMemorySection();
+
+            updateM05Section();
+
+            updateM06Section();
+
+        }
+
+
+        /* =========================================================
+           INITIALISE
+        ========================================================= */
+
+        updateTerminal();
+
+
+        /* =========================================================
+           PERIODIC CHECK
+        ========================================================= */
+
+        setInterval(
+            function () {
+
+                updateMemorySection();
+
+                updateM05Section();
+
+                updateM06Section();
+
+            },
+            1000
+        );
+
+
+        /* =========================================================
+           STORAGE EVENTS
+        ========================================================= */
+
+        window.addEventListener(
+            "storage",
+            function (event) {
+
+                if (
+                    event.key ===
+                    LOCKOUT_KEY ||
+                    event.key ===
+                    RESTORED_M05_KEY ||
+                    event.key ===
+                    RESTORED_M06_KEY
+                ) {
+
+                    updateTerminal();
+
+                }
+
+            }
+        );
+
+
+        /* =========================================================
+           BACK/FORWARD CACHE
+        ========================================================= */
+
+        window.addEventListener(
+            "pageshow",
+            function () {
+
+                updateTerminal();
+
+            }
+        );
+
+
+        /* =========================================================
+           TAB VISIBILITY
+        ========================================================= */
+
+        document.addEventListener(
+            "visibilitychange",
+            function () {
+
+                if (
+                    document.visibilityState ===
+                    "visible"
+                ) {
+
+                    updateTerminal();
+
+                }
+
+            }
+        );
+
+
+    </script>
+
 
 </body>
 

@@ -1,0 +1,2114 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Meridian - Query</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            margin: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        body {
+            background: #111;
+            color: #d8d8d8;
+
+            font-family: "Courier New", monospace;
+            font-weight: 500;
+
+            height: 100vh;
+            overflow: hidden;
+        }
+
+
+        /* =========================
+           SCROLLBAR
+        ========================= */
+
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #111;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #353a35;
+            border: 1px solid #111;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #4f584f;
+        }
+
+        * {
+            scrollbar-width: thin;
+            scrollbar-color: #353a35 #111;
+        }
+
+
+        /* =========================
+           HEADER
+        ========================= */
+
+        header {
+            height: 60px;
+
+            border-bottom: 1px solid #333;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            padding: 0 28px;
+
+            background: #151515;
+
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 25px;
+        }
+
+        .back-button {
+            background: none;
+            border: none;
+
+            color: #666;
+
+            font-family: "Courier New", monospace;
+            font-size: 11px;
+            font-weight: 500;
+            letter-spacing: 1px;
+
+            cursor: pointer;
+
+            padding: 5px 0;
+        }
+
+        .back-button:hover {
+            color: #aaa;
+        }
+
+        .logo {
+            font-size: 18px;
+            font-weight: 500;
+            letter-spacing: 5px;
+
+            color: #d8d8d8;
+        }
+
+        .system-name {
+            font-size: 12px;
+            font-weight: 500;
+
+            color: #777;
+
+            letter-spacing: 2px;
+        }
+
+
+        /* =========================
+           SUBTLE HEADER PASS
+        ========================= */
+
+        header::after {
+            content: "";
+
+            position: absolute;
+
+            top: 0;
+            bottom: 0;
+
+            width: 90px;
+
+            left: -120px;
+
+            pointer-events: none;
+
+            background:
+                linear-gradient(
+                    to right,
+                    transparent,
+                    rgba(150,165,150,0.018),
+                    transparent
+                );
+
+            animation:
+                headerPass
+                18s
+                linear
+                infinite;
+        }
+
+        @keyframes headerPass {
+
+            0%,
+            85% {
+                left: -120px;
+                opacity: 0;
+            }
+
+            86% {
+                opacity: 1;
+            }
+
+            92% {
+                left: calc(100% + 120px);
+                opacity: 1;
+            }
+
+            93%,
+            100% {
+                opacity: 0;
+            }
+        }
+
+
+        /* =========================
+           QUERY AREA
+        ========================= */
+
+        .query-area {
+            height: calc(100vh - 90px);
+
+            padding: 34px 42px;
+
+            overflow: hidden;
+
+            position: relative;
+
+            background:
+                repeating-linear-gradient(
+                    to bottom,
+                    transparent 0,
+                    transparent 35px,
+                    rgba(255,255,255,0.01) 36px
+                );
+        }
+
+
+        /* =========================
+           QUERY WINDOW
+        ========================= */
+
+        .query-window {
+            max-width: 1000px;
+
+            margin: 0 auto;
+
+            height: 100%;
+
+            display: flex;
+            flex-direction: column;
+
+            position: relative;
+
+            border: 1px solid #303430;
+
+            background: #121312;
+        }
+
+        .query-window::before,
+        .query-window::after {
+            content: "";
+
+            position: absolute;
+
+            width: 14px;
+            height: 14px;
+
+            z-index: 6;
+
+            pointer-events: none;
+        }
+
+        .query-window::before {
+            top: -1px;
+            left: -1px;
+
+            border-top: 1px solid #666f66;
+            border-left: 1px solid #666f66;
+        }
+
+        .query-window::after {
+            right: -1px;
+            bottom: -1px;
+
+            border-right: 1px solid #666f66;
+            border-bottom: 1px solid #666f66;
+        }
+
+
+        /* =========================
+           QUERY TITLE
+        ========================= */
+
+        .query-title {
+            min-height: 48px;
+
+            padding: 0 18px;
+
+            display: flex;
+            align-items: center;
+
+            position: relative;
+
+            color: #858d85;
+
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 2px;
+
+            border-bottom: 1px solid #303430;
+
+            background: #151715;
+
+            flex-shrink: 0;
+        }
+
+        .query-title::before {
+            content: "";
+
+            width: 5px;
+            height: 5px;
+
+            margin-right: 12px;
+
+            background: #788478;
+
+            animation:
+                queryStatus
+                8s
+                step-end
+                infinite;
+        }
+
+        .query-title::after {
+            content: "INDEX NODE // AVAILABLE";
+
+            position: absolute;
+
+            right: 18px;
+
+            color: #4f574f;
+
+            font-size: 9px;
+            font-weight: normal;
+            letter-spacing: 1.3px;
+        }
+
+        @keyframes queryStatus {
+
+            0%,
+            72%,
+            75%,
+            100% {
+                opacity: 1;
+            }
+
+            73% {
+                opacity: 0.35;
+            }
+
+            74% {
+                opacity: 0.7;
+            }
+        }
+
+
+        /* =========================
+           CONVERSATION
+        ========================= */
+
+        .conversation {
+            flex: 1;
+
+            overflow-y: auto;
+
+            padding:
+                26px
+                28px
+                34px;
+
+            position: relative;
+        }
+
+        .message {
+            margin-bottom: 24px;
+
+            padding:
+                0
+                0
+                20px;
+
+            border-bottom: 1px solid #232623;
+
+            animation:
+                messageAppear
+                0.18s
+                ease-out;
+        }
+
+        @keyframes messageAppear {
+
+            from {
+                opacity: 0;
+                transform: translateY(3px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .message-label {
+            font-size: 9px;
+
+            letter-spacing: 2px;
+
+            margin-bottom: 8px;
+
+            text-transform: uppercase;
+        }
+
+        .message-content {
+            font-size: 13px;
+
+            line-height: 1.7;
+
+            max-width: 790px;
+        }
+
+
+        /* =========================
+           USER MESSAGE
+        ========================= */
+
+        .user-message {
+            position: relative;
+
+            padding-left: 18px;
+        }
+
+        .user-message::before {
+            content: "";
+
+            position: absolute;
+
+            left: 0;
+            top: 2px;
+
+            width: 2px;
+            height: 32px;
+
+            background: #505550;
+        }
+
+        .user-message .message-label {
+            color: #777;
+        }
+
+        .user-message .message-content {
+            color: #d0d0d0;
+
+            letter-spacing: 0.5px;
+        }
+
+
+        /* =========================
+           MERIDIAN MESSAGE
+        ========================= */
+
+        .meridian-message {
+            position: relative;
+
+            padding-left: 18px;
+        }
+
+        .meridian-message::before {
+            content: "";
+
+            position: absolute;
+
+            left: 0;
+            top: 2px;
+
+            width: 2px;
+            height: 32px;
+
+            background: #718071;
+        }
+
+        .meridian-message .message-label {
+            color: #758675;
+        }
+
+        .meridian-message .message-content {
+            color: #9faa99;
+        }
+
+
+        /* =========================
+           LOCKOUT MESSAGE
+        ========================= */
+
+        #lockout-message {
+            border-bottom-color: #503f3f;
+
+            background:
+                linear-gradient(
+                    to right,
+                    rgba(95,52,52,0.10),
+                    transparent 70%
+                );
+
+            margin-left: -10px;
+            margin-right: -10px;
+
+            padding:
+                14px
+                10px
+                20px
+                28px;
+        }
+
+        #lockout-message::before {
+            background: #826565;
+        }
+
+        #lockout-message .message-label {
+            color: #967878;
+        }
+
+        #lockout-message .message-content {
+            color: #b79a92;
+        }
+
+
+        /* =========================
+           INPUT
+        ========================= */
+
+        .input-area {
+            min-height: 68px;
+
+            border-top: 1px solid #303430;
+
+            background: #151715;
+
+            margin: 0;
+
+            padding: 12px 16px;
+
+            flex-shrink: 0;
+
+            position: relative;
+        }
+
+        .input-area::before {
+            content: "QUERY";
+
+            position: absolute;
+
+            top: -7px;
+            left: 18px;
+
+            padding: 0 6px;
+
+            background: #151715;
+
+            color: #4f574f;
+
+            font-size: 9px;
+            letter-spacing: 2px;
+        }
+
+        .input-row {
+            display: flex;
+
+            gap: 10px;
+
+            height: 100%;
+        }
+
+        #query-input {
+            flex: 1;
+
+            background: #121312;
+
+            border: 1px solid #3c423c;
+            border-left: 2px solid #657265;
+
+            outline: none;
+
+            color: #d8d8d8;
+
+            font-family: "Courier New", monospace;
+
+            font-size: 13px;
+
+            padding: 12px 14px;
+
+            caret-color: #9cad98;
+
+            transition:
+                border-color 0.15s ease,
+                background 0.15s ease;
+        }
+
+        #query-input::placeholder {
+            color: #525852;
+
+            letter-spacing: 1px;
+        }
+
+        #query-input:focus {
+            border-color: #596259;
+
+            border-left-color: #879987;
+
+            background: #141614;
+        }
+
+        #query-input:disabled {
+            color: #555;
+
+            border-color: #303030;
+            border-left-color: #604f4f;
+
+            background: #121212;
+        }
+
+        #submit-button {
+            min-width: 110px;
+
+            background: #1b1e1b;
+
+            border: 1px solid #424842;
+
+            color: #9ca69a;
+
+            font-family: "Courier New", monospace;
+
+            font-size: 11px;
+
+            letter-spacing: 1.5px;
+
+            padding: 0 20px;
+
+            cursor: pointer;
+
+            transition:
+                background 0.15s ease,
+                color 0.15s ease,
+                border-color 0.15s ease;
+        }
+
+        #submit-button:hover {
+            background: #222622;
+
+            color: #d5d8d4;
+
+            border-color: #626c62;
+        }
+
+        #submit-button:disabled {
+            cursor: default;
+
+            color: #555;
+
+            background: #161616;
+
+            border-color: #303030;
+        }
+
+
+        /* =========================
+           FOOTER
+        ========================= */
+
+        footer {
+            height: 30px;
+
+            border-top: 1px solid #292d29;
+
+            background: #151515;
+
+            display: flex;
+
+            align-items: center;
+            justify-content: space-between;
+
+            padding: 0 20px;
+
+            font-size: 10px;
+
+            color: #555;
+
+            letter-spacing: 1px;
+        }
+
+        footer div:last-child {
+            color: #5c685c;
+        }
+
+
+        /* =========================
+           SCREEN TEXTURE
+        ========================= */
+
+        body::after {
+            content: "";
+
+            position: fixed;
+
+            inset: 0;
+
+            pointer-events: none;
+
+            z-index: 999;
+
+            opacity: 0.025;
+
+            background:
+                repeating-linear-gradient(
+                    to bottom,
+                    transparent 0px,
+                    transparent 3px,
+                    rgba(255,255,255,0.03) 4px,
+                    transparent 5px
+                );
+        }
+
+
+        /* =========================
+           QUERY SCAN
+        ========================= */
+
+        .query-window .conversation::after {
+            content: "";
+
+            position: absolute;
+
+            left: 0;
+            right: 0;
+
+            height: 1px;
+
+            top: -2px;
+
+            pointer-events: none;
+
+            background:
+                rgba(150,165,150,0.06);
+
+            animation:
+                queryScan
+                11s
+                linear
+                infinite;
+        }
+
+        @keyframes queryScan {
+
+            0% {
+                top: -2px;
+
+                opacity: 0;
+            }
+
+            8% {
+                opacity: 1;
+            }
+
+            85% {
+                opacity: 0.4;
+            }
+
+            100% {
+                top: calc(100% + 2px);
+
+                opacity: 0;
+            }
+        }
+
+
+        /* =========================================================
+           LOCKOUT INITIATION VFX
+        ========================================================= */
+
+        body.lockout-init {
+            animation:
+                lockoutShake
+                0.055s
+                infinite,
+                lockoutBrightness
+                0.09s
+                infinite;
+        }
+
+
+        body.lockout-init .query-window {
+            animation:
+                lockoutWindow
+                0.07s
+                infinite;
+        }
+
+
+        body.lockout-init .logo,
+        body.lockout-init .query-title,
+        body.lockout-init .message-content,
+        body.lockout-init .message-label {
+            animation:
+                lockoutText
+                0.08s
+                infinite;
+        }
+
+
+        @keyframes lockoutShake {
+
+            0% {
+                transform: translate(0, 0);
+            }
+
+            20% {
+                transform: translate(-7px, 2px);
+            }
+
+            40% {
+                transform: translate(5px, -4px);
+            }
+
+            60% {
+                transform: translate(-4px, 5px);
+            }
+
+            80% {
+                transform: translate(7px, -2px);
+            }
+
+            100% {
+                transform: translate(0, 0);
+            }
+        }
+
+
+        @keyframes lockoutBrightness {
+
+            0% {
+                filter: none;
+            }
+
+            18% {
+                filter:
+                    brightness(1.6)
+                    contrast(1.2);
+            }
+
+            21% {
+                filter:
+                    brightness(0.35);
+            }
+
+            45% {
+                filter: none;
+            }
+
+            70% {
+                filter:
+                    brightness(1.3);
+            }
+
+            73% {
+                filter:
+                    brightness(0.6);
+            }
+
+            100% {
+                filter: none;
+            }
+        }
+
+
+        @keyframes lockoutWindow {
+
+            0% {
+                border-color: #303430;
+            }
+
+            35% {
+                border-color: #794949;
+            }
+
+            55% {
+                border-color: #a76666;
+            }
+
+            75% {
+                border-color: #493737;
+            }
+
+            100% {
+                border-color: #303430;
+            }
+        }
+
+
+        @keyframes lockoutText {
+
+            0% {
+                transform: translateX(0);
+            }
+
+            25% {
+                transform: translateX(-2px);
+            }
+
+            50% {
+                transform: translateX(3px);
+            }
+
+            75% {
+                transform: translateX(-1px);
+            }
+
+            100% {
+                transform: translateX(0);
+            }
+        }
+
+
+        /* =========================
+           LOCKOUT FX LAYER
+        ========================= */
+
+        #lockout-fx {
+            position: fixed;
+
+            inset: 0;
+
+            pointer-events: none;
+
+            z-index: 5000;
+
+            overflow: hidden;
+
+            display: none;
+        }
+
+
+        body.lockout-init
+        #lockout-fx {
+            display: block;
+        }
+
+
+        .lockout-flash {
+            position: absolute;
+
+            inset: 0;
+
+            background: #9c2222;
+
+            opacity: 0;
+
+            animation:
+                lockoutFlash
+                0.16s
+                infinite;
+        }
+
+
+        @keyframes lockoutFlash {
+
+            0% {
+                opacity: 0;
+            }
+
+            18% {
+                opacity: 0.08;
+            }
+
+            20% {
+                opacity: 0;
+            }
+
+            55% {
+                opacity: 0.15;
+            }
+
+            58% {
+                opacity: 0;
+            }
+
+            100% {
+                opacity: 0;
+            }
+        }
+
+
+        .lockout-bar {
+            position: absolute;
+
+            left: 0;
+
+            width: 100%;
+
+            background: #000;
+
+            opacity: 0.9;
+
+            animation:
+                lockoutBarMove
+                0.12s
+                infinite;
+        }
+
+
+        .lockout-bar.one {
+            top: 18%;
+            height: 10px;
+        }
+
+        .lockout-bar.two {
+            top: 54%;
+            height: 4px;
+
+            animation-delay: 0.03s;
+        }
+
+        .lockout-bar.three {
+            top: 78%;
+            height: 22px;
+
+            animation-delay: 0.06s;
+        }
+
+
+        @keyframes lockoutBarMove {
+
+            0% {
+                transform: translateX(0);
+            }
+
+            25% {
+                transform: translateX(-14px);
+            }
+
+            50% {
+                transform: translateX(10px);
+            }
+
+            75% {
+                transform: translateX(-5px);
+            }
+
+            100% {
+                transform: translateX(0);
+            }
+        }
+
+
+        .lockout-text {
+            position: absolute;
+
+            left: 50%;
+            top: 50%;
+
+            transform:
+                translate(-50%, -50%);
+
+            color: #b87878;
+
+            font-size: 28px;
+
+            letter-spacing: 8px;
+
+            opacity: 0;
+
+            white-space: nowrap;
+
+            animation:
+                lockoutWarning
+                1.5s
+                linear
+                forwards;
+        }
+
+
+        @keyframes lockoutWarning {
+
+            0% {
+                opacity: 0;
+            }
+
+            8% {
+                opacity: 1;
+            }
+
+            14% {
+                opacity: 0;
+            }
+
+            23% {
+                opacity: 0.85;
+            }
+
+            31% {
+                opacity: 0;
+            }
+
+            48% {
+                opacity: 1;
+            }
+
+            62% {
+                opacity: 0.25;
+            }
+
+            75% {
+                opacity: 1;
+            }
+
+            100% {
+                opacity: 0;
+            }
+        }
+
+
+        /* =========================
+           LOCKOUT BLACK CUT
+        ========================= */
+
+        #lockout-blackout {
+            position: fixed;
+
+            inset: 0;
+
+            background: #000;
+
+            pointer-events: none;
+
+            z-index: 6000;
+
+            opacity: 0;
+        }
+
+
+        #lockout-blackout.active {
+            animation:
+                lockoutBlackout
+                0.45s
+                ease
+                forwards;
+        }
+
+
+        @keyframes lockoutBlackout {
+
+            0% {
+                opacity: 0;
+            }
+
+            30% {
+                opacity: 1;
+            }
+
+            72% {
+                opacity: 1;
+            }
+
+            100% {
+                opacity: 0;
+            }
+        }
+
+
+        /* =========================
+           RESPONSIVE
+        ========================= */
+
+        @media (max-width: 700px) {
+
+            .query-area {
+                padding: 20px 16px;
+            }
+
+            .query-title::after {
+                display: none;
+            }
+
+            .conversation {
+                padding:
+                    20px
+                    16px
+                    26px;
+            }
+
+            .input-row {
+                flex-direction: column;
+            }
+
+            .input-area {
+                min-height: 112px;
+            }
+
+            #submit-button {
+                min-height: 38px;
+            }
+
+            .lockout-text {
+                font-size: 19px;
+
+                letter-spacing: 4px;
+            }
+        }
+
+
+        @media (prefers-reduced-motion: reduce) {
+
+            *,
+            *::before,
+            *::after {
+                animation: none !important;
+
+                transition: none !important;
+            }
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+    <!-- =========================
+         HEADER
+    ========================= -->
+
+    <header>
+
+        <div class="header-left">
+
+            <button
+                class="back-button"
+                onclick="goBack()"
+            >
+                ← MERIDIAN
+            </button>
+
+            <div class="logo">
+                MERIDIAN 03
+            </div>
+
+        </div>
+
+        <div class="system-name">
+            QUERY SYSTEM
+        </div>
+
+    </header>
+
+
+    <!-- =========================
+         QUERY AREA
+    ========================= -->
+
+    <main class="query-area">
+
+        <div class="query-window">
+
+
+            <div class="query-title">
+                MERIDIAN QUERY INTERFACE
+            </div>
+
+
+            <!-- CONVERSATION -->
+
+            <div
+                class="conversation"
+                id="conversation"
+            >
+
+                <div
+                    class="message meridian-message"
+                >
+
+                    <div class="message-label">
+                        MERIDIAN
+                    </div>
+
+                    <div class="message-content">
+                        QUERY INTERFACE READY.
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- INPUT -->
+
+            <div class="input-area">
+
+                <div class="input-row">
+
+                    <input
+                        type="text"
+                        id="query-input"
+                        placeholder="ENTER ONE-WORD QUERY"
+                        autocomplete="off"
+                        spellcheck="false"
+                    >
+
+                    <button
+                        id="submit-button"
+                        type="button"
+                    >
+                        SUBMIT
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </main>
+
+
+    <!-- =========================
+         FOOTER
+    ========================= -->
+
+    <footer>
+
+        <div>
+            MERIDIAN // QUERY SYSTEM
+        </div>
+
+        <div>
+            STATUS: ACTIVE
+        </div>
+
+    </footer>
+
+
+    <!-- =========================
+         LOCKOUT VFX
+    ========================= -->
+
+    <div id="lockout-fx">
+
+        <div class="lockout-flash"></div>
+
+        <div class="lockout-bar one"></div>
+        <div class="lockout-bar two"></div>
+        <div class="lockout-bar three"></div>
+
+        <div class="lockout-text">
+            LOCKOUT
+        </div>
+
+    </div>
+
+
+    <div id="lockout-blackout"></div>
+
+
+    <script>
+
+
+        /*
+        ============================================================
+        GLOBAL STATE
+        ============================================================
+        */
+
+        const LOCKOUT_KEY =
+            "meridian_global_lockout";
+
+
+        const LOCKOUT_DURATION =
+            17 * 60 * 1000;
+
+
+        /*
+        ============================================================
+        DOM
+        ============================================================
+        */
+
+        const input =
+            document.getElementById(
+                "query-input"
+            );
+
+
+        const conversation =
+            document.getElementById(
+                "conversation"
+            );
+
+
+        const submitButton =
+            document.getElementById(
+                "submit-button"
+            );
+
+
+        /*
+        ============================================================
+        QUERY DEFINITIONS
+        ============================================================
+        */
+
+        const queryResponses = {
+
+
+            hello:
+                "QUERY ACKNOWLEDGED.",
+
+
+            meridian:
+                "REQUEST OUTSIDE AUTHORISED PARAMETERS.",
+
+
+            help:
+                "NO HELP PROTOCOL AVAILABLE.",
+
+
+            test:
+                "QUERY SYSTEM FUNCTIONAL.",
+
+
+            katherine:
+                "the greatest and most beautiful",
+
+
+            a6:
+                "E91B42",
+
+
+            northstar:
+                "ARCHIVED PROJECT INFORMATION CAN BE FOUND AT SYS004B63.",
+
+
+            polydate:
+                "POLYGON DATES LIKE □ 05/02/2026 LIKELY REPRESENT SOME FORM OF NUMERICAL COUNTING.",
+
+
+            hidden:
+                "INFORMATION ON TRACING HIDDEN ITEMS LOCATED AT SYS002D91.",
+
+
+            marco:
+                "POLO."
+
+
+        };
+
+
+        /*
+        ============================================================
+        QUERY HISTORY
+        ============================================================
+
+        Twenty queries within sixty seconds triggers the
+        seventeen-minute global lockout.
+
+        ============================================================
+        */
+
+        let queryHistory = [];
+
+
+        /*
+        ============================================================
+        GLOBAL LOCKOUT
+        ============================================================
+        */
+
+        function isLockedOut() {
+
+            const lockoutUntil =
+                Number(
+                    localStorage.getItem(
+                        LOCKOUT_KEY
+                    )
+                );
+
+
+            if (!lockoutUntil) {
+
+                return false;
+
+            }
+
+
+            if (
+                Date.now() >=
+                lockoutUntil
+            ) {
+
+                localStorage.removeItem(
+                    LOCKOUT_KEY
+                );
+
+
+                return false;
+
+            }
+
+
+            return true;
+
+        }
+
+
+        function getRemainingLockoutTime() {
+
+            const lockoutUntil =
+                Number(
+                    localStorage.getItem(
+                        LOCKOUT_KEY
+                    )
+                );
+
+
+            if (!lockoutUntil) {
+
+                return 0;
+
+            }
+
+
+            return Math.max(
+                0,
+                lockoutUntil -
+                Date.now()
+            );
+
+        }
+
+
+        function formatRemainingTime(
+            milliseconds
+        ) {
+
+            const totalSeconds =
+                Math.ceil(
+                    milliseconds /
+                    1000
+                );
+
+
+            const minutes =
+                Math.floor(
+                    totalSeconds /
+                    60
+                );
+
+
+            const seconds =
+                totalSeconds %
+                60;
+
+
+            return (
+                String(minutes)
+                    .padStart(
+                        2,
+                        "0"
+                    ) +
+                ":" +
+                String(seconds)
+                    .padStart(
+                        2,
+                        "0"
+                    )
+            );
+
+        }
+
+
+        function updateLockoutDisplay() {
+
+            if (!isLockedOut()) {
+
+                input.disabled =
+                    false;
+
+
+                submitButton.disabled =
+                    false;
+
+
+                return;
+
+            }
+
+
+            input.disabled =
+                true;
+
+
+            submitButton.disabled =
+                true;
+
+
+            const remaining =
+                getRemainingLockoutTime();
+
+
+            const existing =
+                document.getElementById(
+                    "lockout-message"
+                );
+
+
+            if (existing) {
+
+                const messageContent =
+                    existing.querySelector(
+                        ".message-content"
+                    );
+
+
+                if (messageContent) {
+
+                    messageContent.textContent =
+                        "LOCKOUT ACTIVE. REMAINING: " +
+                        formatRemainingTime(
+                            remaining
+                        );
+
+                }
+
+            }
+
+            else {
+
+                const message =
+                    document.createElement(
+                        "div"
+                    );
+
+
+                message.className =
+                    "message meridian-message";
+
+
+                message.id =
+                    "lockout-message";
+
+
+                const label =
+                    document.createElement(
+                        "div"
+                    );
+
+
+                label.className =
+                    "message-label";
+
+
+                label.textContent =
+                    "MERIDIAN";
+
+
+                const messageContent =
+                    document.createElement(
+                        "div"
+                    );
+
+
+                messageContent.className =
+                    "message-content";
+
+
+                messageContent.textContent =
+                    "LOCKOUT ACTIVE. REMAINING: " +
+                    formatRemainingTime(
+                        remaining
+                    );
+
+
+                message.appendChild(
+                    label
+                );
+
+
+                message.appendChild(
+                    messageContent
+                );
+
+
+                conversation.appendChild(
+                    message
+                );
+
+            }
+
+
+            conversation.scrollTop =
+                conversation.scrollHeight;
+
+        }
+
+
+        /*
+        ============================================================
+        LOCKOUT INITIATION EFFECT
+        ============================================================
+        */
+
+        async function playLockoutEffect() {
+
+            document.body.classList.add(
+                "lockout-init"
+            );
+
+
+            await new Promise(
+                function (resolve) {
+
+                    setTimeout(
+                        resolve,
+                        1500
+                    );
+
+                }
+            );
+
+
+            const blackout =
+                document.getElementById(
+                    "lockout-blackout"
+                );
+
+
+            blackout.classList.add(
+                "active"
+            );
+
+
+            await new Promise(
+                function (resolve) {
+
+                    setTimeout(
+                        resolve,
+                        450
+                    );
+
+                }
+            );
+
+
+            document.body.classList.remove(
+                "lockout-init"
+            );
+
+
+            blackout.classList.remove(
+                "active"
+            );
+
+
+            updateLockoutDisplay();
+
+        }
+
+
+        function activateGlobalLockout() {
+
+            const lockoutUntil =
+                Date.now() +
+                LOCKOUT_DURATION;
+
+
+            localStorage.setItem(
+                LOCKOUT_KEY,
+                String(lockoutUntil)
+            );
+
+
+            input.disabled =
+                true;
+
+
+            submitButton.disabled =
+                true;
+
+
+            playLockoutEffect();
+
+        }
+
+
+        /*
+        ============================================================
+        CHECK LOCKOUT ON LOAD
+        ============================================================
+        */
+
+        updateLockoutDisplay();
+
+
+        /*
+        ============================================================
+        LOCKOUT TIMER
+        ============================================================
+        */
+
+        setInterval(
+            function () {
+
+                if (isLockedOut()) {
+
+                    /*
+                     * Don't insert/update the countdown
+                     * during the initial violent glitch.
+                     */
+
+                    if (
+                        !document.body.classList.contains(
+                            "lockout-init"
+                        )
+                    ) {
+
+                        updateLockoutDisplay();
+
+                    }
+
+                }
+
+                else {
+
+                    const lockoutMessage =
+                        document.getElementById(
+                            "lockout-message"
+                        );
+
+
+                    if (lockoutMessage) {
+
+                        lockoutMessage.remove();
+
+                    }
+
+
+                    input.disabled =
+                        false;
+
+
+                    submitButton.disabled =
+                        false;
+
+                }
+
+            },
+            1000
+        );
+
+
+        /*
+        ============================================================
+        RESPONSE SYSTEM
+        ============================================================
+        */
+
+        function getResponse(query) {
+
+            const cleanQuery =
+                query
+                    .toLowerCase()
+                    .trim();
+
+
+            if (
+                cleanQuery.includes(" ") ||
+                cleanQuery === ""
+            ) {
+
+                return "QUERY NOT RECOGNISED.";
+
+            }
+
+
+            if (
+                Object.prototype.hasOwnProperty.call(
+                    queryResponses,
+                    cleanQuery
+                )
+            ) {
+
+                return queryResponses[
+                    cleanQuery
+                ];
+
+            }
+
+
+            return "QUERY NOT RECOGNISED.";
+
+        }
+
+
+        /*
+        ============================================================
+        ADD MESSAGE
+        ============================================================
+        */
+
+        function addMessage(
+            type,
+            content
+        ) {
+
+            const message =
+                document.createElement(
+                    "div"
+                );
+
+
+            message.className =
+                "message " +
+                type +
+                "-message";
+
+
+            const label =
+                document.createElement(
+                    "div"
+                );
+
+
+            label.className =
+                "message-label";
+
+
+            label.textContent =
+                type === "user"
+                    ? "USER"
+                    : "MERIDIAN";
+
+
+            const messageContent =
+                document.createElement(
+                    "div"
+                );
+
+
+            messageContent.className =
+                "message-content";
+
+
+            messageContent.textContent =
+                content;
+
+
+            message.appendChild(
+                label
+            );
+
+
+            message.appendChild(
+                messageContent
+            );
+
+
+            conversation.appendChild(
+                message
+            );
+
+
+            conversation.scrollTop =
+                conversation.scrollHeight;
+
+        }
+
+
+        /*
+        ============================================================
+        REGISTER QUERY
+        ============================================================
+        */
+
+        function registerQuery() {
+
+            const now =
+                Date.now();
+
+
+            queryHistory =
+                queryHistory.filter(
+                    timestamp =>
+                        now -
+                        timestamp <
+                        60000
+                );
+
+
+            queryHistory.push(
+                now
+            );
+
+
+            if (
+                queryHistory.length >=
+                20
+            ) {
+
+                activateGlobalLockout();
+
+            }
+
+        }
+
+
+        /*
+        ============================================================
+        SUBMIT QUERY
+        ============================================================
+        */
+
+        function submitQuery() {
+
+            if (isLockedOut()) {
+
+                updateLockoutDisplay();
+
+                return;
+
+            }
+
+
+            const query =
+                input.value.trim();
+
+
+            if (query === "") {
+
+                return;
+
+            }
+
+
+            addMessage(
+                "user",
+                query
+            );
+
+
+            input.value =
+                "";
+
+
+            registerQuery();
+
+
+            if (isLockedOut()) {
+
+                return;
+
+            }
+
+
+            const response =
+                getResponse(
+                    query
+                );
+
+
+            addMessage(
+                "meridian",
+                response
+            );
+
+        }
+
+
+        /*
+        ============================================================
+        SUBMIT BUTTON
+        ============================================================
+        */
+
+        submitButton.addEventListener(
+            "click",
+            submitQuery
+        );
+
+
+        /*
+        ============================================================
+        ENTER TO SUBMIT
+        ============================================================
+        */
+
+        input.addEventListener(
+            "keydown",
+            function (event) {
+
+                if (
+                    event.key ===
+                    "Enter"
+                ) {
+
+                    event.preventDefault();
+
+                    submitQuery();
+
+                }
+
+            }
+        );
+
+
+        /*
+        ============================================================
+        BACK TO MERIDIAN
+        ============================================================
+        */
+
+        function goBack() {
+
+            window.location.href =
+                "../index.html";
+
+        }
+
+
+    </script>
+
+</body>
+
+</html>
