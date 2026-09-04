@@ -3562,6 +3562,18 @@
                 triggerRemoteHearts();
                 break;
 
+            case "photo1":
+            case "photo_bw":
+            case "photo_glitch_1":
+                triggerRemotePhotoGlitch1();
+                break;
+
+            case "photo2":
+            case "photo_green":
+            case "photo_glitch_2":
+                triggerRemotePhotoGlitch2();
+                break;
+
         }
 
     }
@@ -3575,7 +3587,9 @@
             "remote-distortion",
             "remote-snow",
             "remote-reload-lockout",
-            "remote-hearts"
+            "remote-hearts",
+            "remote-photo-glitch-1",
+            "remote-photo-glitch-2"
         );
 
     }
@@ -3933,7 +3947,59 @@
     }
 
 
+
+
+    let remotePhotoTimeout = null;
+
+    function clearRemotePhotoTimer() {
+        if (remotePhotoTimeout) {
+            clearTimeout(remotePhotoTimeout);
+            remotePhotoTimeout = null;
+        }
+    }
+
+    function triggerRemotePhotoGlitch1() {
+        if (document.body.classList.contains("remote-dead-black")) return;
+        clearRemotePhotoTimer();
+        clearRemoteVfx();
+        void document.body.offsetWidth;
+        document.body.classList.add("remote-photo-glitch-1");
+        remotePhotoTimeout = setTimeout(() => {
+            document.body.classList.remove("remote-photo-glitch-1");
+            remotePhotoTimeout = null;
+        }, 6500);
+    }
+
+    function triggerRemotePhotoGlitch2() {
+        if (document.body.classList.contains("remote-dead-black")) return;
+        clearRemotePhotoTimer();
+        clearRemoteVfx();
+        void document.body.offsetWidth;
+        document.body.classList.add("remote-photo-glitch-2");
+        remotePhotoTimeout = setTimeout(() => {
+            document.body.classList.remove("remote-photo-glitch-2");
+            remotePhotoTimeout = null;
+        }, 6500);
+    }
+
+
 </script>
+
+
+<!-- REMOTE PHOTO VFX // PHOTO 01 -->
+<div class="remote-photo-layer remote-photo-layer-1" id="remotePhotoLayer1" aria-hidden="true">
+    <div class="remote-photo-frame">
+        <img src="../images/remote-photo-1.png" class="remote-photo" id="remotePhoto1" alt="">
+    </div>
+</div>
+
+<!-- REMOTE PHOTO VFX // PHOTO 02 -->
+<div class="remote-photo-layer remote-photo-layer-2" id="remotePhotoLayer2" aria-hidden="true">
+    <div class="remote-photo-frame">
+        <img src="../images/remote-photo-2.png" class="remote-photo" id="remotePhoto2" alt="">
+    </div>
+</div>
+
 
 </body>
 
