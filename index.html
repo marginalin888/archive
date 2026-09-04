@@ -2145,6 +2145,112 @@
         }
 
 
+
+        /* =========================================================
+           REMOTE VFX // HAPPY BIRTHDAY
+        ========================================================= */
+
+        .remote-birthday-layer {
+            position: fixed;
+            inset: 0;
+            z-index: 14000;
+            display: none;
+            overflow: hidden;
+            pointer-events: none;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0,0,0,0.12);
+        }
+
+        body.remote-birthday .remote-birthday-layer {
+            display: flex;
+        }
+
+        .remote-birthday-title {
+            position: relative;
+            z-index: 3;
+            color: #fff;
+            font-family: Arial, sans-serif;
+            font-size: clamp(42px, 9vw, 112px);
+            font-weight: 900;
+            letter-spacing: 0.08em;
+            text-align: center;
+            line-height: 0.95;
+            text-shadow:
+                0 3px 0 rgba(0,0,0,0.35),
+                0 0 18px rgba(255,255,255,0.42);
+            animation: remoteBirthdayTitle 0.65s cubic-bezier(.2,.9,.25,1) both;
+        }
+
+        .remote-confetti {
+            position: absolute;
+            top: -12vh;
+            left: var(--confetti-left);
+            width: var(--confetti-width);
+            height: var(--confetti-height);
+            background: var(--confetti-colour);
+            opacity: 0;
+            transform: rotate(var(--confetti-rotation));
+            animation:
+                remoteConfettiFall
+                var(--confetti-duration)
+                linear
+                var(--confetti-delay)
+                forwards;
+        }
+
+        .remote-confetti.round {
+            border-radius: 50%;
+        }
+
+        @keyframes remoteBirthdayTitle {
+            0% {
+                opacity: 0;
+                transform: scale(0.35) rotate(-4deg);
+            }
+
+            55% {
+                opacity: 1;
+                transform: scale(1.10) rotate(1deg);
+            }
+
+            78% {
+                transform: scale(0.96) rotate(-0.5deg);
+            }
+
+            100% {
+                opacity: 1;
+                transform: scale(1) rotate(0deg);
+            }
+        }
+
+        @keyframes remoteConfettiFall {
+            0% {
+                opacity: 0;
+                transform:
+                    translate3d(0, -10vh, 0)
+                    rotate(var(--confetti-rotation));
+            }
+
+            8% {
+                opacity: 1;
+            }
+
+            45% {
+                transform:
+                    translate3d(var(--confetti-drift), 52vh, 0)
+                    rotate(calc(var(--confetti-rotation) + 260deg));
+            }
+
+            100% {
+                opacity: 0.95;
+                transform:
+                    translate3d(calc(var(--confetti-drift) * -0.55), 122vh, 0)
+                    rotate(calc(var(--confetti-rotation) + 720deg));
+            }
+        }
+
+
     </style>
 
 </head>
@@ -2777,6 +2883,12 @@
                 triggerRemotePhotoGlitch2();
                 break;
 
+            case "birthday":
+            case "happy_birthday":
+            case "celebration":
+                triggerRemoteBirthday();
+                break;
+
         }
 
     }
@@ -2792,7 +2904,8 @@
             "remote-reload-lockout",
             "remote-hearts",
             "remote-photo-glitch-1",
-            "remote-photo-glitch-2"
+            "remote-photo-glitch-2",
+            "remote-birthday"
         );
 
     }
@@ -3258,6 +3371,110 @@
     }
 
 
+
+
+    let remoteBirthdayTimeout = null;
+
+    function clearRemoteBirthdayTimer() {
+        if (remoteBirthdayTimeout) {
+            clearTimeout(remoteBirthdayTimeout);
+            remoteBirthdayTimeout = null;
+        }
+    }
+
+    function triggerRemoteBirthday() {
+        if (document.body.classList.contains("remote-dead-black")) {
+            return;
+        }
+
+        clearRemoteBirthdayTimer();
+        clearRemoteVfx();
+
+        const layer =
+            document.getElementById("remoteBirthdayLayer");
+
+        layer.querySelectorAll(".remote-confetti").forEach(
+            piece => piece.remove()
+        );
+
+        const colours = [
+            "#ff4d6d",
+            "#ffd166",
+            "#06d6a0",
+            "#4cc9f0",
+            "#c77dff",
+            "#ffffff"
+        ];
+
+        for (let i = 0; i < 120; i++) {
+            const piece = document.createElement("span");
+
+            piece.className =
+                "remote-confetti" +
+                (Math.random() > 0.72 ? " round" : "");
+
+            piece.style.setProperty(
+                "--confetti-left",
+                `${Math.random() * 100}%`
+            );
+
+            piece.style.setProperty(
+                "--confetti-width",
+                `${5 + Math.random() * 8}px`
+            );
+
+            piece.style.setProperty(
+                "--confetti-height",
+                `${7 + Math.random() * 14}px`
+            );
+
+            piece.style.setProperty(
+                "--confetti-colour",
+                colours[
+                    Math.floor(
+                        Math.random() * colours.length
+                    )
+                ]
+            );
+
+            piece.style.setProperty(
+                "--confetti-rotation",
+                `${Math.random() * 360}deg`
+            );
+
+            piece.style.setProperty(
+                "--confetti-duration",
+                `${3.4 + Math.random() * 3.2}s`
+            );
+
+            piece.style.setProperty(
+                "--confetti-delay",
+                `${Math.random() * 1.5}s`
+            );
+
+            piece.style.setProperty(
+                "--confetti-drift",
+                `${-120 + Math.random() * 240}px`
+            );
+
+            layer.appendChild(piece);
+        }
+
+        void document.body.offsetWidth;
+        document.body.classList.add("remote-birthday");
+
+        remoteBirthdayTimeout = setTimeout(() => {
+            document.body.classList.remove("remote-birthday");
+
+            layer.querySelectorAll(".remote-confetti").forEach(
+                piece => piece.remove()
+            );
+
+            remoteBirthdayTimeout = null;
+        }, 7200);
+    }
+
+
 </script>
 
 
@@ -3312,7 +3529,7 @@
 
             <!-- CHANGE PHOTO 01 PATH -->
             <img
-                src="pray.png"
+                src="images/remote-photo-1.png"
                 class="remote-photo"
                 id="remotePhoto1"
                 alt=""
@@ -3336,7 +3553,7 @@
 
             <!-- CHANGE PHOTO 02 PATH -->
             <img
-                src="jumpscare.png"
+                src="images/remote-photo-2.png"
                 class="remote-photo"
                 id="remotePhoto2"
                 alt=""
