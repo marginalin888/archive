@@ -2147,19 +2147,30 @@
 
 
         /* =========================================================
-           REMOTE VFX // HAPPY BIRTHDAY
+           REMOTE VFX // HAPPY BIRTHDAY CELEBRATION
+           Built to match the existing remote-VFX system.
         ========================================================= */
 
         .remote-birthday-layer {
             position: fixed;
             inset: 0;
+
             z-index: 14000;
+
             display: none;
-            overflow: hidden;
-            pointer-events: none;
             align-items: center;
             justify-content: center;
-            background: rgba(0,0,0,0.12);
+
+            overflow: hidden;
+            pointer-events: none;
+
+            background:
+                radial-gradient(
+                    ellipse at center,
+                    rgba(20,20,20,0.18) 0%,
+                    rgba(0,0,0,0.34) 68%,
+                    rgba(0,0,0,0.52) 100%
+                );
         }
 
         body.remote-birthday .remote-birthday-layer {
@@ -2168,85 +2179,164 @@
 
         .remote-birthday-title {
             position: relative;
-            z-index: 3;
+            z-index: 4;
+
+            padding: 0 24px;
+
             color: #fff;
+
             font-family: Arial, sans-serif;
-            font-size: clamp(42px, 9vw, 112px);
+            font-size: clamp(44px, 8.5vw, 108px);
             font-weight: 900;
-            letter-spacing: 0.08em;
-            text-align: center;
+
             line-height: 0.95;
+            letter-spacing: 0.055em;
+            text-align: center;
+
             text-shadow:
-                0 3px 0 rgba(0,0,0,0.35),
-                0 0 18px rgba(255,255,255,0.42);
-            animation: remoteBirthdayTitle 0.65s cubic-bezier(.2,.9,.25,1) both;
+                0 3px 0 rgba(0,0,0,0.34),
+                0 0 16px rgba(255,255,255,0.32);
+
+            animation:
+                remoteBirthdayTitlePop
+                0.72s
+                cubic-bezier(.16,.92,.28,1.2)
+                both;
         }
 
-        .remote-confetti {
+        .remote-birthday-piece {
             position: absolute;
+
+            left: var(--birthday-x);
             top: -12vh;
-            left: var(--confetti-left);
-            width: var(--confetti-width);
-            height: var(--confetti-height);
-            background: var(--confetti-colour);
+
+            width: var(--birthday-w);
+            height: var(--birthday-h);
+
+            border-radius: var(--birthday-radius);
+
+            background: var(--birthday-colour);
+
             opacity: 0;
-            transform: rotate(var(--confetti-rotation));
+
             animation:
-                remoteConfettiFall
-                var(--confetti-duration)
+                remoteBirthdayConfetti
+                var(--birthday-duration)
                 linear
-                var(--confetti-delay)
+                var(--birthday-delay)
                 forwards;
         }
 
-        .remote-confetti.round {
+        .remote-birthday-burst {
+            position: absolute;
+
+            left: 50%;
+            top: 50%;
+
+            width: 8px;
+            height: 8px;
+
             border-radius: 50%;
+
+            background: var(--birthday-colour);
+
+            opacity: 0;
+
+            animation:
+                remoteBirthdayBurst
+                1.15s
+                ease-out
+                var(--birthday-delay)
+                forwards;
         }
 
-        @keyframes remoteBirthdayTitle {
+        @keyframes remoteBirthdayTitlePop {
             0% {
                 opacity: 0;
-                transform: scale(0.35) rotate(-4deg);
+                transform:
+                    scale(0.25)
+                    rotate(-5deg);
             }
 
             55% {
                 opacity: 1;
-                transform: scale(1.10) rotate(1deg);
+                transform:
+                    scale(1.12)
+                    rotate(2deg);
             }
 
-            78% {
-                transform: scale(0.96) rotate(-0.5deg);
+            76% {
+                transform:
+                    scale(0.96)
+                    rotate(-1deg);
             }
 
             100% {
                 opacity: 1;
-                transform: scale(1) rotate(0deg);
+                transform:
+                    scale(1)
+                    rotate(0deg);
             }
         }
 
-        @keyframes remoteConfettiFall {
+        @keyframes remoteBirthdayConfetti {
             0% {
                 opacity: 0;
+
                 transform:
-                    translate3d(0, -10vh, 0)
-                    rotate(var(--confetti-rotation));
+                    translate3d(0, -12vh, 0)
+                    rotate(0deg);
             }
 
-            8% {
+            7% {
                 opacity: 1;
             }
 
             45% {
                 transform:
-                    translate3d(var(--confetti-drift), 52vh, 0)
-                    rotate(calc(var(--confetti-rotation) + 260deg));
+                    translate3d(
+                        var(--birthday-drift),
+                        52vh,
+                        0
+                    )
+                    rotate(320deg);
             }
 
             100% {
-                opacity: 0.95;
+                opacity: 0.94;
+
                 transform:
-                    translate3d(calc(var(--confetti-drift) * -0.55), 122vh, 0)
-                    rotate(calc(var(--confetti-rotation) + 720deg));
+                    translate3d(
+                        calc(var(--birthday-drift) * -0.45),
+                        124vh,
+                        0
+                    )
+                    rotate(760deg);
+            }
+        }
+
+        @keyframes remoteBirthdayBurst {
+            0% {
+                opacity: 0;
+                transform:
+                    translate(-50%, -50%)
+                    translate(0, 0)
+                    scale(0.2);
+            }
+
+            12% {
+                opacity: 1;
+            }
+
+            100% {
+                opacity: 0;
+                transform:
+                    translate(-50%, -50%)
+                    translate(
+                        var(--birthday-burst-x),
+                        var(--birthday-burst-y)
+                    )
+                    scale(1);
             }
         }
 
@@ -2905,8 +2995,7 @@
             "remote-hearts",
             "remote-photo-glitch-1",
             "remote-photo-glitch-2",
-            "remote-birthday"
-        );
+            "remote-birthday");
 
     }
 
@@ -3373,106 +3462,269 @@
 
 
 
-    let remoteBirthdayTimeout = null;
+        let remoteBirthdayTimeout = null;
 
-    function clearRemoteBirthdayTimer() {
-        if (remoteBirthdayTimeout) {
-            clearTimeout(remoteBirthdayTimeout);
-            remoteBirthdayTimeout = null;
-        }
-    }
 
-    function triggerRemoteBirthday() {
-        if (document.body.classList.contains("remote-dead-black")) {
-            return;
-        }
+        function clearRemoteBirthdayTimer() {
 
-        clearRemoteBirthdayTimer();
-        clearRemoteVfx();
+            if (remoteBirthdayTimeout) {
 
-        const layer =
-            document.getElementById("remoteBirthdayLayer");
+                clearTimeout(
+                    remoteBirthdayTimeout
+                );
 
-        layer.querySelectorAll(".remote-confetti").forEach(
-            piece => piece.remove()
-        );
+                remoteBirthdayTimeout =
+                    null;
 
-        const colours = [
-            "#ff4d6d",
-            "#ffd166",
-            "#06d6a0",
-            "#4cc9f0",
-            "#c77dff",
-            "#ffffff"
-        ];
+            }
 
-        for (let i = 0; i < 120; i++) {
-            const piece = document.createElement("span");
-
-            piece.className =
-                "remote-confetti" +
-                (Math.random() > 0.72 ? " round" : "");
-
-            piece.style.setProperty(
-                "--confetti-left",
-                `${Math.random() * 100}%`
-            );
-
-            piece.style.setProperty(
-                "--confetti-width",
-                `${5 + Math.random() * 8}px`
-            );
-
-            piece.style.setProperty(
-                "--confetti-height",
-                `${7 + Math.random() * 14}px`
-            );
-
-            piece.style.setProperty(
-                "--confetti-colour",
-                colours[
-                    Math.floor(
-                        Math.random() * colours.length
-                    )
-                ]
-            );
-
-            piece.style.setProperty(
-                "--confetti-rotation",
-                `${Math.random() * 360}deg`
-            );
-
-            piece.style.setProperty(
-                "--confetti-duration",
-                `${3.4 + Math.random() * 3.2}s`
-            );
-
-            piece.style.setProperty(
-                "--confetti-delay",
-                `${Math.random() * 1.5}s`
-            );
-
-            piece.style.setProperty(
-                "--confetti-drift",
-                `${-120 + Math.random() * 240}px`
-            );
-
-            layer.appendChild(piece);
         }
 
-        void document.body.offsetWidth;
-        document.body.classList.add("remote-birthday");
 
-        remoteBirthdayTimeout = setTimeout(() => {
-            document.body.classList.remove("remote-birthday");
+        function clearRemoteBirthdayPieces() {
 
-            layer.querySelectorAll(".remote-confetti").forEach(
-                piece => piece.remove()
+            const layer =
+                document.getElementById(
+                    "remoteBirthdayLayer"
+                );
+
+
+            if (!layer) {
+                return;
+            }
+
+
+            layer
+                .querySelectorAll(
+                    ".remote-birthday-piece, .remote-birthday-burst"
+                )
+                .forEach(
+                    piece => piece.remove()
+                );
+
+        }
+
+
+        function triggerRemoteBirthday() {
+
+            if (
+                document.body.classList.contains(
+                    "remote-dead-black"
+                )
+            ) {
+                return;
+            }
+
+
+            clearRemoteBirthdayTimer();
+            clearRemoteBirthdayPieces();
+            clearRemoteVfx();
+
+
+            const layer =
+                document.getElementById(
+                    "remoteBirthdayLayer"
+                );
+
+
+            if (!layer) {
+                return;
+            }
+
+
+            const colours = [
+                "#ff5f6d",
+                "#ffd166",
+                "#55efc4",
+                "#74b9ff",
+                "#c084fc",
+                "#ffffff"
+            ];
+
+
+            /*
+             * Falling confetti.
+             */
+
+            for (
+                let i = 0;
+                i < 150;
+                i++
+            ) {
+
+                const piece =
+                    document.createElement(
+                        "span"
+                    );
+
+
+                piece.className =
+                    "remote-birthday-piece";
+
+
+                piece.style.setProperty(
+                    "--birthday-x",
+                    `${Math.random() * 100}%`
+                );
+
+
+                piece.style.setProperty(
+                    "--birthday-w",
+                    `${5 + Math.random() * 8}px`
+                );
+
+
+                piece.style.setProperty(
+                    "--birthday-h",
+                    `${7 + Math.random() * 14}px`
+                );
+
+
+                piece.style.setProperty(
+                    "--birthday-radius",
+                    Math.random() > 0.76
+                        ? "50%"
+                        : "1px"
+                );
+
+
+                piece.style.setProperty(
+                    "--birthday-colour",
+                    colours[
+                        Math.floor(
+                            Math.random() *
+                            colours.length
+                        )
+                    ]
+                );
+
+
+                piece.style.setProperty(
+                    "--birthday-duration",
+                    `${3.8 + Math.random() * 3.4}s`
+                );
+
+
+                piece.style.setProperty(
+                    "--birthday-delay",
+                    `${Math.random() * 1.4}s`
+                );
+
+
+                piece.style.setProperty(
+                    "--birthday-drift",
+                    `${-150 + Math.random() * 300}px`
+                );
+
+
+                layer.appendChild(
+                    piece
+                );
+
+            }
+
+
+            /*
+             * Small centre burst so the celebration starts
+             * immediately rather than waiting for confetti to fall.
+             */
+
+            for (
+                let i = 0;
+                i < 42;
+                i++
+            ) {
+
+                const burst =
+                    document.createElement(
+                        "span"
+                    );
+
+
+                burst.className =
+                    "remote-birthday-burst";
+
+
+                const angle =
+                    Math.random() *
+                    Math.PI *
+                    2;
+
+
+                const distance =
+                    90 +
+                    Math.random() *
+                    260;
+
+
+                burst.style.setProperty(
+                    "--birthday-colour",
+                    colours[
+                        Math.floor(
+                            Math.random() *
+                            colours.length
+                        )
+                    ]
+                );
+
+
+                burst.style.setProperty(
+                    "--birthday-delay",
+                    `${Math.random() * 0.18}s`
+                );
+
+
+                burst.style.setProperty(
+                    "--birthday-burst-x",
+                    `${Math.cos(angle) * distance}px`
+                );
+
+
+                burst.style.setProperty(
+                    "--birthday-burst-y",
+                    `${Math.sin(angle) * distance}px`
+                );
+
+
+                layer.appendChild(
+                    burst
+                );
+
+            }
+
+
+            /*
+             * Force a fresh animation when triggered repeatedly.
+             */
+
+            void document.body.offsetWidth;
+
+
+            document.body.classList.add(
+                "remote-birthday"
             );
 
-            remoteBirthdayTimeout = null;
-        }, 7200);
-    }
+
+            remoteBirthdayTimeout =
+                setTimeout(
+                    () => {
+
+                        document.body.classList.remove(
+                            "remote-birthday"
+                        );
+
+
+                        clearRemoteBirthdayPieces();
+
+
+                        remoteBirthdayTimeout =
+                            null;
+
+                    },
+                    7600
+                );
+
+        }
 
 
 </script>
@@ -3529,7 +3781,7 @@
 
             <!-- CHANGE PHOTO 01 PATH -->
             <img
-                src="images/remote-photo-1.png"
+                src="pray.png"
                 class="remote-photo"
                 id="remotePhoto1"
                 alt=""
@@ -3553,12 +3805,28 @@
 
             <!-- CHANGE PHOTO 02 PATH -->
             <img
-                src="images/remote-photo-2.png"
+                src="jumpscare.png"
                 class="remote-photo"
                 id="remotePhoto2"
                 alt=""
             >
 
+        </div>
+    </div>
+
+
+
+    <!-- =========================================================
+         REMOTE VFX // HAPPY BIRTHDAY
+    ========================================================= -->
+
+    <div
+        class="remote-birthday-layer"
+        id="remoteBirthdayLayer"
+        aria-hidden="true"
+    >
+        <div class="remote-birthday-title">
+            HAPPY BIRTHDAY
         </div>
     </div>
 
