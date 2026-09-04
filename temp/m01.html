@@ -1771,6 +1771,480 @@ header::after {
                     }
                 }
 
+
+        /* =========================================================
+           REMOTE VFX // RELOAD LOCKOUT
+           Red lockout-style corruption followed by a persistent
+           blackout. The blackout only clears when the page reloads.
+        ========================================================= */
+
+        body.remote-reload-lockout {
+            overflow: hidden !important;
+
+            animation:
+                remoteReloadShake 0.055s steps(2, end) infinite;
+
+            filter:
+                contrast(1.2)
+                brightness(1.04);
+        }
+
+        body.remote-reload-lockout .interface,
+        body.remote-reload-lockout header {
+            animation:
+                remoteReloadContentJolt 0.075s steps(2, end) infinite;
+
+            text-shadow:
+                -2px 0 rgba(255, 30, 30, 0.95),
+                2px 0 rgba(255,255,255,0.18);
+        }
+
+        body.remote-reload-lockout::before {
+            content: "";
+
+            position: fixed;
+            inset: 0;
+
+            z-index: 12000;
+
+            pointer-events: none;
+
+            background:
+                repeating-linear-gradient(
+                    to bottom,
+                    transparent 0px,
+                    transparent 22px,
+                    rgba(255,255,255,0.08) 23px,
+                    rgba(255,255,255,0.16) 24px,
+                    transparent 26px,
+                    transparent 49px,
+                    rgba(255, 18, 18, 0.24) 50px,
+                    rgba(255, 18, 18, 0.68) 52px,
+                    transparent 55px
+                ),
+                linear-gradient(
+                    to bottom,
+                    transparent 0%,
+                    transparent 17%,
+                    rgba(255, 22, 22, 0.92) 17.1%,
+                    rgba(255, 22, 22, 0.92) 18.2%,
+                    transparent 18.5%,
+                    transparent 47%,
+                    rgba(255,255,255,0.72) 47.1%,
+                    rgba(255,255,255,0.72) 47.45%,
+                    transparent 47.7%,
+                    transparent 73%,
+                    rgba(255, 12, 12, 0.88) 73.1%,
+                    rgba(255, 12, 12, 0.88) 74.4%,
+                    transparent 74.7%
+                );
+
+            mix-blend-mode: screen;
+
+            animation:
+                remoteReloadBars 0.11s steps(2, end) infinite;
+        }
+
+        body.remote-reload-lockout::after {
+            content: "";
+
+            position: fixed;
+            inset: 0;
+
+            z-index: 11999;
+
+            pointer-events: none;
+
+            background:
+                radial-gradient(
+                    ellipse at center,
+                    transparent 18%,
+                    rgba(0,0,0,0.20) 52%,
+                    rgba(35,0,0,0.58) 100%
+                );
+
+            box-shadow:
+                inset 0 0 120px rgba(255, 0, 0, 0.10);
+        }
+
+        .remote-reload-panel {
+            position: fixed;
+            inset: 0;
+
+            z-index: 12001;
+
+            display: none;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+
+            pointer-events: none;
+
+            font-family: "Courier New", monospace;
+            text-align: center;
+        }
+
+        body.remote-reload-lockout .remote-reload-panel {
+            display: flex;
+        }
+
+        .remote-reload-title {
+            color: #fff;
+
+            font-size: clamp(42px, 8vw, 92px);
+            font-weight: 700;
+
+            letter-spacing: 0.18em;
+
+            margin-left: 0.18em;
+
+            text-shadow:
+                -4px 0 rgba(255, 25, 25, 0.95),
+                4px 0 rgba(255,255,255,0.16);
+
+            animation:
+                remoteReloadTitleFlicker 0.13s steps(2, end) infinite;
+        }
+
+        .remote-reload-timer {
+            margin-top: 22px;
+
+            color: #ff3d3d;
+
+            font-size: clamp(18px, 3vw, 30px);
+            font-weight: 700;
+
+            letter-spacing: 0.30em;
+
+            margin-left: 0.30em;
+
+            text-shadow:
+                0 0 8px rgba(255, 0, 0, 0.18);
+
+            animation:
+                remoteReloadTimerPulse 0.7s steps(2, end) infinite;
+        }
+
+        .remote-reload-subtext {
+            margin-top: 14px;
+
+            color: #9d9d9d;
+
+            font-size: 11px;
+
+            letter-spacing: 0.22em;
+
+            margin-left: 0.22em;
+        }
+
+        body.remote-dead-black {
+            background: #000 !important;
+            overflow: hidden !important;
+        }
+
+        body.remote-dead-black > * {
+            visibility: hidden !important;
+        }
+
+        body.remote-dead-black::before {
+            content: "";
+
+            position: fixed;
+            inset: 0;
+
+            z-index: 2147483647;
+
+            display: block;
+
+            background: #000;
+
+            pointer-events: all;
+        }
+
+        @keyframes remoteReloadShake {
+            0%   { transform: translate(0, 0); }
+            18%  { transform: translate(-6px, 1px); }
+            36%  { transform: translate(5px, -2px); }
+            54%  { transform: translate(-3px, 2px); }
+            72%  { transform: translate(7px, -1px); }
+            88%  { transform: translate(-4px, 1px); }
+            100% { transform: translate(0, 0); }
+        }
+
+        @keyframes remoteReloadContentJolt {
+            0%,
+            100% {
+                transform: translateX(0);
+                opacity: 1;
+            }
+
+            30% {
+                transform: translateX(-4px);
+                opacity: 0.88;
+            }
+
+            57% {
+                transform: translateX(3px);
+                opacity: 1;
+            }
+
+            78% {
+                transform: translateX(-2px);
+                opacity: 0.93;
+            }
+        }
+
+        @keyframes remoteReloadBars {
+            0% {
+                transform: translate(-2%, -10px);
+                opacity: 0.55;
+            }
+
+            25% {
+                transform: translate(3%, 14px);
+                opacity: 1;
+            }
+
+            50% {
+                transform: translate(-4%, -6px);
+                opacity: 0.70;
+            }
+
+            75% {
+                transform: translate(2%, 9px);
+                opacity: 0.95;
+            }
+
+            100% {
+                transform: translate(0, 0);
+                opacity: 0.62;
+            }
+        }
+
+        @keyframes remoteReloadTitleFlicker {
+            0%,
+            100% {
+                opacity: 1;
+                transform: translateX(0);
+            }
+
+            24% {
+                opacity: 0.72;
+                transform: translateX(-5px);
+            }
+
+            48% {
+                opacity: 1;
+                transform: translateX(4px);
+            }
+
+            72% {
+                opacity: 0.86;
+                transform: translateX(-2px);
+            }
+        }
+
+        @keyframes remoteReloadTimerPulse {
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.62;
+            }
+        }
+
+
+
+        /* =========================================================
+           REMOTE VFX // HEART BREAK
+           Intentionally out-of-theme fourth-wall interruption.
+        ========================================================= */
+
+        .remote-heart-layer {
+            position: fixed;
+            inset: 0;
+            z-index: 13000;
+            overflow: hidden;
+            pointer-events: none;
+            display: none;
+        }
+
+        body.remote-hearts .remote-heart-layer {
+            display: block;
+        }
+
+        .remote-heart {
+            position: absolute;
+            top: -12vh;
+            color: #ff69b4;
+            font-family: Arial, sans-serif;
+            line-height: 1;
+            user-select: none;
+            text-shadow:
+                0 0 8px rgba(255, 105, 180, 0.42);
+
+            animation:
+                remoteHeartFall
+                var(--heart-duration)
+                linear
+                var(--heart-delay)
+                forwards;
+        }
+
+        .remote-ily {
+            position: fixed;
+            left: 50%;
+            top: 50%;
+            z-index: 13001;
+
+            width: min(290px, 68vw);
+            aspect-ratio: 1 / 0.92;
+
+            transform:
+                translate(-50%, -50%)
+                scale(0);
+
+            display: none;
+            align-items: center;
+            justify-content: center;
+
+            color: #fff;
+            font-family: Arial, sans-serif;
+            font-size: clamp(42px, 8vw, 74px);
+            font-weight: 700;
+            letter-spacing: 0.03em;
+
+            text-shadow:
+                0 2px 8px rgba(130, 0, 65, 0.38);
+
+            pointer-events: none;
+        }
+
+        .remote-ily::before {
+            content: "♥";
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            z-index: -1;
+
+            color: #ff69b4;
+            font-size: min(340px, 80vw);
+            line-height: 1;
+
+            filter:
+                drop-shadow(
+                    0 8px 18px
+                    rgba(255, 105, 180, 0.28)
+                );
+        }
+
+        body.remote-hearts .remote-ily {
+            display: flex;
+
+            animation:
+                remoteIlyPop
+                5.8s
+                cubic-bezier(.2,.9,.25,1)
+                forwards;
+        }
+
+        @keyframes remoteHeartFall {
+            0% {
+                transform:
+                    translateY(-15vh)
+                    translateX(0)
+                    rotate(0deg);
+
+                opacity: 0;
+            }
+
+            7% {
+                opacity: 0.95;
+            }
+
+            45% {
+                transform:
+                    translateY(50vh)
+                    translateX(var(--heart-drift))
+                    rotate(160deg);
+
+                opacity: 1;
+            }
+
+            100% {
+                transform:
+                    translateY(125vh)
+                    translateX(calc(var(--heart-drift) * -0.45))
+                    rotate(360deg);
+
+                opacity: 0.85;
+            }
+        }
+
+        @keyframes remoteIlyPop {
+            0% {
+                transform:
+                    translate(-50%, -50%)
+                    scale(0)
+                    rotate(-8deg);
+
+                opacity: 0;
+            }
+
+            10% {
+                transform:
+                    translate(-50%, -50%)
+                    scale(1.20)
+                    rotate(4deg);
+
+                opacity: 1;
+            }
+
+            16% {
+                transform:
+                    translate(-50%, -50%)
+                    scale(0.94)
+                    rotate(-2deg);
+            }
+
+            22% {
+                transform:
+                    translate(-50%, -50%)
+                    scale(1.04)
+                    rotate(0deg);
+            }
+
+            28%,
+            78% {
+                transform:
+                    translate(-50%, -50%)
+                    scale(1)
+                    rotate(0deg);
+
+                opacity: 1;
+            }
+
+            84% {
+                transform:
+                    translate(-50%, -50%)
+                    scale(1.08)
+                    rotate(2deg);
+            }
+
+            100% {
+                transform:
+                    translate(-50%, -50%)
+                    scale(0)
+                    rotate(-8deg);
+
+                opacity: 0;
+            }
+        }
+
+
     </style>
 
 </head>
@@ -4108,6 +4582,16 @@ MERIDIAN STATUS: ACTIVE`
                 triggerRemoteSnow();
                 break;
 
+            case "reload":
+            case "reload_lockout":
+                triggerRemoteReloadLockout();
+                break;
+
+            case "hearts":
+            case "ily":
+                triggerRemoteHearts();
+                break;
+
         }
 
     }
@@ -4119,7 +4603,9 @@ MERIDIAN STATUS: ACTIVE`
             "remote-glitch",
             "remote-blackout",
             "remote-distortion",
-            "remote-snow"
+            "remote-snow",
+            "remote-reload-lockout",
+            "remote-hearts"
         );
 
     }
@@ -4219,7 +4705,304 @@ MERIDIAN STATUS: ACTIVE`
 
     }
 
+
+    let remoteReloadInterval = null;
+
+
+    function triggerRemoteReloadLockout() {
+
+        /*
+         * Once the terminal has reached the permanent black state,
+         * remote effects cannot revive it. A real page reload is required.
+         */
+        if (
+            document.body.classList.contains(
+                "remote-dead-black"
+            )
+        ) {
+            return;
+        }
+
+
+        clearRemoteVfx();
+
+        if (remoteReloadInterval) {
+
+            clearInterval(
+                remoteReloadInterval
+            );
+
+            remoteReloadInterval = null;
+
+        }
+
+
+        const timer =
+            document.getElementById(
+                "remoteReloadTimer"
+            );
+
+
+        const durationSeconds =
+            10;
+
+
+        let remaining =
+            durationSeconds;
+
+
+        timer.textContent =
+            "00:" +
+            String(remaining).padStart(
+                2,
+                "0"
+            );
+
+
+        void document.body.offsetWidth;
+
+
+        document.body.classList.add(
+            "remote-reload-lockout"
+        );
+
+
+        remoteReloadInterval =
+            setInterval(
+                () => {
+
+                    remaining -= 1;
+
+
+                    timer.textContent =
+                        "00:" +
+                        String(
+                            Math.max(
+                                remaining,
+                                0
+                            )
+                        ).padStart(
+                            2,
+                            "0"
+                        );
+
+
+                    if (
+                        remaining <= 0
+                    ) {
+
+                        clearInterval(
+                            remoteReloadInterval
+                        );
+
+                        remoteReloadInterval =
+                            null;
+
+
+                        document.body.classList.remove(
+                            "remote-reload-lockout"
+                        );
+
+
+                        /*
+                         * Intentionally permanent for the lifetime of
+                         * this document. Reloading the page recreates
+                         * the document without this class.
+                         */
+                        document.body.classList.add(
+                            "remote-dead-black"
+                        );
+
+                    }
+
+                },
+                1000
+            );
+
+    }
+
+
+
+    let remoteHeartTimeout = null;
+
+
+    function triggerRemoteHearts() {
+
+        if (
+            document.body.classList.contains(
+                "remote-dead-black"
+            )
+        ) {
+            return;
+        }
+
+
+        clearRemoteVfx();
+
+
+        if (remoteHeartTimeout) {
+
+            clearTimeout(
+                remoteHeartTimeout
+            );
+
+            remoteHeartTimeout = null;
+
+        }
+
+
+        const layer =
+            document.getElementById(
+                "remoteHeartLayer"
+            );
+
+
+        layer.innerHTML = "";
+
+
+        const heartCount =
+            72;
+
+
+        for (
+            let i = 0;
+            i < heartCount;
+            i += 1
+        ) {
+
+            const heart =
+                document.createElement(
+                    "div"
+                );
+
+
+            heart.className =
+                "remote-heart";
+
+
+            heart.textContent =
+                Math.random() > 0.18
+                    ? "♥"
+                    : "♡";
+
+
+            heart.style.left =
+                (
+                    Math.random() * 100
+                ) + "vw";
+
+
+            heart.style.fontSize =
+                (
+                    14 +
+                    Math.random() * 28
+                ) + "px";
+
+
+            heart.style.setProperty(
+                "--heart-duration",
+                (
+                    3.8 +
+                    Math.random() * 3.2
+                ) + "s"
+            );
+
+
+            heart.style.setProperty(
+                "--heart-delay",
+                (
+                    Math.random() * 2.2
+                ) + "s"
+            );
+
+
+            heart.style.setProperty(
+                "--heart-drift",
+                (
+                    -45 +
+                    Math.random() * 90
+                ) + "px"
+            );
+
+
+            layer.appendChild(
+                heart
+            );
+
+        }
+
+
+        void document.body.offsetWidth;
+
+
+        document.body.classList.add(
+            "remote-hearts"
+        );
+
+
+        remoteHeartTimeout =
+            setTimeout(
+                () => {
+
+                    document.body.classList.remove(
+                        "remote-hearts"
+                    );
+
+
+                    layer.innerHTML =
+                        "";
+
+
+                    remoteHeartTimeout =
+                        null;
+
+                },
+                7200
+            );
+
+    }
+
+
 </script>
+
+
+    <div
+        class="remote-reload-panel"
+        id="remoteReloadPanel"
+        aria-hidden="true"
+    >
+        <div class="remote-reload-title">
+            RELOAD
+        </div>
+
+        <div
+            class="remote-reload-timer"
+            id="remoteReloadTimer"
+        >
+            00:10
+        </div>
+
+        <div class="remote-reload-subtext">
+            SESSION FAILURE // REINITIALISATION REQUIRED
+        </div>
+    </div>
+
+
+
+    <div
+        class="remote-heart-layer"
+        id="remoteHeartLayer"
+        aria-hidden="true"
+    ></div>
+
+    <div
+        class="remote-ily"
+        id="remoteIly"
+        aria-hidden="true"
+    >
+        ily
+    </div>
+
 
 </body>
 
