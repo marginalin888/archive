@@ -1007,6 +1007,770 @@ header::after {
     }
 
 }
+
+        /* =========================================================
+                   REMOTE VFX
+                   Triggered from the MERIDIAN control page.
+                   Brighter red/white corruption closer to the reference look.
+                ========================================================= */
+        
+                body.remote-glitch {
+                    animation:
+                        remoteGlitchShake 0.055s steps(2, end) infinite,
+                        ambientBrightness 12s ease-in-out infinite;
+        
+                    filter:
+                        contrast(1.16)
+                        brightness(1.05);
+                }
+        
+                body.remote-glitch::before,
+                body.remote-glitch::after {
+                    content: "";
+                    position: fixed;
+                    left: 0;
+                    width: 100vw;
+                    pointer-events: none;
+                    z-index: 9998;
+                    mix-blend-mode: screen;
+                }
+        
+                body.remote-glitch::before {
+                    top: 0;
+                    height: 100vh;
+        
+                    background:
+                        repeating-linear-gradient(
+                            to bottom,
+                            transparent 0px,
+                            transparent 24px,
+                            rgba(255,255,255,0.08) 25px,
+                            rgba(255,255,255,0.18) 26px,
+                            transparent 28px,
+                            transparent 52px,
+                            rgba(255, 24, 24, 0.22) 53px,
+                            rgba(255, 24, 24, 0.55) 55px,
+                            rgba(255, 24, 24, 0.18) 58px,
+                            transparent 60px,
+                            transparent 96px
+                        );
+        
+                    animation:
+                        remoteRedBarsA 0.13s steps(2, end) infinite;
+                }
+        
+                body.remote-glitch::after {
+                    top: 0;
+                    height: 100vh;
+        
+                    background:
+                        linear-gradient(
+                            to bottom,
+                            transparent 0%,
+                            transparent 8%,
+        
+                            rgba(255,255,255,0.92) 8.1%,
+                            rgba(255,255,255,0.92) 8.45%,
+                            transparent 8.7%,
+        
+                            transparent 16%,
+                            rgba(255, 18, 18, 0.98) 16.1%,
+                            rgba(255, 18, 18, 0.98) 17.25%,
+                            transparent 17.55%,
+        
+                            transparent 36%,
+                            rgba(255,255,255,0.72) 36.15%,
+                            rgba(255,255,255,0.72) 36.55%,
+                            transparent 36.85%,
+        
+                            transparent 48%,
+                            rgba(255, 32, 32, 0.88) 48.2%,
+                            rgba(255, 32, 32, 0.88) 49.4%,
+                            transparent 49.7%,
+        
+                            transparent 71%,
+                            rgba(255, 10, 10, 0.94) 71.15%,
+                            rgba(255, 10, 10, 0.94) 72.35%,
+                            transparent 72.65%,
+        
+                            transparent 84%,
+                            rgba(255,255,255,0.78) 84.1%,
+                            rgba(255,255,255,0.78) 84.45%,
+                            transparent 84.8%,
+        
+                            transparent 100%
+                        );
+        
+                    box-shadow:
+                        inset 0 0 60px rgba(255, 0, 0, 0.10);
+        
+                    animation:
+                        remoteRedBarsB 0.09s steps(2, end) infinite;
+                }
+        
+                body.remote-glitch .archive {
+                    animation:
+                        remoteArchiveJolt 0.075s steps(2, end) infinite;
+        
+                    text-shadow:
+                        -1px 0 rgba(255, 40, 40, 0.85),
+                        1px 0 rgba(255,255,255,0.22);
+                }
+        
+                body.remote-glitch .scanlines {
+                    opacity: 0.20;
+                }
+        
+                body.remote-glitch .terminal-flicker {
+                    opacity: 0.12;
+                    background:
+                        rgba(255,255,255,0.08);
+                }
+        
+                @keyframes remoteGlitchShake {
+                    0%   { transform: translate(0, 0); }
+                    15%  { transform: translate(-7px, 1px); }
+                    30%  { transform: translate(5px, -2px); }
+                    45%  { transform: translate(-3px, 3px); }
+                    60%  { transform: translate(8px, -1px); }
+                    75%  { transform: translate(-4px, 2px); }
+                    100% { transform: translate(0, 0); }
+                }
+        
+                @keyframes remoteArchiveJolt {
+                    0%, 100% {
+                        transform: translateX(0);
+                        filter: brightness(1);
+                    }
+        
+                    28% {
+                        transform: translateX(-4px);
+                        filter: brightness(1.18);
+                    }
+        
+                    55% {
+                        transform: translateX(3px);
+                        filter: brightness(0.92);
+                    }
+        
+                    76% {
+                        transform: translateX(-2px);
+                        filter: brightness(1.10);
+                    }
+                }
+        
+                @keyframes remoteRedBarsA {
+                    0% {
+                        transform:
+                            translateY(-12px)
+                            scaleY(1);
+                        opacity: 0.50;
+                    }
+        
+                    24% {
+                        transform:
+                            translateY(20px)
+                            scaleY(0.7);
+                        opacity: 1;
+                    }
+        
+                    48% {
+                        transform:
+                            translateY(-16px)
+                            scaleY(1.35);
+                        opacity: 0.72;
+                    }
+        
+                    73% {
+                        transform:
+                            translateY(9px)
+                            scaleY(0.86);
+                        opacity: 1;
+                    }
+        
+                    100% {
+                        transform:
+                            translateY(0)
+                            scaleY(1);
+                        opacity: 0.58;
+                    }
+                }
+        
+                @keyframes remoteRedBarsB {
+                    0% {
+                        transform: translateX(-4%);
+                        opacity: 0.58;
+                    }
+        
+                    26% {
+                        transform: translateX(3%);
+                        opacity: 1;
+                    }
+        
+                    51% {
+                        transform: translateX(-2%);
+                        opacity: 0.72;
+                    }
+        
+                    76% {
+                        transform: translateX(5%);
+                        opacity: 0.94;
+                    }
+        
+                    100% {
+                        transform: translateX(0);
+                        opacity: 0.66;
+                    }
+                }
+        
+        
+                body.remote-blackout {
+                    background: #000;
+        
+                    animation:
+                        remoteBlackoutBody 0.11s steps(2, end) 3;
+                }
+        
+                body.remote-blackout .archive,
+                body.remote-blackout .terminal-flicker,
+                body.remote-blackout .vignette,
+                body.remote-blackout .scanlines {
+                    opacity: 0 !important;
+                }
+        
+                body.remote-blackout::before {
+                    content: "";
+        
+                    position: fixed;
+                    inset: 0;
+        
+                    z-index: 10000;
+        
+                    background: #000;
+        
+                    pointer-events: none;
+        
+                    animation:
+                        remoteBlackoutCut 1.8s linear forwards;
+                }
+        
+                body.remote-blackout::after {
+                    content: "";
+        
+                    position: fixed;
+                    inset: 0;
+        
+                    z-index: 10001;
+        
+                    pointer-events: none;
+        
+                    background:
+                        linear-gradient(
+                            to bottom,
+                            transparent 0%,
+                            transparent 46%,
+                            rgba(255,255,255,0.14) 46.1%,
+                            rgba(255,255,255,0.14) 46.35%,
+                            transparent 46.6%,
+        
+                            transparent 77%,
+                            rgba(255, 16, 16, 0.18) 77.1%,
+                            rgba(255, 16, 16, 0.18) 77.45%,
+                            transparent 77.7%
+                        );
+        
+                    opacity: 0;
+        
+                    animation:
+                        remoteBlackoutGhostLines 1.8s linear forwards;
+                }
+        
+                @keyframes remoteBlackoutBody {
+                    0%   { filter: brightness(1); }
+                    50%  { filter: brightness(0.18); }
+                    100% { filter: brightness(1); }
+                }
+        
+                @keyframes remoteBlackoutCut {
+                    0%   { opacity: 0; }
+                    3%   { opacity: 0.28; }
+                    5%   { opacity: 0.02; }
+                    8%   { opacity: 0.68; }
+                    11%  { opacity: 0.12; }
+                    15%  { opacity: 1; }
+                    92%  { opacity: 1; }
+                    96%  { opacity: 0.96; }
+                    98%  { opacity: 1; }
+                    100% { opacity: 0; }
+                }
+        
+                @keyframes remoteBlackoutGhostLines {
+                    0%,
+                    12% {
+                        opacity: 0;
+                    }
+        
+                    13% {
+                        opacity: 0.9;
+                    }
+        
+                    16% {
+                        opacity: 0;
+                    }
+        
+                    91% {
+                        opacity: 0;
+                    }
+        
+                    93% {
+                        opacity: 0.5;
+                    }
+        
+                    95% {
+                        opacity: 0;
+                    }
+        
+                    100% {
+                        opacity: 0;
+                    }
+                }
+        
+        
+                body.remote-distortion {
+                    animation:
+                        remoteDistortionShake 0.045s steps(2, end) infinite,
+                        ambientBrightness 12s ease-in-out infinite;
+        
+                    filter:
+                        contrast(1.26)
+                        brightness(1.08);
+                }
+        
+                body.remote-distortion .archive {
+                    animation:
+                        remoteDistortionSplit 0.065s steps(2, end) infinite;
+        
+                    text-shadow:
+                        -3px 0 rgba(255, 20, 20, 0.95),
+                        3px 0 rgba(255,255,255,0.30);
+        
+                    filter:
+                        contrast(1.14);
+                }
+        
+                body.remote-distortion::before,
+                body.remote-distortion::after {
+                    content: "";
+        
+                    position: fixed;
+                    inset: 0;
+        
+                    pointer-events: none;
+                }
+        
+                body.remote-distortion::before {
+                    z-index: 9997;
+        
+                    background:
+                        repeating-linear-gradient(
+                            to bottom,
+                            transparent 0px,
+                            transparent 5px,
+                            rgba(255,255,255,0.09) 6px,
+                            rgba(255,255,255,0.03) 7px,
+                            transparent 8px
+                        );
+        
+                    animation:
+                        remoteDistortionNoise 0.055s steps(2, end) infinite;
+                }
+        
+                body.remote-distortion::after {
+                    z-index: 9999;
+        
+                    background:
+                        linear-gradient(
+                            to bottom,
+        
+                            transparent 0%,
+                            transparent 12%,
+                            rgba(255,255,255,0.82) 12.1%,
+                            rgba(255,255,255,0.82) 12.5%,
+                            transparent 12.75%,
+        
+                            transparent 28%,
+                            rgba(255, 22, 22, 0.92) 28.1%,
+                            rgba(255, 22, 22, 0.92) 29.15%,
+                            transparent 29.45%,
+        
+                            transparent 52%,
+                            rgba(255,255,255,0.58) 52.1%,
+                            rgba(255,255,255,0.58) 52.55%,
+                            transparent 52.8%,
+        
+                            transparent 68%,
+                            rgba(255, 18, 18, 0.88) 68.1%,
+                            rgba(255, 18, 18, 0.88) 69.4%,
+                            transparent 69.7%,
+        
+                            transparent 88%,
+                            rgba(255,255,255,0.72) 88.1%,
+                            rgba(255,255,255,0.72) 88.5%,
+                            transparent 88.8%,
+        
+                            transparent 100%
+                        );
+        
+                    box-shadow:
+                        inset 0 0 80px rgba(255, 0, 0, 0.08);
+        
+                    animation:
+                        remoteDistortionSlice 0.075s steps(2, end) infinite;
+                }
+        
+                body.remote-distortion .section {
+                    border-color:
+                        rgba(255,255,255,0.20);
+                }
+        
+                body.remote-distortion .scanlines {
+                    opacity: 0.22;
+                }
+        
+                @keyframes remoteDistortionShake {
+                    0% {
+                        transform:
+                            translate(0, 0)
+                            skewX(0deg);
+                    }
+        
+                    20% {
+                        transform:
+                            translate(-5px, 1px)
+                            skewX(-0.7deg);
+                    }
+        
+                    40% {
+                        transform:
+                            translate(6px, -2px)
+                            skewX(0.8deg);
+                    }
+        
+                    60% {
+                        transform:
+                            translate(-2px, 3px)
+                            skewX(-0.35deg);
+                    }
+        
+                    80% {
+                        transform:
+                            translate(4px, -1px)
+                            skewX(0.45deg);
+                    }
+        
+                    100% {
+                        transform:
+                            translate(0, 0)
+                            skewX(0deg);
+                    }
+                }
+        
+                @keyframes remoteDistortionSplit {
+                    0%,
+                    100% {
+                        transform: translate(0, 0);
+                        filter:
+                            contrast(1)
+                            brightness(1);
+                    }
+        
+                    22% {
+                        transform: translate(-6px, 0);
+                        filter:
+                            contrast(1.30)
+                            brightness(1.16);
+                    }
+        
+                    49% {
+                        transform: translate(5px, 1px);
+                        filter:
+                            contrast(1.12)
+                            brightness(0.94);
+                    }
+        
+                    73% {
+                        transform: translate(-3px, -1px);
+                        filter:
+                            contrast(1.24)
+                            brightness(1.10);
+                    }
+                }
+        
+                @keyframes remoteDistortionNoise {
+                    0% {
+                        opacity: 0.10;
+                        transform: translateY(0);
+                    }
+        
+                    32% {
+                        opacity: 0.34;
+                        transform: translateY(-6px);
+                    }
+        
+                    64% {
+                        opacity: 0.16;
+                        transform: translateY(4px);
+                    }
+        
+                    100% {
+                        opacity: 0.22;
+                        transform: translateY(-2px);
+                    }
+                }
+        
+                @keyframes remoteDistortionSlice {
+                    0% {
+                        transform: translateX(0);
+                        opacity: 0.56;
+                    }
+        
+                    25% {
+                        transform: translateX(12px);
+                        opacity: 1;
+                    }
+        
+                    50% {
+                        transform: translateX(-9px);
+                        opacity: 0.68;
+                    }
+        
+                    75% {
+                        transform: translateX(6px);
+                        opacity: 0.92;
+                    }
+        
+                    100% {
+                        transform: translateX(0);
+                        opacity: 0.62;
+                    }
+                }
+        
+        
+                /* =========================================================
+                   REMOTE VFX // VISUAL SNOW
+                   Long-form analogue/static corruption.
+                ========================================================= */
+        
+                body.remote-snow {
+                    filter:
+                        contrast(1.22)
+                        brightness(1.06);
+                }
+        
+                body.remote-snow .archive {
+                    animation:
+                        remoteSnowImageDrift 0.19s steps(2, end) infinite;
+        
+                    text-shadow:
+                        -1px 0 rgba(255,255,255,0.40),
+                        1px 0 rgba(255,255,255,0.15);
+                }
+        
+                body.remote-snow::before,
+                body.remote-snow::after {
+                    content: "";
+        
+                    position: fixed;
+                    inset: -35%;
+        
+                    pointer-events: none;
+                }
+        
+                /*
+                 * Dense fine-grain television/static texture.
+                 *
+                 * Multiple tiny repeating gradients are offset from one another
+                 * so it feels much less like ordinary scanlines.
+                 */
+                body.remote-snow::before {
+                    z-index: 9998;
+        
+                    background:
+                        repeating-radial-gradient(
+                            circle at 17% 31%,
+                            rgba(255,255,255,0.32) 0px,
+                            rgba(255,255,255,0.32) 1px,
+                            transparent 1px,
+                            transparent 3px
+                        ),
+                        repeating-radial-gradient(
+                            circle at 72% 64%,
+                            rgba(255,255,255,0.20) 0px,
+                            rgba(255,255,255,0.20) 1px,
+                            transparent 1px,
+                            transparent 4px
+                        ),
+                        repeating-linear-gradient(
+                            117deg,
+                            rgba(255,255,255,0.08) 0px,
+                            rgba(255,255,255,0.08) 1px,
+                            transparent 1px,
+                            transparent 3px
+                        );
+        
+                    opacity: 0.72;
+        
+                    mix-blend-mode: screen;
+        
+                    animation:
+                        remoteSnowNoise 0.085s steps(2, end) infinite;
+                }
+        
+                /*
+                 * Larger horizontal interference bands over the grain.
+                 */
+                body.remote-snow::after {
+                    z-index: 9999;
+        
+                    background:
+                        repeating-linear-gradient(
+                            to bottom,
+                            transparent 0px,
+                            transparent 17px,
+                            rgba(255,255,255,0.07) 18px,
+                            transparent 19px,
+                            transparent 41px,
+                            rgba(255,255,255,0.16) 42px,
+                            rgba(255,255,255,0.05) 44px,
+                            transparent 45px
+                        );
+        
+                    opacity: 0.68;
+        
+                    animation:
+                        remoteSnowBands 0.14s steps(2, end) infinite;
+                }
+        
+                body.remote-snow .scanlines {
+                    opacity: 0.30;
+                }
+        
+                body.remote-snow .vignette {
+                    background:
+                        radial-gradient(
+                            ellipse at center,
+                            transparent 28%,
+                            rgba(0,0,0,0.22) 66%,
+                            rgba(0,0,0,0.62) 100%
+                        );
+                }
+        
+                @keyframes remoteSnowNoise {
+                    0% {
+                        transform:
+                            translate(-3%, -4%)
+                            scale(1.04);
+                        opacity: 0.54;
+                    }
+        
+                    16% {
+                        transform:
+                            translate(5%, 2%)
+                            scale(1.01);
+                        opacity: 0.82;
+                    }
+        
+                    33% {
+                        transform:
+                            translate(-1%, 6%)
+                            scale(1.05);
+                        opacity: 0.64;
+                    }
+        
+                    50% {
+                        transform:
+                            translate(7%, -2%)
+                            scale(1.02);
+                        opacity: 0.88;
+                    }
+        
+                    66% {
+                        transform:
+                            translate(-6%, 1%)
+                            scale(1.06);
+                        opacity: 0.58;
+                    }
+        
+                    83% {
+                        transform:
+                            translate(2%, -6%)
+                            scale(1.03);
+                        opacity: 0.78;
+                    }
+        
+                    100% {
+                        transform:
+                            translate(-3%, -4%)
+                            scale(1.04);
+                        opacity: 0.54;
+                    }
+                }
+        
+                @keyframes remoteSnowBands {
+                    0% {
+                        transform: translateY(-12px);
+                        opacity: 0.38;
+                    }
+        
+                    25% {
+                        transform: translateY(19px);
+                        opacity: 0.78;
+                    }
+        
+                    50% {
+                        transform: translateY(-7px);
+                        opacity: 0.52;
+                    }
+        
+                    75% {
+                        transform: translateY(13px);
+                        opacity: 0.86;
+                    }
+        
+                    100% {
+                        transform: translateY(-12px);
+                        opacity: 0.38;
+                    }
+                }
+        
+                @keyframes remoteSnowImageDrift {
+                    0%,
+                    100% {
+                        transform: translate(0, 0);
+                        opacity: 1;
+                    }
+        
+                    18% {
+                        transform: translate(-1px, 0);
+                        opacity: 0.94;
+                    }
+        
+                    37% {
+                        transform: translate(1px, 1px);
+                        opacity: 1;
+                    }
+        
+                    58% {
+                        transform: translate(0, -1px);
+                        opacity: 0.90;
+                    }
+        
+                    76% {
+                        transform: translate(1px, 0);
+                        opacity: 0.97;
+                    }
+                }
+
     </style>
 
 </head>
@@ -3219,6 +3983,243 @@ MERIDIAN STATUS: ACTIVE`
         }
 
     </script>
+
+
+<script type="module">
+
+    import {
+        initializeApp
+    } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
+
+    import {
+        getDatabase,
+        ref,
+        onValue
+    } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-database.js";
+
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyAYpmII-FnbAhrNtKCZnAtV4nmeS50GsgE",
+        authDomain: "meridian-c942b.firebaseapp.com",
+        databaseURL: "https://meridian-c942b-default-rtdb.asia-southeast1.firebasedatabase.app",
+        projectId: "meridian-c942b",
+        storageBucket: "meridian-c942b.firebasestorage.app",
+        messagingSenderId: "443298591760",
+        appId: "1:443298591760:web:750f2babc66ecc3309c695"
+    };
+
+
+    const app =
+        initializeApp(firebaseConfig);
+
+    const database =
+        getDatabase(app);
+
+    const eventRef =
+        ref(
+            database,
+            "meridian/event"
+        );
+
+
+    let lastRemoteEventId = null;
+    let remoteListenerInitialised = false;
+
+
+    onValue(
+        eventRef,
+        snapshot => {
+
+            const event =
+                snapshot.val();
+
+
+            if (!event) {
+
+                remoteListenerInitialised =
+                    true;
+
+                return;
+
+            }
+
+
+            /*
+             * Firebase immediately returns the currently
+             * stored event when this listener first connects.
+             *
+             * Remember it, but do not play it.
+             */
+            if (!remoteListenerInitialised) {
+
+                lastRemoteEventId =
+                    event.id;
+
+                remoteListenerInitialised =
+                    true;
+
+                return;
+
+            }
+
+
+            /*
+             * Ignore anything already processed.
+             */
+            if (
+                event.id ===
+                lastRemoteEventId
+            ) {
+                return;
+            }
+
+
+            lastRemoteEventId =
+                event.id;
+
+
+            handleRemoteEvent(
+                event
+            );
+
+        }
+    );
+
+
+    function handleRemoteEvent(event) {
+
+        switch (event.type) {
+
+            case "glitch":
+                triggerRemoteGlitch();
+                break;
+
+            case "blackout":
+                triggerRemoteBlackout();
+                break;
+
+            case "flash":
+            case "distortion":
+                triggerRemoteDistortion();
+                break;
+
+            case "snow":
+            case "static":
+                triggerRemoteSnow();
+                break;
+
+        }
+
+    }
+
+
+    function clearRemoteVfx() {
+
+        document.body.classList.remove(
+            "remote-glitch",
+            "remote-blackout",
+            "remote-distortion",
+            "remote-snow"
+        );
+
+    }
+
+
+    function triggerRemoteGlitch() {
+
+        clearRemoteVfx();
+
+        void document.body.offsetWidth;
+
+        document.body.classList.add(
+            "remote-glitch"
+        );
+
+        setTimeout(
+            () => {
+
+                document.body.classList.remove(
+                    "remote-glitch"
+                );
+
+            },
+            1300
+        );
+
+    }
+
+
+    function triggerRemoteBlackout() {
+
+        clearRemoteVfx();
+
+        void document.body.offsetWidth;
+
+        document.body.classList.add(
+            "remote-blackout"
+        );
+
+        setTimeout(
+            () => {
+
+                document.body.classList.remove(
+                    "remote-blackout"
+                );
+
+            },
+            1800
+        );
+
+    }
+
+
+    function triggerRemoteDistortion() {
+
+        clearRemoteVfx();
+
+        void document.body.offsetWidth;
+
+        document.body.classList.add(
+            "remote-distortion"
+        );
+
+        setTimeout(
+            () => {
+
+                document.body.classList.remove(
+                    "remote-distortion"
+                );
+
+            },
+            1050
+        );
+
+    }
+
+    function triggerRemoteSnow() {
+
+        clearRemoteVfx();
+
+        void document.body.offsetWidth;
+
+        document.body.classList.add(
+            "remote-snow"
+        );
+
+        setTimeout(
+            () => {
+
+                document.body.classList.remove(
+                    "remote-snow"
+                );
+
+            },
+            10000
+        );
+
+    }
+
+</script>
 
 </body>
 
