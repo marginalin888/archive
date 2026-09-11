@@ -1,156 +1,790 @@
-
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
+
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>Meridian — 05</title>
 
     <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+
         body {
             margin: 0;
+
             background: #111;
-            color: #ddd;
+
+            color: #d8d8d8;
+
             font-family: "Courier New", monospace;
+
+            min-height: 100vh;
+
             overflow: hidden;
         }
 
+
+        /* =========================
+           HEADER
+        ========================= */
+
+        header {
+            height: 60px;
+
+            border-bottom: 1px solid #333;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            padding: 0 28px;
+
+            background: #151515;
+
+            position: relative;
+
+            z-index: 10;
+        }
+
+
+        .header-left {
+            display: flex;
+
+            align-items: center;
+
+            gap: 25px;
+        }
+
+
+        .back-button {
+            background: none;
+
+            border: none;
+
+            color: #666;
+
+            font-family: "Courier New", monospace;
+
+            font-size: 11px;
+
+            letter-spacing: 1px;
+
+            cursor: pointer;
+
+            padding: 5px 0;
+        }
+
+
+        .back-button:hover {
+            color: #aaa;
+        }
+
+
+        .logo {
+            font-size: 18px;
+
+            letter-spacing: 5px;
+
+            color: #d8d8d8;
+        }
+
+
+        .system-name {
+            font-size: 12px;
+
+            color: #777;
+
+            letter-spacing: 2px;
+        }
+
+
+        /* =========================
+           MAIN
+        ========================= */
+
         .container {
-            max-width: 700px;
-            margin: 80px auto;
-            padding: 40px;
-            text-align: center;
-        }
+            width: min(900px, calc(100% - 80px));
 
-        .message {
-            margin-top: 180px;
-            font-size: 28px;
-            letter-spacing: 4px;
+            margin: 0 auto;
+
+            padding: 70px 0 80px;
+
             position: relative;
+
+            z-index: 3;
         }
 
-        .date {
+
+        .record-heading {
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: flex-start;
+
+            gap: 30px;
+
+            padding-bottom: 25px;
+
+            border-bottom: 1px solid #333;
+        }
+
+
+        .record-title {
+            font-size: 20px;
+
+            letter-spacing: 3px;
+        }
+
+
+        .record-id {
+            color: #666;
+
+            font-size: 11px;
+
+            letter-spacing: 2px;
+
+            padding-top: 5px;
+        }
+
+
+        /* =========================
+           STATUS BLOCK
+        ========================= */
+
+        .metadata {
+            margin-top: 30px;
+
+            display: grid;
+
+            grid-template-columns: 210px 1fr;
+
+            gap: 10px 25px;
+
+            font-size: 12px;
+        }
+
+
+        .metadata-label {
+            color: #666;
+
+            letter-spacing: 1px;
+        }
+
+
+        .metadata-value {
+            color: #aaa;
+        }
+
+
+        /* =========================
+           MESSAGE
+        ========================= */
+
+        .message-block {
             margin-top: 55px;
-            font-size: 24px;
+
+            padding: 34px 36px;
+
+            border-top: 1px solid #292929;
+
+            border-bottom: 1px solid #292929;
+
             position: relative;
         }
 
-        /*
-         * The glitch happens occasionally.
-         * Most of the time the page looks completely normal.
-         */
+
+        .message-label {
+            font-size: 10px;
+
+            letter-spacing: 3px;
+
+            color: #555;
+
+            margin-bottom: 24px;
+        }
+
 
         .message {
-            animation: messageGlitch 8s infinite;
+            font-size: 17px;
+
+            line-height: 1.9;
+
+            letter-spacing: 1px;
+
+            color: #c6c6c6;
+
+            max-width: 720px;
+
+            animation:
+                textDrift 6s ease-in-out infinite;
         }
 
-        .date {
-            animation: dateGlitch 11s infinite;
-        }
 
-        @keyframes messageGlitch {
+        @keyframes textDrift {
 
-            0%,
-            88%,
-            90%,
-            100% {
-                transform: translate(0, 0);
-                opacity: 1;
-                text-shadow: none;
-            }
-
-            88.5% {
-                transform: translate(-2px, 0);
-                opacity: 0.75;
-                text-shadow: 2px 0 #777;
-            }
-
-            89% {
-                transform: translate(2px, 1px);
-                opacity: 0.9;
-                text-shadow: -2px 0 #555;
-            }
-
-            89.5% {
-                transform: translate(-1px, -1px);
-                opacity: 0.55;
-            }
-        }
-
-        @keyframes dateGlitch {
-
-            0%,
-            91%,
-            93%,
-            100% {
-                transform: translate(0, 0);
-                opacity: 1;
-            }
-
-            91.5% {
-                transform: translate(3px, 0);
-                opacity: 0.7;
-            }
-
-            92% {
-                transform: translate(-2px, 1px);
-                opacity: 0.45;
-                text-shadow: 2px 0 #777;
-            }
-
-            92.5% {
-                transform: translate(1px, 0);
-                opacity: 0.8;
-            }
-        }
-
-        /*
-         * Very subtle screen flicker.
-         */
-
-        body {
-            animation: screenFlicker 13s infinite;
-        }
-
-        @keyframes screenFlicker {
-
-            0%,
-            94%,
-            96%,
-            100% {
-                opacity: 1;
-            }
-
-            94.5% {
+            0% {
                 opacity: 0.96;
+                transform: translateX(0);
             }
 
-            95% {
+            25% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.94;
+                transform: translateX(0.35px);
+            }
+
+            75% {
+                opacity: 0.98;
+            }
+
+            100% {
+                opacity: 0.96;
+                transform: translateX(0);
+            }
+
+        }
+
+
+        /* =========================
+           MESSAGE POLYDATE
+        ========================= */
+
+        .message-polydate {
+            margin-top: 30px;
+
+            padding-top: 16px;
+
+            border-top: 1px solid #292929;
+
+            color: #777;
+
+            font-size: 13px;
+
+            letter-spacing: 2px;
+
+            text-align: right;
+
+            animation:
+                polydateDrift
+                7s
+                ease-in-out
+                infinite;
+        }
+
+
+        @keyframes polydateDrift {
+
+            0%,
+            100% {
+                opacity: 0.72;
+            }
+
+            50% {
                 opacity: 0.92;
             }
 
-            95.5% {
-                opacity: 0.98;
-            }
         }
+
+
+        /* =========================
+           RESOLVED REFERENCE
+        ========================= */
+
+        .reference-block {
+            margin-top: 42px;
+
+            padding: 28px 0;
+
+            border-bottom: 1px solid #292929;
+        }
+
+
+        .section-label {
+            font-size: 10px;
+
+            letter-spacing: 3px;
+
+            color: #555;
+
+            margin-bottom: 20px;
+        }
+
+
+        .reference-grid {
+            display: grid;
+
+            grid-template-columns: 210px 1fr;
+
+            gap: 9px 25px;
+
+            font-size: 12px;
+        }
+
+
+        .reference-label {
+            color: #666;
+        }
+
+
+        .reference-value {
+            color: #aaa;
+        }
+
+
+        .query-reference {
+            color: #c2c9c0;
+
+            letter-spacing: 2px;
+
+            animation:
+                referencePulse 3.8s ease-in-out infinite;
+        }
+
+
+        @keyframes referencePulse {
+
+            0%,
+            100% {
+                opacity: 0.72;
+            }
+
+            50% {
+                opacity: 1;
+            }
+
+        }
+
+
+        /* =========================
+           CONSTANT DISPLAY EFFECT
+        ========================= */
+
+        .scanlines {
+            position: fixed;
+
+            inset: 0;
+
+            pointer-events: none;
+
+            z-index: 100;
+
+            opacity: 0.13;
+
+            background:
+                repeating-linear-gradient(
+                    to bottom,
+                    rgba(255,255,255,0.03) 0px,
+                    rgba(255,255,255,0.03) 1px,
+                    transparent 1px,
+                    transparent 4px
+                );
+        }
+
+
+        .drift-band {
+            position: fixed;
+
+            left: 0;
+
+            right: 0;
+
+            height: 130px;
+
+            top: -160px;
+
+            z-index: 90;
+
+            pointer-events: none;
+
+            background:
+                linear-gradient(
+                    to bottom,
+                    rgba(255,255,255,0),
+                    rgba(255,255,255,0.025),
+                    rgba(255,255,255,0.055),
+                    rgba(255,255,255,0.025),
+                    rgba(255,255,255,0)
+                );
+
+            animation:
+                driftBand 8s linear infinite;
+        }
+
+
+        @keyframes driftBand {
+
+            from {
+                transform: translateY(0);
+            }
+
+            to {
+                transform: translateY(
+                    calc(100vh + 320px)
+                );
+            }
+
+        }
+
+
+        .noise {
+            position: fixed;
+
+            inset: -20px;
+
+            pointer-events: none;
+
+            z-index: 80;
+
+            opacity: 0.035;
+
+            background-image:
+                repeating-radial-gradient(
+                    circle at 30% 40%,
+                    rgba(255,255,255,0.7) 0,
+                    transparent 1px,
+                    transparent 3px
+                );
+
+            background-size: 7px 7px;
+
+            animation:
+                noiseShift 0.22s steps(2) infinite;
+        }
+
+
+        @keyframes noiseShift {
+
+            0% {
+                transform: translate(0, 0);
+            }
+
+            25% {
+                transform: translate(-2px, 1px);
+            }
+
+            50% {
+                transform: translate(1px, -2px);
+            }
+
+            75% {
+                transform: translate(2px, 2px);
+            }
+
+            100% {
+                transform: translate(0, 0);
+            }
+
+        }
+
+
+        /* =========================
+           FOOTER
+        ========================= */
+
+        footer {
+            height: 30px;
+
+            position: fixed;
+
+            left: 0;
+
+            right: 0;
+
+            bottom: 0;
+
+            border-top: 1px solid #333;
+
+            background: #151515;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            padding: 0 20px;
+
+            font-size: 10px;
+
+            color: #555;
+
+            letter-spacing: 1px;
+
+            z-index: 10;
+        }
+
+
+        @media (max-width: 700px) {
+
+            .container {
+                width: calc(100% - 35px);
+
+                padding-top: 40px;
+            }
+
+
+            .metadata,
+            .reference-grid {
+                grid-template-columns: 1fr;
+
+                gap: 5px;
+            }
+
+
+            .metadata-value,
+            .reference-value {
+                margin-bottom: 10px;
+            }
+
+        }
+
     </style>
+
 </head>
+
 
 <body>
 
-    <div class="container">
 
-        <div class="message">
-            WHAT ARE YOU REALLY SEARCHING FOR?
+    <!-- =========================
+         HEADER
+    ========================= -->
+
+    <header>
+
+        <div class="header-left">
+
+            <button
+                class="back-button"
+                onclick="goBack()"
+            >
+                ← MERIDIAN
+            </button>
+
+            <div class="logo">
+                MERIDIAN 05
+            </div>
+
         </div>
 
-        <div class="date">
-            ⬟ 05/04/2026
+        <div class="system-name">
+            VISUAL EVIDENCE
         </div>
 
-    </div>
+    </header>
+
+
+    <!-- =========================
+         MAIN
+    ========================= -->
+
+    <main class="container">
+
+
+        <div class="record-heading">
+
+            <div class="record-title">
+                REFERENCE RESOLUTION
+            </div>
+
+            <div class="record-id">
+                VE-C4-01
+            </div>
+
+        </div>
+
+
+        <!-- =========================
+             STATUS
+        ========================= -->
+
+        <div class="metadata">
+
+            <div class="metadata-label">
+                SUBJECT
+            </div>
+
+            <div class="metadata-value">
+                CANDIDATE 04
+            </div>
+
+
+            <div class="metadata-label">
+                OBJECT STATE
+            </div>
+
+            <div class="metadata-value">
+                RESOLVED
+            </div>
+
+
+            <div class="metadata-label">
+                REFERENCE STATE
+            </div>
+
+            <div class="metadata-value">
+                VERIFIED
+            </div>
+
+
+            <div class="metadata-label">
+                SOURCE
+            </div>
+
+            <div class="metadata-value">
+                VISUAL OBJECT
+            </div>
+
+        </div>
+
+
+        <!-- =========================
+             RETAINED MESSAGE
+
+             POLYDATE:
+             ⬟ = 5th letter
+             02 = 2nd word
+             05 = code position 5
+
+             2nd word = "shouldn't"
+             5th letter = L
+        ========================= -->
+
+        <div class="message-block">
+
+            <div class="message-label">
+                RETAINED ANNOTATION
+            </div>
+
+            <div class="message">
+
+                You shouldn't be asking about MERIDIAN.
+
+                <br><br>
+
+                You should be asking about A.
+
+
+                <div class="message-polydate">
+                    ⬟ 02/05/2026
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =========================
+             REFERENCE INFORMATION
+        ========================= -->
+
+        <div class="reference-block">
+
+            <div class="section-label">
+                ASSOCIATED REFERENCE
+            </div>
+
+
+            <div class="reference-grid">
+
+
+                <div class="reference-label">
+                    REFERENCE CLASS
+                </div>
+
+                <div class="reference-value">
+                    QUERY
+                </div>
+
+
+                <div class="reference-label">
+                    QUERY MODE
+                </div>
+
+                <div class="reference-value">
+                    SINGLE TERM
+                </div>
+
+
+                <div class="reference-label">
+                    QUERY REFERENCE
+                </div>
+
+                <div
+                    class="reference-value query-reference"
+                >
+                    A6
+                </div>
+
+
+                <div class="reference-label">
+                    RESOLUTION STATE
+                </div>
+
+                <div class="reference-value">
+                    PENDING
+                </div>
+
+
+            </div>
+
+        </div>
+
+
+    </main>
+
+
+    <!-- =========================
+         FOOTER
+    ========================= -->
+
+    <footer>
+
+        <div>
+            MERIDIAN // VISUAL EVIDENCE SYSTEM
+        </div>
+
+        <div>
+            STATUS: RESOLVED
+        </div>
+
+    </footer>
+
+
+    <!-- =========================
+         DISPLAY EFFECTS
+    ========================= -->
+
+    <div class="noise"></div>
+
+    <div class="drift-band"></div>
+
+    <div class="scanlines"></div>
+
+
+    <script>
+
+        function goBack() {
+
+            window.location.href =
+                "index.html";
+
+        }
+
+    </script>
 
 </body>
 
 </html>
-
