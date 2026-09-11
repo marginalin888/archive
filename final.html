@@ -1,70 +1,1617 @@
-
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
+
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>Meridian</title>
 
     <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+
+        html,
         body {
             margin: 0;
+
+            width: 100%;
+            height: 100%;
+
             background: #111;
-            color: #ddd;
+
+            color: #d8d8d8;
+
             font-family: "Courier New", monospace;
+
+            overflow: hidden;
         }
 
-        .container {
-            max-width: 700px;
-            margin: 120px auto;
-            padding: 40px;
-            text-align: center;
+
+        /* =========================================================
+           GLOBAL DISPLAY EFFECT
+        ========================================================= */
+
+        #scanlines {
+            position: fixed;
+
+            inset: 0;
+
+            pointer-events: none;
+
+            z-index: 5000;
+
+            opacity: 0.08;
+
+            background:
+                repeating-linear-gradient(
+                    0deg,
+                    transparent 0px,
+                    transparent 3px,
+                    rgba(255,255,255,0.025) 4px,
+                    transparent 5px
+                );
         }
 
-        h1 {
-            font-size: 28px;
-            font-weight: normal;
-            letter-spacing: 6px;
-            margin-bottom: 60px;
+
+        #screenPulse {
+            position: fixed;
+
+            inset: 0;
+
+            pointer-events: none;
+
+            z-index: 4900;
+
+            background: #fff;
+
+            opacity: 0;
         }
 
-        .message {
-            font-size: 18px;
+
+        .pulse {
+            animation:
+                screenPulseAnimation
+                0.3s
+                linear;
+        }
+
+
+        @keyframes screenPulseAnimation {
+
+            0% {
+                opacity: 0;
+            }
+
+            20% {
+                opacity: 0.08;
+            }
+
+            40% {
+                opacity: 0;
+            }
+
+            65% {
+                opacity: 0.035;
+            }
+
+            100% {
+                opacity: 0;
+            }
+
+        }
+
+
+        /* =========================================================
+           PHASE 1 — VERIFICATION
+        ========================================================= */
+
+        #verification {
+            position: fixed;
+
+            inset: 0;
+
+            background: #000;
+
+            z-index: 1000;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+        }
+
+
+        #verificationText {
+            min-width: 380px;
+
+            color: #777;
+
+            font-size: 12px;
+
             line-height: 2;
+
+            letter-spacing: 2px;
+
+            white-space: pre-line;
+        }
+
+
+        /* =========================================================
+           PHASE 2 — SYSTEM ASSEMBLY
+        ========================================================= */
+
+        #assembly {
+            position: fixed;
+
+            inset: 0;
+
+            background: #111;
+
+            z-index: 900;
+
+            display: none;
+
+            opacity: 0;
+        }
+
+
+        #assembly.visible {
+            display: block;
+
+            animation:
+                phaseFadeIn
+                0.4s
+                ease
+                forwards;
+        }
+
+
+        @keyframes phaseFadeIn {
+
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+
+        }
+
+
+        .assembly-title {
+            position: absolute;
+
+            top: 12%;
+
+            width: 100%;
+
+            text-align: center;
+
+            font-size: 12px;
+
+            color: #666;
+
+            letter-spacing: 4px;
+        }
+
+
+        .section-grid {
+            position: absolute;
+
+            left: 50%;
+
+            top: 50%;
+
+            transform:
+                translate(
+                    -50%,
+                    -40%
+                );
+
+            width: min(
+                1050px,
+                calc(100% - 80px)
+            );
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(3, 1fr);
+
+            gap: 18px;
+        }
+
+
+        .section-box {
+            height: 115px;
+
+            border: 1px solid #333;
+
+            background: #151515;
+
+            padding: 18px 20px;
+
+            opacity: 0;
+
+            transform:
+                translateY(
+                    calc(100vh + 200px)
+                );
+
+            transition:
+                transform 0.65s cubic-bezier(
+                    0.2,
+                    0.85,
+                    0.25,
+                    1
+                ),
+                opacity 0.3s ease,
+                border-color 0.35s ease,
+                background 0.35s ease;
+        }
+
+
+        .section-box.arrived {
+            opacity: 1;
+
+            transform:
+                translateY(0);
+        }
+
+
+        .section-box.confirmed {
+            border-color: #536653;
+
+            background: #172018;
+        }
+
+
+        .section-number {
+            color: #555;
+
+            font-size: 10px;
+
+            letter-spacing: 2px;
+
+            margin-bottom: 12px;
+        }
+
+
+        .section-name {
+            color: #aaa;
+
+            font-size: 14px;
+
             letter-spacing: 2px;
         }
 
-        .final-code {
-            font-size: 32px;
-            letter-spacing: 6px;
-            margin: 35px 0;
-            color: #fff;
+
+        .section-status {
+            margin-top: 16px;
+
+            color: #555;
+
+            font-size: 9px;
+
+            letter-spacing: 2px;
         }
+
+
+        .section-box.confirmed
+        .section-status {
+            color: #789078;
+        }
+
+
+        .section-box.confirmed
+        .section-name {
+            color: #9fb39d;
+        }
+
+
+        /* =========================================================
+           ASSEMBLY COMPLETION LINE
+        ========================================================= */
+
+        #assemblyComplete {
+            position: absolute;
+
+            left: 0;
+
+            right: 0;
+
+            bottom: 12%;
+
+            text-align: center;
+
+            font-size: 11px;
+
+            color: #789078;
+
+            letter-spacing: 4px;
+
+            opacity: 0;
+
+            transition:
+                opacity 0.4s ease;
+        }
+
+
+        #assemblyComplete.visible {
+            opacity: 1;
+        }
+
+
+        /* =========================================================
+           PHASE 3 — RECALL / HISTORY
+        ========================================================= */
+
+        #recall {
+            position: fixed;
+
+            inset: 0;
+
+            z-index: 850;
+
+            display: none;
+
+            align-items: center;
+
+            justify-content: center;
+
+            background: #111;
+
+            opacity: 0;
+        }
+
+
+        #recall.visible {
+            display: flex;
+
+            animation:
+                phaseFadeIn
+                0.35s
+                ease
+                forwards;
+        }
+
+
+        #recallText {
+            position: absolute;
+
+            left: 50%;
+            top: 50%;
+
+            transform:
+                translate(
+                    -50%,
+                    -50%
+                );
+
+            width: 90%;
+
+            text-align: center;
+
+            color: #aaa;
+
+            font-size: 26px;
+
+            letter-spacing: 5px;
+
+            white-space: nowrap;
+        }
+
+
+        .recall-flicker {
+            animation:
+                recallFlicker
+                0.11s
+                linear;
+        }
+
+
+        @keyframes recallFlicker {
+
+            0% {
+                opacity: 1;
+
+                transform:
+                    translate(
+                        -50%,
+                        -50%
+                    );
+            }
+
+            25% {
+                opacity: 0.2;
+
+                transform:
+                    translate(
+                        calc(-50% - 4px),
+                        calc(-50% + 1px)
+                    );
+            }
+
+            50% {
+                opacity: 1;
+
+                transform:
+                    translate(
+                        calc(-50% + 3px),
+                        calc(-50% - 1px)
+                    );
+            }
+
+            75% {
+                opacity: 0.45;
+            }
+
+            100% {
+                opacity: 1;
+
+                transform:
+                    translate(
+                        -50%,
+                        -50%
+                    );
+            }
+
+        }
+
+
+        /* =========================================================
+           PHASE 4 — FINAL SCREEN
+        ========================================================= */
+
+        #finalScreen {
+            position: fixed;
+
+            inset: 0;
+
+            z-index: 800;
+
+            background: #111;
+
+            display: none;
+
+            opacity: 0;
+        }
+
+
+        #finalScreen.visible {
+            display: block;
+
+            animation:
+                finalFade
+                1s
+                ease
+                forwards;
+        }
+
+
+        @keyframes finalFade {
+
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+
+        }
+
+
+        .final-container {
+            max-width: 760px;
+
+            height: 100vh;
+
+            margin: 0 auto;
+
+            padding: 60px 40px;
+
+            display: flex;
+
+            flex-direction: column;
+
+            justify-content: center;
+
+            text-align: center;
+        }
+
+
+        .final-title {
+            font-size: 26px;
+
+            font-weight: normal;
+
+            letter-spacing: 7px;
+
+            color: #d8d8d8;
+
+            margin-bottom: 55px;
+
+            opacity: 0;
+
+            transition:
+                opacity 0.8s ease;
+        }
+
+
+        .final-title.visible {
+            opacity: 1;
+        }
+
+
+        .final-status {
+            font-size: 11px;
+
+            color: #777;
+
+            letter-spacing: 3px;
+
+            margin-bottom: 28px;
+
+            opacity: 0;
+
+            transition:
+                opacity 0.7s ease;
+        }
+
+
+        .final-status.visible {
+            opacity: 1;
+        }
+
+
+        .divider {
+            width: 100%;
+
+            max-width: 520px;
+
+            border-top: 1px solid #292929;
+
+            margin: 0 auto 35px;
+
+            opacity: 0;
+
+            transition:
+                opacity 0.7s ease;
+        }
+
+
+        .divider.visible {
+            opacity: 1;
+        }
+
+
+        .accepted {
+            color: #c8c8c8;
+
+            font-size: 15px;
+
+            letter-spacing: 3px;
+
+            margin-bottom: 28px;
+
+            opacity: 0;
+
+            transition:
+                opacity 0.7s ease;
+        }
+
+
+        .accepted.visible {
+            opacity: 1;
+        }
+
+
+        /* =========================================================
+           FINAL CODE
+        ========================================================= */
+
+        #finalCode {
+            font-size: 34px;
+
+            color: #fff;
+
+            letter-spacing: 7px;
+
+            margin:
+                10px
+                0
+                42px;
+
+            opacity: 0;
+
+            transform:
+                scale(0.95);
+
+            filter:
+                brightness(2);
+        }
+
+
+        #finalCode.visible {
+            animation:
+                finalCodeReveal
+                1.4s
+                ease
+                forwards;
+        }
+
+
+        @keyframes finalCodeReveal {
+
+            0% {
+                opacity: 0;
+
+                transform:
+                    scale(0.95);
+
+                filter:
+                    brightness(2);
+            }
+
+            20% {
+                opacity: 0.2;
+            }
+
+            35% {
+                opacity: 0.85;
+
+                transform:
+                    scale(1.015);
+            }
+
+            45% {
+                opacity: 0.25;
+            }
+
+            58% {
+                opacity: 1;
+
+                filter:
+                    brightness(1.4);
+            }
+
+            70% {
+                opacity: 0.6;
+            }
+
+            100% {
+                opacity: 1;
+
+                transform:
+                    scale(1);
+
+                filter:
+                    brightness(1);
+            }
+
+        }
+
+
+        .ending-message {
+            color: #777;
+
+            font-size: 14px;
+
+            line-height: 2;
+
+            letter-spacing: 2px;
+
+            opacity: 0;
+
+            transition:
+                opacity 1s ease;
+        }
+
+
+        .ending-message.visible {
+            opacity: 1;
+        }
+
+
+        .footer-note {
+            margin-top: 55px;
+
+            color: #444;
+
+            font-size: 10px;
+
+            letter-spacing: 2px;
+
+            opacity: 0;
+
+            transition:
+                opacity 1s ease;
+        }
+
+
+        .footer-note.visible {
+            opacity: 1;
+        }
+
+
+        /* =========================================================
+           RESPONSIVE
+        ========================================================= */
+
+        @media (
+            max-width: 800px
+        ) {
+
+            .section-grid {
+                grid-template-columns:
+                    repeat(2, 1fr);
+            }
+
+
+            .section-box {
+                height: 95px;
+            }
+
+
+            #recallText {
+                font-size: 19px;
+
+                letter-spacing: 3px;
+            }
+
+
+            #finalCode {
+                font-size: 27px;
+
+                letter-spacing: 4px;
+            }
+
+        }
+
     </style>
+
 </head>
+
 
 <body>
 
-    <div class="container">
 
-        <h1>MERIDIAN</h1>
+    <!-- =========================================================
+         PHASE 1
+    ========================================================= -->
 
-        <div class="message">
+    <div id="verification">
 
-            <div>CODE ACCEPTED.</div>
+        <div id="verificationText"></div>
 
-            <div class="final-code">
-                XXXX-XXXX-XXXX
+    </div>
+
+
+    <!-- =========================================================
+         PHASE 2
+    ========================================================= -->
+
+    <div id="assembly">
+
+        <div class="assembly-title">
+            SYSTEM STATE RECONSTRUCTION
+        </div>
+
+
+        <div class="section-grid">
+
+
+            <div
+                class="section-box"
+                data-section="01"
+            >
+
+                <div class="section-number">
+                    MERIDIAN 01
+                </div>
+
+                <div class="section-name">
+                    RECORD
+                </div>
+
+                <div class="section-status">
+                    PENDING
+                </div>
+
             </div>
 
-            <br>
 
-            <div>THIS CODE HAS MORE THAN ONE USE.</div>
-            <div>YOU'LL KNOW WHEN.</div>
+            <div
+                class="section-box"
+                data-section="02"
+            >
+
+                <div class="section-number">
+                    MERIDIAN 02
+                </div>
+
+                <div class="section-name">
+                    COMMAND
+                </div>
+
+                <div class="section-status">
+                    PENDING
+                </div>
+
+            </div>
+
+
+            <div
+                class="section-box"
+                data-section="03"
+            >
+
+                <div class="section-number">
+                    MERIDIAN 03
+                </div>
+
+                <div class="section-name">
+                    QUERY
+                </div>
+
+                <div class="section-status">
+                    PENDING
+                </div>
+
+            </div>
+
+
+            <div
+                class="section-box"
+                data-section="04"
+            >
+
+                <div class="section-number">
+                    MERIDIAN 04
+                </div>
+
+                <div class="section-name">
+                    MEMORY
+                </div>
+
+                <div class="section-status">
+                    PENDING
+                </div>
+
+            </div>
+
+
+            <div
+                class="section-box"
+                data-section="05"
+            >
+
+                <div class="section-number">
+                    MERIDIAN 05
+                </div>
+
+                <div class="section-name">
+                    VISUAL EVIDENCE
+                </div>
+
+                <div class="section-status">
+                    PENDING
+                </div>
+
+            </div>
+
+
+            <div
+                class="section-box"
+                data-section="06"
+            >
+
+                <div class="section-number">
+                    MERIDIAN 06
+                </div>
+
+                <div class="section-name">
+                    SEQUENCE
+                </div>
+
+                <div class="section-status">
+                    PENDING
+                </div>
+
+            </div>
+
+
+        </div>
+
+
+        <div id="assemblyComplete">
+            SYSTEM STATE COMPLETE
+        </div>
+
+    </div>
+
+
+    <!-- =========================================================
+         PHASE 3
+    ========================================================= -->
+
+    <div id="recall">
+
+        <div id="recallText"></div>
+
+    </div>
+
+
+    <!-- =========================================================
+         PHASE 4
+    ========================================================= -->
+
+    <div id="finalScreen">
+
+        <div class="final-container">
+
+            <div
+                class="final-title"
+                id="finalTitle"
+            >
+                MERIDIAN
+            </div>
+
+
+            <div
+                class="final-status"
+                id="finalStatus"
+            >
+                SEQUENCE RESOLVED
+            </div>
+
+
+            <div
+                class="divider"
+                id="finalDivider"
+            ></div>
+
+
+            <div
+                class="accepted"
+                id="accepted"
+            >
+                CODE ACCEPTED.
+            </div>
+
+
+            <div id="finalCode">
+                KROA-SLNI-DGEM
+            </div>
+
+
+            <div
+                class="ending-message"
+                id="endingMessage"
+            >
+
+                THIS CODE HAS MORE THAN ONE USE.
+
+                <br>
+
+                RETAIN IT.
+
+                <br><br>
+
+                YOU'LL KNOW WHEN.
+
+            </div>
+
+
+            <div
+                class="footer-note"
+                id="footerNote"
+            >
+                MERIDIAN // SESSION COMPLETE
+            </div>
 
         </div>
 
     </div>
+
+
+    <!-- =========================================================
+         EFFECTS
+    ========================================================= -->
+
+    <div id="screenPulse"></div>
+
+    <div id="scanlines"></div>
+
+
+    <script>
+
+
+        /* =========================================================
+           HELPERS
+        ========================================================= */
+
+
+        function wait(ms) {
+
+            return new Promise(
+                function (resolve) {
+
+                    setTimeout(
+                        resolve,
+                        ms
+                    );
+
+                }
+            );
+
+        }
+
+
+        function pulseScreen() {
+
+            const pulse =
+                document.getElementById(
+                    "screenPulse"
+                );
+
+
+            pulse.classList.remove(
+                "pulse"
+            );
+
+
+            void pulse.offsetWidth;
+
+
+            pulse.classList.add(
+                "pulse"
+            );
+
+        }
+
+
+        /* =========================================================
+           PHASE 1 — VERIFICATION
+        ========================================================= */
+
+
+        async function runVerification() {
+
+            const text =
+                document.getElementById(
+                    "verificationText"
+                );
+
+
+            await wait(
+                500
+            );
+
+
+            text.textContent =
+                "VERIFYING SEQUENCE...";
+
+
+            await wait(
+                550
+            );
+
+
+            text.textContent +=
+                "\n12 / 12 INSTANCES RESOLVED";
+
+
+            await wait(
+                450
+            );
+
+
+            text.textContent +=
+                "\nASSEMBLING OUTPUT...";
+
+
+            await wait(
+                550
+            );
+
+
+            text.textContent +=
+                "\nOUTPUT VERIFIED";
+
+
+            await wait(
+                450
+            );
+
+
+            text.textContent +=
+                "\nCHECKING SYSTEM STATE...";
+
+
+            await wait(
+                550
+            );
+
+
+            text.textContent =
+                "SEQUENCE ACCEPTED";
+
+
+            pulseScreen();
+
+
+            await wait(
+                750
+            );
+
+        }
+
+
+        /* =========================================================
+           PHASE 2 — ASSEMBLY
+        ========================================================= */
+
+
+        async function runAssembly() {
+
+            const verification =
+                document.getElementById(
+                    "verification"
+                );
+
+
+            const assembly =
+                document.getElementById(
+                    "assembly"
+                );
+
+
+            verification.style.display =
+                "none";
+
+
+            assembly.classList.add(
+                "visible"
+            );
+
+
+            await wait(
+                500
+            );
+
+
+            const sections =
+                Array.from(
+                    document.querySelectorAll(
+                        ".section-box"
+                    )
+                );
+
+
+            for (
+                const section
+                of sections
+            ) {
+
+                /*
+                 * Rise into place.
+                 */
+
+                section.classList.add(
+                    "arrived"
+                );
+
+
+                pulseScreen();
+
+
+                await wait(
+                    620
+                );
+
+
+                /*
+                 * Confirm.
+                 */
+
+                const status =
+                    section.querySelector(
+                        ".section-status"
+                    );
+
+
+                status.textContent =
+                    "CONFIRMED";
+
+
+                section.classList.add(
+                    "confirmed"
+                );
+
+
+                await wait(
+                    300
+                );
+
+            }
+
+
+            const complete =
+                document.getElementById(
+                    "assemblyComplete"
+                );
+
+
+            complete.classList.add(
+                "visible"
+            );
+
+
+            pulseScreen();
+
+
+            await wait(
+                1300
+            );
+
+        }
+
+
+        /* =========================================================
+           PHASE 3 — RECALL SEQUENCE
+        ========================================================= */
+
+
+        const recallEntries = [
+
+            "MERIDIAN",
+
+            "CANDIDATE 01",
+
+            "CANDIDATE 02",
+
+            "CANDIDATE 03",
+
+            "CANDIDATE 04",
+
+            "17 MINUTES",
+
+            "F52C8A19",
+
+            "RETRIEVE",
+
+            "/system",
+
+            "SYS003E52",
+
+            "POLYDATE",
+
+            "△ 12/04/2026",
+
+            "⬟ 10/07/2026",
+
+            "□ 14/03/2026",
+
+            "⬡ 08/11/2026",
+
+            "NORTHSTAR",
+
+            "SYS004B63",
+
+            "MEMORY",
+
+            "/memorium",
+
+            "RECALL",
+
+            "/channel",
+
+            "XnV46Q",
+
+            "VISUAL EVIDENCE",
+
+            "O83nD3kLm5",
+
+            "A6",
+
+            "CANDIDATE 04",
+
+            "△ 05/09/2026",
+
+            "TWELVE BECOME ONE"
+
+        ];
+
+
+        async function runRecall() {
+
+            const assembly =
+                document.getElementById(
+                    "assembly"
+                );
+
+
+            const recall =
+                document.getElementById(
+                    "recall"
+                );
+
+
+            assembly.style.display =
+                "none";
+
+
+            recall.classList.add(
+                "visible"
+            );
+
+
+            const text =
+                document.getElementById(
+                    "recallText"
+                );
+
+
+            await wait(
+                350
+            );
+
+
+            for (
+                let i = 0;
+                i < recallEntries.length;
+                i++
+            ) {
+
+                text.textContent =
+                    recallEntries[i];
+
+
+                text.classList.remove(
+                    "recall-flicker"
+                );
+
+
+                void text.offsetWidth;
+
+
+                text.classList.add(
+                    "recall-flicker"
+                );
+
+
+                /*
+                 * Start measured, accelerate,
+                 * then slow down again.
+                 */
+
+                let delay;
+
+
+                if (
+                    i < 5
+                ) {
+
+                    delay = 270;
+
+                }
+
+                else if (
+                    i <
+                    recallEntries.length - 5
+                ) {
+
+                    delay =
+                        115 +
+                        Math.random() * 80;
+
+                }
+
+                else {
+
+                    delay = 320;
+
+                }
+
+
+                await wait(
+                    delay
+                );
+
+            }
+
+
+            await wait(
+                650
+            );
+
+
+            text.textContent =
+                "";
+
+
+            pulseScreen();
+
+
+            await wait(
+                450
+            );
+
+        }
+
+
+        /* =========================================================
+           PHASE 4 — FINAL
+        ========================================================= */
+
+
+        async function runFinal() {
+
+            const recall =
+                document.getElementById(
+                    "recall"
+                );
+
+
+            const finalScreen =
+                document.getElementById(
+                    "finalScreen"
+                );
+
+
+            recall.style.display =
+                "none";
+
+
+            finalScreen.classList.add(
+                "visible"
+            );
+
+
+            await wait(
+                650
+            );
+
+
+            document
+                .getElementById(
+                    "finalTitle"
+                )
+                .classList.add(
+                    "visible"
+                );
+
+
+            await wait(
+                650
+            );
+
+
+            document
+                .getElementById(
+                    "finalStatus"
+                )
+                .classList.add(
+                    "visible"
+                );
+
+
+            await wait(
+                400
+            );
+
+
+            document
+                .getElementById(
+                    "finalDivider"
+                )
+                .classList.add(
+                    "visible"
+                );
+
+
+            await wait(
+                450
+            );
+
+
+            document
+                .getElementById(
+                    "accepted"
+                )
+                .classList.add(
+                    "visible"
+                );
+
+
+            /*
+             * Hold here so CODE ACCEPTED
+             * lands before the actual code.
+             */
+
+            await wait(
+                1100
+            );
+
+
+            /*
+             * The final code is the LAST major
+             * piece of information revealed.
+             */
+
+            pulseScreen();
+
+
+            document
+                .getElementById(
+                    "finalCode"
+                )
+                .classList.add(
+                    "visible"
+                );
+
+
+            await wait(
+                1700
+            );
+
+
+            document
+                .getElementById(
+                    "endingMessage"
+                )
+                .classList.add(
+                    "visible"
+                );
+
+
+            await wait(
+                900
+            );
+
+
+            document
+                .getElementById(
+                    "footerNote"
+                )
+                .classList.add(
+                    "visible"
+                );
+
+        }
+
+
+        /* =========================================================
+           FULL SEQUENCE
+        ========================================================= */
+
+
+        async function runEnding() {
+
+            await runVerification();
+
+            await runAssembly();
+
+            await runRecall();
+
+            await runFinal();
+
+        }
+
+
+        runEnding();
+
+
+    </script>
 
 </body>
 
