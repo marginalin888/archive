@@ -1,0 +1,5004 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Meridian — M07</title>
+
+<style>
+
+/* ================================================================
+   GLOBAL
+================================================================ */
+
+* {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    margin: 0;
+    width: 100%;
+    height: 100%;
+    background: #111;
+}
+
+body {
+    min-height: 100vh;
+    overflow: hidden;
+
+    color: #ddd;
+
+    font-family:
+        "Courier New",
+        Courier,
+        monospace;
+}
+
+
+/* ================================================================
+   SCREENS
+================================================================ */
+
+.screen {
+    position: absolute;
+
+    top: 0;
+    left: 0;
+
+    width: 100%;
+    height: 100%;
+
+    display: none;
+
+    align-items: center;
+    justify-content: center;
+
+    padding: 30px;
+}
+
+.screen.active {
+    display: flex;
+}
+
+
+/* ================================================================
+   MERIDIAN LANDING
+================================================================ */
+
+.archive {
+    position: relative;
+    z-index: 10;
+
+    width: 90%;
+    max-width: 700px;
+
+    text-align: center;
+}
+
+h1 {
+    margin: 0;
+
+    color: #ddd;
+
+    font-size: 42px;
+    font-weight: normal;
+
+    letter-spacing: 8px;
+}
+
+.subtitle {
+    margin-top: 8px;
+    margin-bottom: 35px;
+
+    color: #777;
+
+    font-size: 14px;
+    letter-spacing: 3px;
+}
+
+hr {
+    margin: 25px 0;
+
+    border: none;
+    border-top: 1px solid #444;
+}
+
+.section {
+    display: block;
+
+    width: 100%;
+
+    margin: 10px 0;
+    padding: 16px;
+
+    border: 1px solid #333;
+
+    background: rgba(17,17,17,0.65);
+
+    color: #ddd;
+
+    font-family:
+        "Courier New",
+        Courier,
+        monospace;
+
+    font-size: 16px;
+
+    cursor: pointer;
+    outline: none;
+}
+
+.section:hover,
+.section:focus,
+.section.selected {
+    border-color: #777;
+
+    background: #1b1b1b;
+
+    color: #fff;
+}
+
+.footer {
+    margin-top: 30px;
+
+    color: #444;
+
+    font-size: 12px;
+    letter-spacing: 2px;
+}
+
+
+/* ================================================================
+   LOADING SCREEN
+================================================================ */
+
+.loading-screen {
+    background: #111;
+
+    text-align: center;
+}
+
+.loader {
+    position: relative;
+    z-index: 10;
+
+    width: 520px;
+    max-width: 74vw;
+
+    text-align: center;
+}
+
+.loading-title {
+    position: relative;
+
+    margin-bottom: 22px;
+
+    color: #aaa;
+
+    font-size: 14px;
+    font-weight: normal;
+
+    letter-spacing: 3px;
+}
+
+.loading-bar-area {
+    position: relative;
+
+    width: 100%;
+
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.loading-bar-shell {
+    position: relative;
+
+    width: 100%;
+    height: 18px;
+
+    padding: 3px;
+
+    overflow: hidden;
+
+    border: 1px solid #555;
+
+    background: #111;
+}
+
+.loading-bar {
+    position: relative;
+
+    width: 0%;
+    height: 100%;
+
+    background: #bbb;
+}
+
+.loading-percentage {
+    position: relative;
+
+    margin-top: 16px;
+
+    color: #777;
+
+    font-size: 13px;
+    letter-spacing: 2px;
+}
+
+
+/* ================================================================
+   ERROR
+================================================================ */
+
+.interception {
+    margin-top: 30px;
+
+    opacity: 0;
+    visibility: hidden;
+}
+
+.interception.visible {
+    opacity: 1;
+    visibility: visible;
+}
+
+.interception.urgent {
+    animation:
+        urgentError
+        0.62s
+        steps(2, end)
+        infinite;
+}
+
+.error-title {
+    color: #e25858;
+
+    font-size: 16px;
+    font-weight: bold;
+
+    letter-spacing: 5px;
+}
+
+.error-message {
+    margin-top: 9px;
+
+    color: #c27a7a;
+
+    font-size: 12px;
+    letter-spacing: 2px;
+}
+
+@keyframes urgentError {
+
+    0%, 35% {
+        opacity: 1;
+    }
+
+    36%, 52% {
+        opacity: 0.12;
+    }
+
+    53%, 78% {
+        opacity: 1;
+    }
+
+    79%, 88% {
+        opacity: 0.3;
+    }
+
+    89%, 100% {
+        opacity: 1;
+    }
+}
+
+
+/* ================================================================
+   EXIT
+================================================================ */
+
+.exit-button {
+    display: none;
+
+    width: 150px;
+
+    margin: 24px auto 0;
+    padding: 10px 15px;
+
+    border: 1px solid #843f3f;
+
+    background: transparent;
+
+    color: #c56c6c;
+
+    font-family:
+        "Courier New",
+        Courier,
+        monospace;
+
+    font-size: 13px;
+    letter-spacing: 3px;
+
+    cursor: pointer;
+    outline: none;
+}
+
+.exit-button.visible {
+    display: block;
+}
+
+.exit-button:hover,
+.exit-button:focus {
+    border-color: #c56c6c;
+
+    background: #281616;
+
+    color: #eee;
+}
+
+.exit-button.pressed {
+    background: #381818;
+
+    transform: translateY(1px);
+}
+
+
+/* ================================================================
+   ERROR FLASH
+================================================================ */
+
+.error-flash {
+    position: fixed;
+
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+
+    z-index: 110;
+
+    pointer-events: none;
+
+    background: rgba(190,15,15,0.13);
+
+    opacity: 0;
+}
+
+.error-flash.active {
+    animation:
+        errorFlash
+        0.48s
+        steps(2, end);
+}
+
+@keyframes errorFlash {
+
+    0% {
+        opacity: 0;
+    }
+
+    10% {
+        opacity: 1;
+    }
+
+    22% {
+        opacity: 0;
+    }
+
+    39% {
+        opacity: 0.8;
+    }
+
+    50% {
+        opacity: 0;
+    }
+
+    68% {
+        opacity: 0.5;
+    }
+
+    78%,
+    100% {
+        opacity: 0;
+    }
+}
+
+
+/* ================================================================
+   CORRUPTION SHARED
+================================================================ */
+
+.loader.corrupting {
+    width: 660px;
+    max-width: 86vw;
+}
+
+.loader.corrupting .loading-bar-area {
+    transition:
+        width 0.05s linear,
+        transform 0.05s linear;
+}
+
+
+/* ================================================================
+   01 — ASCII
+================================================================ */
+
+.style-ascii .loading-bar-shell {
+    height: 26px;
+
+    padding: 0;
+
+    overflow: visible;
+
+    border: none;
+
+    background: transparent;
+}
+
+.style-ascii .loading-bar {
+    display: none;
+}
+
+.style-ascii .loading-bar-shell:after {
+    content: "[#############-----------------------------]";
+
+    color: #eee;
+
+    font-size: 18px;
+
+    white-space: nowrap;
+}
+
+
+/* ================================================================
+   02 — GREEN TERMINAL
+================================================================ */
+
+.style-terminal .loading-title,
+.style-terminal .loading-percentage {
+    color: #00ff66;
+
+    text-shadow:
+        0 0 6px #00aa44;
+}
+
+.style-terminal .loading-bar-shell {
+    height: 23px;
+
+    border: 1px solid #00ff66;
+
+    background: #001609;
+
+    box-shadow:
+        0 0 10px #005522;
+}
+
+.style-terminal .loading-bar {
+    background:
+        repeating-linear-gradient(
+            90deg,
+            #00ff66 0,
+            #00ff66 7px,
+            #003d19 8px,
+            #003d19 10px
+        );
+}
+
+
+/* ================================================================
+   03 — BLUE BUBBLE
+================================================================ */
+
+.style-bubble .loading-title,
+.style-bubble .loading-percentage {
+    color: #a9eaff;
+
+    font-family: Arial, sans-serif;
+    font-weight: bold;
+}
+
+.style-bubble .loading-bar-shell {
+    height: 36px;
+
+    padding: 5px;
+
+    border: 4px solid #5ac9ff;
+    border-radius: 22px;
+
+    background: #133568;
+
+    box-shadow:
+        0 0 13px #2788d1;
+}
+
+.style-bubble .loading-bar {
+    border-radius: 14px;
+
+    background:
+        repeating-linear-gradient(
+            45deg,
+            #b7f4ff 0,
+            #b7f4ff 9px,
+            #48bdec 10px,
+            #48bdec 19px
+        );
+}
+
+
+/* ================================================================
+   04 — RAINBOW
+================================================================ */
+
+.style-rainbow .loading-title,
+.style-rainbow .loading-percentage {
+    color: white;
+
+    font-family: Arial, sans-serif;
+    font-weight: bold;
+
+    text-shadow:
+        2px 0 #ff2e63,
+        -2px 0 #00eaff;
+}
+
+.style-rainbow .loading-bar-shell {
+    height: 32px;
+
+    padding: 4px;
+
+    border: 3px solid white;
+
+    background:
+        linear-gradient(
+            90deg,
+            #ff3333,
+            #ff9c26,
+            #fff229,
+            #3eff55,
+            #32dcff,
+            #6657ff,
+            #ff4bd5
+        );
+}
+
+.style-rainbow .loading-bar {
+    border: 2px solid white;
+
+    background:
+        linear-gradient(
+            90deg,
+            #ff3030,
+            #ff9b21,
+            #fff323,
+            #43ff43,
+            #2cdcff,
+            #635bff,
+            #ff3cda
+        );
+
+    box-shadow:
+        0 0 8px white;
+}
+
+
+/* ================================================================
+   05 — UNICORN
+================================================================ */
+
+.style-unicorn .loading-title {
+    color: #ff91e8;
+
+    font-family:
+        "Comic Sans MS",
+        Arial,
+        sans-serif;
+
+    font-size: 19px;
+    font-weight: bold;
+
+    letter-spacing: 1px;
+
+    text-shadow:
+        2px 2px #8d4dff;
+}
+
+.style-unicorn .loading-title:before {
+    content: "★ ";
+}
+
+.style-unicorn .loading-title:after {
+    content: " ★";
+}
+
+.style-unicorn .loading-bar-shell {
+    height: 45px;
+
+    padding: 6px;
+
+    border: 4px solid #ff67d7;
+    border-radius: 24px;
+
+    background:
+        linear-gradient(
+            90deg,
+            #ffc6ef,
+            #d9c5ff,
+            #b9f4ff,
+            #fff4a8,
+            #ffc6ef
+        );
+
+    box-shadow:
+        0 0 16px #ff55ce;
+}
+
+.style-unicorn .loading-bar {
+    border-radius: 16px;
+
+    background:
+        linear-gradient(
+            90deg,
+            #ff4bbb,
+            #ff9edc,
+            #8ceeff,
+            #ad8aff,
+            #ffef77
+        );
+}
+
+.style-unicorn .loading-bar:after {
+    content: "★ ✦ ★";
+
+    position: absolute;
+
+    top: 2px;
+    left: 8px;
+
+    color: white;
+
+    font-size: 15px;
+}
+
+.style-unicorn .loading-percentage:before {
+    content: "🦄  🌈  ";
+}
+
+.style-unicorn .loading-percentage:after {
+    content: "  ☁  ✨";
+}
+
+.style-unicorn .loading-percentage {
+    color: #ff77dc;
+
+    font-family:
+        "Comic Sans MS",
+        Arial,
+        sans-serif;
+
+    font-weight: bold;
+}
+
+
+/* ================================================================
+   06 — TROPICAL
+================================================================ */
+
+.style-tropical .loading-title {
+    color: #fff46c;
+
+    font-family: Arial, sans-serif;
+    font-size: 18px;
+    font-weight: bold;
+
+    text-shadow:
+        2px 2px #008b77;
+}
+
+.style-tropical .loading-title:before {
+    content: "🌴 ";
+}
+
+.style-tropical .loading-title:after {
+    content: " 🌺";
+}
+
+.style-tropical .loading-bar-shell {
+    height: 42px;
+
+    padding: 5px;
+
+    border: 4px solid #00a98f;
+
+    background:
+        linear-gradient(
+            #67e6ff 0%,
+            #67e6ff 48%,
+            #ffe56b 49%,
+            #ffc84c 100%
+        );
+}
+
+.style-tropical .loading-bar {
+    background:
+        repeating-linear-gradient(
+            -45deg,
+            #25cf8c 0,
+            #25cf8c 10px,
+            #ffe153 11px,
+            #ffe153 20px
+        );
+}
+
+.style-tropical .loading-percentage {
+    color: #fff064;
+
+    font-family: Arial, sans-serif;
+    font-weight: bold;
+}
+
+.style-tropical .loading-percentage:before {
+    content: "☀  ";
+}
+
+.style-tropical .loading-percentage:after {
+    content: "  🌊";
+}
+
+
+/* ================================================================
+   07 — FLOWERS
+================================================================ */
+
+.style-flowers .loading-title {
+    color: #fff3a3;
+
+    font-family: Georgia, serif;
+    font-size: 18px;
+}
+
+.style-flowers .loading-title:before {
+    content: "🌼 ❀ ";
+}
+
+.style-flowers .loading-title:after {
+    content: " ❀ 🌸";
+}
+
+.style-flowers .loading-bar-shell {
+    height: 41px;
+
+    padding: 5px;
+
+    border: 4px solid #74bd58;
+    border-radius: 5px;
+
+    background: #c8f2a8;
+}
+
+.style-flowers .loading-bar {
+    background:
+        repeating-linear-gradient(
+            90deg,
+            #ffd95a 0,
+            #ffd95a 13px,
+            #ff8fcf 14px,
+            #ff8fcf 27px,
+            #9d83ff 28px,
+            #9d83ff 41px
+        );
+}
+
+.style-flowers .loading-percentage {
+    color: #9ae373;
+
+    font-family: Georgia, serif;
+    font-weight: bold;
+}
+
+.style-flowers .loading-percentage:after {
+    content: "  🌷🌻🌷";
+}
+
+
+/* ================================================================
+   08 — MONO STRIPES
+================================================================ */
+
+.style-stripes .loading-title,
+.style-stripes .loading-percentage {
+    color: white;
+
+    font-family: Arial, sans-serif;
+    font-weight: bold;
+}
+
+.style-stripes .loading-bar-shell {
+    height: 35px;
+
+    padding: 5px;
+
+    border: 4px solid white;
+
+    background:
+        repeating-linear-gradient(
+            -45deg,
+            #000 0,
+            #000 12px,
+            #fff 13px,
+            #fff 25px
+        );
+}
+
+.style-stripes .loading-bar {
+    border: 2px solid black;
+
+    background:
+        repeating-linear-gradient(
+            45deg,
+            white 0,
+            white 9px,
+            #111 10px,
+            #111 18px
+        );
+}
+
+
+/* ================================================================
+   09 — RPG GRASS
+================================================================ */
+
+.style-rpg .loading-title {
+    color: #f3e1a2;
+
+    font-size: 18px;
+    font-weight: bold;
+
+    text-shadow:
+        2px 2px #3a2b19;
+}
+
+.style-rpg .loading-title:before {
+    content: "⚔ ";
+}
+
+.style-rpg .loading-title:after {
+    content: " 🐎";
+}
+
+.style-rpg .loading-bar-shell {
+    height: 46px;
+
+    padding: 6px;
+
+    border: 5px solid #51351e;
+
+    background:
+        repeating-linear-gradient(
+            90deg,
+            #6d492b 0,
+            #6d492b 15px,
+            #7f5734 16px,
+            #7f5734 31px
+        );
+
+    box-shadow:
+        inset 0 6px #8bce45,
+        0 4px #2d1c10;
+}
+
+.style-rpg .loading-bar {
+    background:
+        repeating-linear-gradient(
+            90deg,
+            #5f9f35 0,
+            #5f9f35 13px,
+            #7ec84a 14px,
+            #7ec84a 27px
+        );
+}
+
+
+/* ================================================================
+   10 — FIRE
+================================================================ */
+
+.style-fire .loading-title,
+.style-fire .loading-percentage {
+    color: #ffb129;
+
+    font-family: Arial, sans-serif;
+    font-weight: bold;
+
+    text-shadow:
+        0 0 8px #ff3100;
+}
+
+.style-fire .loading-title:before,
+.style-fire .loading-title:after {
+    content: "🔥";
+}
+
+.style-fire .loading-bar-shell {
+    height: 43px;
+
+    padding: 4px;
+
+    border: 4px solid #ff4218;
+
+    background: #310000;
+
+    box-shadow:
+        0 0 17px #d82400;
+}
+
+.style-fire .loading-bar {
+    overflow: visible;
+
+    background:
+        linear-gradient(
+            #ffe44d,
+            #ff7900,
+            #ff2500
+        );
+
+    box-shadow:
+        0 0 14px #ff5b00;
+}
+
+.style-fire .loading-bar:after {
+    content: "▲▲▲▲▲▲▲▲▲";
+
+    position: absolute;
+
+    bottom: 1px;
+    left: 0;
+
+    color: #fff36a;
+
+    font-size: 18px;
+
+    white-space: nowrap;
+
+    animation:
+        fireTravel
+        0.3s
+        linear
+        infinite;
+}
+
+@keyframes fireTravel {
+
+    from {
+        transform: translateX(-30px);
+    }
+
+    to {
+        transform: translateX(25px);
+    }
+}
+
+
+/* ================================================================
+   11 — ELECTRIC
+================================================================ */
+
+.style-electric .loading-title,
+.style-electric .loading-percentage {
+    color: #d7faff;
+
+    font-family: Arial, sans-serif;
+    font-weight: bold;
+
+    text-shadow:
+        0 0 9px #4be7ff;
+}
+
+.style-electric .loading-title:before,
+.style-electric .loading-title:after {
+    content: "⚡ ";
+}
+
+.style-electric .loading-bar-shell {
+    height: 40px;
+
+    padding: 5px;
+
+    border: 4px solid #77eeff;
+
+    background: #071c35;
+
+    box-shadow:
+        0 0 5px white,
+        0 0 13px #4bdcff,
+        0 0 25px #226aff;
+
+    animation:
+        electricFlash
+        0.16s
+        steps(2, end)
+        infinite;
+}
+
+.style-electric .loading-bar {
+    background:
+        repeating-linear-gradient(
+            90deg,
+            #fff44f 0,
+            #fff44f 7px,
+            #47ddff 8px,
+            #47ddff 15px
+        );
+}
+
+@keyframes electricFlash {
+
+    0% {
+        border-color: #fff;
+    }
+
+    50% {
+        border-color: #35d9ff;
+    }
+
+    100% {
+        border-color: #fff;
+    }
+}
+
+
+/* ================================================================
+   12 — ARCADE
+================================================================ */
+
+.style-arcade .loading-title,
+.style-arcade .loading-percentage {
+    color: white;
+
+    font-family: Arial, sans-serif;
+    font-weight: 900;
+}
+
+.style-arcade .loading-bar-shell {
+    height: 41px;
+
+    padding: 5px;
+
+    border: 5px solid #ff315e;
+
+    background:
+        repeating-linear-gradient(
+            90deg,
+            #ff315e 0,
+            #ff315e 18px,
+            #ffe433 19px,
+            #ffe433 37px,
+            #26dfff 38px,
+            #26dfff 56px
+        );
+}
+
+.style-arcade .loading-bar {
+    background:
+        repeating-linear-gradient(
+            90deg,
+            #ffe433 0,
+            #ffe433 14px,
+            #ff315e 15px,
+            #ff315e 29px,
+            #52ff75 30px,
+            #52ff75 44px
+        );
+}
+
+
+/* ================================================================
+   13 — CANDY
+================================================================ */
+
+.style-candy .loading-title,
+.style-candy .loading-percentage {
+    color: #ffb5dc;
+
+    font-family: Arial, sans-serif;
+    font-weight: bold;
+}
+
+.style-candy .loading-title:before {
+    content: "♥ ";
+}
+
+.style-candy .loading-title:after {
+    content: " ♥";
+}
+
+.style-candy .loading-bar-shell {
+    height: 40px;
+
+    padding: 5px;
+
+    border: 4px solid #ff6cad;
+
+    background:
+        repeating-linear-gradient(
+            -45deg,
+            #fff 0,
+            #fff 10px,
+            #ffb9dc 11px,
+            #ffb9dc 21px
+        );
+}
+
+.style-candy .loading-bar {
+    background: #ff4f9c;
+}
+
+
+/* ================================================================
+   14 — WINDOWS 95
+================================================================ */
+
+.style-win95 {
+    font-family:
+        Arial,
+        sans-serif;
+}
+
+.style-win95 .loading-title,
+.style-win95 .loading-percentage {
+    color: #000;
+}
+
+.style-win95 .loading-bar-area {
+    padding: 8px;
+
+    background: #c0c0c0;
+
+    border-top: 2px solid white;
+    border-left: 2px solid white;
+    border-right: 2px solid #444;
+    border-bottom: 2px solid #444;
+}
+
+.style-win95 .loading-bar-shell {
+    height: 28px;
+
+    padding: 3px;
+
+    border-top: 2px solid #444;
+    border-left: 2px solid #444;
+    border-right: 2px solid white;
+    border-bottom: 2px solid white;
+
+    background: white;
+}
+
+.style-win95 .loading-bar {
+    background:
+        repeating-linear-gradient(
+            90deg,
+            #000080 0,
+            #000080 12px,
+            white 13px,
+            white 15px
+        );
+}
+
+
+/* ================================================================
+   15 — XP
+================================================================ */
+
+.style-xp .loading-title,
+.style-xp .loading-percentage {
+    color: #ddd;
+
+    font-family: Arial, sans-serif;
+}
+
+.style-xp .loading-bar-shell {
+    height: 28px;
+
+    padding: 4px;
+
+    border: 2px solid #8c8c8c;
+    border-radius: 5px;
+
+    background: white;
+}
+
+.style-xp .loading-bar {
+    border-radius: 3px;
+
+    background:
+        repeating-linear-gradient(
+            90deg,
+            #4fd334 0,
+            #4fd334 11px,
+            #89ef68 12px,
+            #89ef68 17px,
+            transparent 18px,
+            transparent 20px
+        );
+}
+
+
+/* ================================================================
+   16 — AMBER CRT
+================================================================ */
+
+.style-amber .loading-title,
+.style-amber .loading-percentage {
+    color: #ffb52e;
+
+    text-shadow:
+        0 0 7px #b65d00;
+}
+
+.style-amber .loading-bar-shell {
+    height: 24px;
+
+    border: 1px solid #ff9d17;
+
+    background: #211200;
+
+    box-shadow:
+        0 0 10px #6f3900;
+}
+
+.style-amber .loading-bar {
+    background:
+        repeating-linear-gradient(
+            90deg,
+            #ffb52e 0,
+            #ffb52e 5px,
+            #4c2900 6px,
+            #4c2900 8px
+        );
+}
+
+
+/* ================================================================
+   17 — CONSTRUCTION
+================================================================ */
+
+.style-construction .loading-title,
+.style-construction .loading-percentage {
+    color: #ffd51f;
+
+    font-family: Arial, sans-serif;
+    font-weight: bold;
+}
+
+.style-construction .loading-title:before,
+.style-construction .loading-title:after {
+    content: "⚠ ";
+}
+
+.style-construction .loading-bar-shell {
+    height: 40px;
+
+    padding: 5px;
+
+    border: 5px solid #ffd51f;
+
+    background:
+        repeating-linear-gradient(
+            -45deg,
+            #111 0,
+            #111 13px,
+            #ffd51f 14px,
+            #ffd51f 27px
+        );
+}
+
+.style-construction .loading-bar {
+    background: #ffcf00;
+}
+
+
+/* ================================================================
+   18 — LAVA
+================================================================ */
+
+.style-lava .loading-title,
+.style-lava .loading-percentage {
+    color: #ff6528;
+
+    font-family: Arial, sans-serif;
+    font-weight: bold;
+}
+
+.style-lava .loading-bar-shell {
+    height: 45px;
+
+    padding: 5px;
+
+    border: 5px solid #451000;
+
+    background: #180300;
+}
+
+.style-lava .loading-bar {
+    background:
+        repeating-linear-gradient(
+            -30deg,
+            #ff2500 0,
+            #ff2500 10px,
+            #ff7a00 11px,
+            #ff7a00 20px,
+            #ffd232 21px,
+            #ffd232 25px
+        );
+
+    box-shadow:
+        0 0 16px #ff3c00;
+}
+
+
+/* ================================================================
+   19 — ICE
+================================================================ */
+
+.style-ice .loading-title,
+.style-ice .loading-percentage {
+    color: #dffbff;
+
+    font-family: Arial, sans-serif;
+    font-weight: bold;
+
+    text-shadow:
+        0 0 7px #75d9ff;
+}
+
+.style-ice .loading-title:before,
+.style-ice .loading-title:after {
+    content: "❄ ";
+}
+
+.style-ice .loading-bar-shell {
+    height: 40px;
+
+    padding: 5px;
+
+    border: 4px solid #c8f7ff;
+
+    background: #3779a6;
+
+    box-shadow:
+        0 0 12px #70dcff;
+}
+
+.style-ice .loading-bar {
+    background:
+        linear-gradient(
+            #f5ffff,
+            #79d9ff,
+            #318fc5
+        );
+}
+
+.style-ice .loading-bar:after {
+    content: "▼ ▼ ▼ ▼";
+
+    position: absolute;
+
+    top: 15px;
+    left: 4px;
+
+    color: #dffbff;
+}
+
+
+/* ================================================================
+   20 — OCEAN
+================================================================ */
+
+.style-ocean .loading-title,
+.style-ocean .loading-percentage {
+    color: #8be8ff;
+
+    font-family: Arial, sans-serif;
+    font-weight: bold;
+}
+
+.style-ocean .loading-title:before {
+    content: "🐠 ";
+}
+
+.style-ocean .loading-title:after {
+    content: " 🫧";
+}
+
+.style-ocean .loading-bar-shell {
+    height: 43px;
+
+    padding: 5px;
+
+    border: 4px solid #35c9ed;
+
+    border-radius: 12px;
+
+    background:
+        linear-gradient(
+            #3ccdf1,
+            #074b92
+        );
+}
+
+.style-ocean .loading-bar {
+    border-radius: 7px;
+
+    background:
+        repeating-radial-gradient(
+            circle,
+            #b8f5ff 0,
+            #b8f5ff 3px,
+            #1597cc 4px,
+            #1597cc 10px
+        );
+}
+
+
+/* ================================================================
+   21 — SKY
+================================================================ */
+
+.style-sky .loading-title,
+.style-sky .loading-percentage {
+    color: white;
+
+    font-family: Arial, sans-serif;
+    font-weight: bold;
+}
+
+.style-sky .loading-title:before {
+    content: "☀ ";
+}
+
+.style-sky .loading-title:after {
+    content: " ☁";
+}
+
+.style-sky .loading-bar-shell {
+    height: 45px;
+
+    padding: 5px;
+
+    border: 4px solid white;
+
+    border-radius: 20px;
+
+    background: #55c7ff;
+}
+
+.style-sky .loading-bar {
+    border-radius: 14px;
+
+    background:
+        repeating-linear-gradient(
+            90deg,
+            white 0,
+            white 14px,
+            #9be2ff 15px,
+            #9be2ff 28px
+        );
+}
+
+
+/* ================================================================
+   22 — SPACE
+================================================================ */
+
+.style-space .loading-title,
+.style-space .loading-percentage {
+    color: #d7d0ff;
+
+    font-family: Arial, sans-serif;
+    font-weight: bold;
+}
+
+.style-space .loading-title:before {
+    content: "✦ ";
+}
+
+.style-space .loading-title:after {
+    content: " 🚀";
+}
+
+.style-space .loading-bar-shell {
+    height: 40px;
+
+    padding: 5px;
+
+    border: 3px solid #745cff;
+
+    background:
+        radial-gradient(
+            circle,
+            white 0,
+            white 1px,
+            transparent 2px
+        ),
+        #070319;
+
+    background-size: 17px 13px;
+}
+
+.style-space .loading-bar {
+    background:
+        linear-gradient(
+            90deg,
+            #5b30ff,
+            #df48ff
+        );
+
+    box-shadow:
+        0 0 12px #985cff;
+}
+
+
+/* ================================================================
+   23 — SYNTHWAVE
+================================================================ */
+
+.style-synth .loading-title,
+.style-synth .loading-percentage {
+    color: #ff4cda;
+
+    font-family: Arial, sans-serif;
+    font-style: italic;
+    font-weight: bold;
+
+    text-shadow:
+        2px 2px #25ddff;
+}
+
+.style-synth .loading-bar-shell {
+    height: 38px;
+
+    padding: 4px;
+
+    border: 3px solid #25ddff;
+
+    background:
+        repeating-linear-gradient(
+            90deg,
+            #20012c 0,
+            #20012c 19px,
+            #4e075e 20px,
+            #4e075e 21px
+        );
+
+    box-shadow:
+        0 0 13px #ff27d7;
+}
+
+.style-synth .loading-bar {
+    background:
+        linear-gradient(
+            90deg,
+            #27e4ff,
+            #8a4dff,
+            #ff35d3
+        );
+}
+
+
+/* ================================================================
+   24 — HEART METER
+================================================================ */
+
+.style-hearts .loading-title,
+.style-hearts .loading-percentage {
+    color: #ff667d;
+
+    font-family: Arial, sans-serif;
+    font-weight: bold;
+}
+
+.style-hearts .loading-title:before,
+.style-hearts .loading-title:after {
+    content: "♥ ";
+}
+
+.style-hearts .loading-bar-shell {
+    height: 40px;
+
+    padding: 5px;
+
+    border: 4px solid #ff4d6d;
+
+    background: #3b0912;
+}
+
+.style-hearts .loading-bar {
+    background: #ff3156;
+}
+
+.style-hearts .loading-bar:after {
+    content: "♥ ♥ ♥ ♥ ♥";
+
+    position: absolute;
+
+    top: 2px;
+    left: 5px;
+
+    color: #ffd5dd;
+
+    white-space: nowrap;
+}
+
+
+/* ================================================================
+   25 — FANTASY
+================================================================ */
+
+.style-fantasy .loading-title,
+.style-fantasy .loading-percentage {
+    color: #f3d36a;
+
+    font-family: Georgia, serif;
+    font-weight: bold;
+}
+
+.style-fantasy .loading-title:before {
+    content: "✦ ";
+}
+
+.style-fantasy .loading-title:after {
+    content: " ✦";
+}
+
+.style-fantasy .loading-bar-shell {
+    height: 43px;
+
+    padding: 6px;
+
+    border: 6px double #e4b94e;
+
+    background: #14351f;
+}
+
+.style-fantasy .loading-bar {
+    background:
+        linear-gradient(
+            #b8e376,
+            #4c922f
+        );
+
+    box-shadow:
+        inset 0 0 0 2px #f4dc72;
+}
+
+
+/* ================================================================
+   26 — HORSE RACE
+================================================================ */
+
+.style-horse .loading-title,
+.style-horse .loading-percentage {
+    color: #f4e0b3;
+
+    font-family: Georgia, serif;
+    font-weight: bold;
+}
+
+.style-horse .loading-title:before {
+    content: "🏁 ";
+}
+
+.style-horse .loading-bar-shell {
+    height: 44px;
+
+    padding: 4px;
+
+    border: 4px solid white;
+
+    background:
+        repeating-linear-gradient(
+            90deg,
+            #9a663d 0,
+            #9a663d 22px,
+            #87542f 23px,
+            #87542f 45px
+        );
+}
+
+.style-horse .loading-bar {
+    overflow: visible;
+
+    background: #d7a56c;
+}
+
+.style-horse .loading-bar:after {
+    content: "🐎";
+
+    position: absolute;
+
+    top: -10px;
+    right: -23px;
+
+    font-size: 30px;
+}
+
+
+/* ================================================================
+   27 — CASINO
+================================================================ */
+
+.style-casino .loading-title,
+.style-casino .loading-percentage {
+    color: #ffe850;
+
+    font-family: Georgia, serif;
+    font-weight: bold;
+
+    text-shadow:
+        0 0 7px #ff9c00;
+}
+
+.style-casino .loading-title:before {
+    content: "♦ ";
+}
+
+.style-casino .loading-title:after {
+    content: " ♣";
+}
+
+.style-casino .loading-bar-shell {
+    height: 46px;
+
+    padding: 8px;
+
+    border: 6px dotted #ffe23d;
+
+    background: #9e1010;
+
+    box-shadow:
+        0 0 13px #ffb000;
+}
+
+.style-casino .loading-bar {
+    background:
+        linear-gradient(
+            #fff36d,
+            #d99900
+        );
+}
+
+
+/* ================================================================
+   28 — DISCO
+================================================================ */
+
+.style-disco .loading-title,
+.style-disco .loading-percentage {
+    color: white;
+
+    font-family: Arial, sans-serif;
+    font-weight: bold;
+}
+
+.style-disco .loading-title:before,
+.style-disco .loading-title:after {
+    content: "✦ ";
+}
+
+.style-disco .loading-bar-shell {
+    height: 43px;
+
+    padding: 4px;
+
+    border: 4px solid white;
+
+    background:
+        repeating-linear-gradient(
+            90deg,
+            #ff3ea5 0,
+            #ff3ea5 15px,
+            #28ddff 16px,
+            #28ddff 31px,
+            #ffe62f 32px,
+            #ffe62f 47px
+        );
+}
+
+.style-disco .loading-bar {
+    background:
+        repeating-linear-gradient(
+            90deg,
+            #8c45ff 0,
+            #8c45ff 12px,
+            #3dff86 13px,
+            #3dff86 25px
+        );
+}
+
+
+/* ================================================================
+   29 — COMIC
+================================================================ */
+
+.style-comic .loading-title,
+.style-comic .loading-percentage {
+    color: #fff329;
+
+    font-family:
+        "Arial Black",
+        Arial,
+        sans-serif;
+
+    font-weight: 900;
+
+    text-shadow:
+        3px 3px #e72d2d;
+}
+
+.style-comic .loading-title:before {
+    content: "POW! ";
+}
+
+.style-comic .loading-bar-shell {
+    height: 42px;
+
+    padding: 5px;
+
+    border: 5px solid black;
+
+    background:
+        radial-gradient(
+            circle,
+            #111 0,
+            #111 2px,
+            #f4e730 3px,
+            #f4e730 7px
+        );
+
+    background-size: 10px 10px;
+}
+
+.style-comic .loading-bar {
+    background: #ef3131;
+
+    border: 3px solid black;
+}
+
+
+/* ================================================================
+   30 — MAGIC
+================================================================ */
+
+.style-magic .loading-title,
+.style-magic .loading-percentage {
+    color: #db9cff;
+
+    font-family: Georgia, serif;
+    font-weight: bold;
+
+    text-shadow:
+        0 0 9px #b32cff;
+}
+
+.style-magic .loading-title:before,
+.style-magic .loading-title:after {
+    content: "✧ ";
+}
+
+.style-magic .loading-bar-shell {
+    height: 42px;
+
+    padding: 5px;
+
+    border: 4px solid #c05cff;
+
+    background: #160725;
+
+    box-shadow:
+        0 0 16px #8d28cc;
+}
+
+.style-magic .loading-bar {
+    background:
+        repeating-linear-gradient(
+            45deg,
+            #c55dff 0,
+            #c55dff 12px,
+            #6624a3 13px,
+            #6624a3 24px
+        );
+}
+
+
+/* ================================================================
+   31 — INDUSTRIAL
+================================================================ */
+
+.style-industrial .loading-title,
+.style-industrial .loading-percentage {
+    color: #bbb;
+
+    font-family: Arial, sans-serif;
+    font-weight: bold;
+}
+
+.style-industrial .loading-bar-shell {
+    height: 44px;
+
+    padding: 7px;
+
+    border: 6px ridge #888;
+
+    background:
+        repeating-linear-gradient(
+            90deg,
+            #444 0,
+            #444 20px,
+            #666 21px,
+            #666 40px
+        );
+}
+
+.style-industrial .loading-bar {
+    background:
+        linear-gradient(
+            #ccc,
+            #555
+        );
+}
+
+
+/* ================================================================
+   32 — SLIME
+================================================================ */
+
+.style-slime .loading-title,
+.style-slime .loading-percentage {
+    color: #8cff34;
+
+    font-family: Arial, sans-serif;
+    font-weight: bold;
+}
+
+.style-slime .loading-title:before,
+.style-slime .loading-title:after {
+    content: "● ";
+}
+
+.style-slime .loading-bar-shell {
+    height: 43px;
+
+    padding: 5px;
+
+    border: 4px solid #70d526;
+    border-radius: 16px;
+
+    background: #183c08;
+}
+
+.style-slime .loading-bar {
+    border-radius: 11px;
+
+    background:
+        radial-gradient(
+            circle at 20% 30%,
+            #d1ff85 0,
+            #d1ff85 3px,
+            transparent 4px
+        ),
+        #6ee31f;
+
+    background-size: 20px 18px;
+}
+
+
+/* ================================================================
+   33 — TV COLOUR BARS
+================================================================ */
+
+.style-tvbars .loading-title,
+.style-tvbars .loading-percentage {
+    color: white;
+
+    font-family: Arial, sans-serif;
+    font-weight: bold;
+}
+
+.style-tvbars .loading-bar-shell {
+    height: 45px;
+
+    padding: 4px;
+
+    border: 4px solid white;
+
+    background:
+        linear-gradient(
+            90deg,
+            #fff 0%,
+            #fff 14%,
+            #ffff00 14%,
+            #ffff00 28%,
+            #00ffff 28%,
+            #00ffff 42%,
+            #00ff00 42%,
+            #00ff00 56%,
+            #ff00ff 56%,
+            #ff00ff 70%,
+            #ff0000 70%,
+            #ff0000 84%,
+            #0000ff 84%
+        );
+}
+
+.style-tvbars .loading-bar {
+    background: rgba(0,0,0,0.65);
+}
+
+
+/* ================================================================
+   34 — VHS
+================================================================ */
+
+.style-vhs .loading-title,
+.style-vhs .loading-percentage {
+    color: #eee;
+
+    text-shadow:
+        3px 0 #ff2d7d,
+        -3px 0 #23d8ff;
+}
+
+.style-vhs .loading-title:before {
+    content: "▶ ";
+}
+
+.style-vhs .loading-bar-shell {
+    height: 34px;
+
+    border: 2px solid #aaa;
+
+    background:
+        repeating-linear-gradient(
+            0deg,
+            #222 0,
+            #222 2px,
+            #555 3px,
+            #111 4px
+        );
+}
+
+.style-vhs .loading-bar {
+    background:
+        repeating-linear-gradient(
+            0deg,
+            white 0,
+            white 2px,
+            #777 3px,
+            #ddd 4px
+        );
+}
+
+
+/* ================================================================
+   35 — GOLD LUXURY
+================================================================ */
+
+.style-luxury .loading-title,
+.style-luxury .loading-percentage {
+    color: #ffe994;
+
+    font-family: Georgia, serif;
+    font-weight: bold;
+
+    text-shadow:
+        0 0 7px #c78900;
+}
+
+.style-luxury .loading-title:before {
+    content: "◆ ";
+}
+
+.style-luxury .loading-title:after {
+    content: " ◆";
+}
+
+.style-luxury .loading-bar-shell {
+    height: 44px;
+
+    padding: 6px;
+
+    border: 6px double #f3c449;
+
+    background: #18120a;
+}
+
+.style-luxury .loading-bar {
+    background:
+        linear-gradient(
+            #fff2a4,
+            #d8960c,
+            #fff0a0
+        );
+}
+
+
+/* ================================================================
+   36 — CHECKERBOARD
+================================================================ */
+
+.style-checker .loading-title,
+.style-checker .loading-percentage {
+    color: #fff;
+
+    font-family: Arial, sans-serif;
+    font-weight: bold;
+}
+
+.style-checker .loading-bar-shell {
+    height: 41px;
+
+    padding: 5px;
+
+    border: 5px solid white;
+
+    background:
+        repeating-linear-gradient(
+            45deg,
+            #111 0,
+            #111 10px,
+            white 11px,
+            white 20px
+        );
+}
+
+.style-checker .loading-bar {
+    background:
+        repeating-linear-gradient(
+            -45deg,
+            #ff3434 0,
+            #ff3434 10px,
+            #fff 11px,
+            #fff 20px
+        );
+}
+
+
+/* ================================================================
+   37 — PASTEL CLOUD
+================================================================ */
+
+.style-pastel .loading-title,
+.style-pastel .loading-percentage {
+    color: #ffd6f5;
+
+    font-family: Arial, sans-serif;
+    font-weight: bold;
+}
+
+.style-pastel .loading-title:before {
+    content: "☁ ";
+}
+
+.style-pastel .loading-title:after {
+    content: " ☁";
+}
+
+.style-pastel .loading-bar-shell {
+    height: 43px;
+
+    padding: 6px;
+
+    border: 4px solid #ffd3ef;
+    border-radius: 24px;
+
+    background:
+        linear-gradient(
+            90deg,
+            #ffc9e8,
+            #c7eaff,
+            #dfccff
+        );
+}
+
+.style-pastel .loading-bar {
+    border-radius: 16px;
+
+    background:
+        linear-gradient(
+            90deg,
+            #ff96d2,
+            #a2dfff
+        );
+}
+
+
+/* ================================================================
+   38 — TOXIC
+================================================================ */
+
+.style-toxic .loading-title,
+.style-toxic .loading-percentage {
+    color: #c9ff25;
+
+    font-family: Arial, sans-serif;
+    font-weight: 900;
+}
+
+.style-toxic .loading-title:before,
+.style-toxic .loading-title:after {
+    content: "☣ ";
+}
+
+.style-toxic .loading-bar-shell {
+    height: 41px;
+
+    padding: 5px;
+
+    border: 4px solid #c9ff25;
+
+    background: #182000;
+}
+
+.style-toxic .loading-bar {
+    background:
+        repeating-linear-gradient(
+            -45deg,
+            #c9ff25 0,
+            #c9ff25 11px,
+            #536b00 12px,
+            #536b00 23px
+        );
+}
+
+
+/* ================================================================
+   39 — RED ALERT
+================================================================ */
+
+.style-alert .loading-title,
+.style-alert .loading-percentage {
+    color: #ff4545;
+
+    font-family: Arial, sans-serif;
+    font-weight: 900;
+
+    text-shadow:
+        0 0 8px #ff0000;
+}
+
+.style-alert .loading-title:before,
+.style-alert .loading-title:after {
+    content: "! ";
+}
+
+.style-alert .loading-bar-shell {
+    height: 42px;
+
+    padding: 5px;
+
+    border: 5px solid #ff3333;
+
+    background:
+        repeating-linear-gradient(
+            90deg,
+            #420000 0,
+            #420000 20px,
+            #850000 21px,
+            #850000 40px
+        );
+
+    animation:
+        alertPulse
+        0.18s
+        steps(2,end)
+        infinite;
+}
+
+.style-alert .loading-bar {
+    background: #ff2525;
+}
+
+@keyframes alertPulse {
+
+    0% {
+        box-shadow: 0 0 3px #ff0000;
+    }
+
+    100% {
+        box-shadow: 0 0 22px #ff0000;
+    }
+}
+
+
+/* ================================================================
+   TENNA MARQUEE
+
+   Built independently from the generic bar.
+================================================================ */
+
+.tenna-loader {
+    display: none;
+
+    position: relative;
+
+    width: 720px;
+    max-width: 84vw;
+
+    margin: 0 auto;
+
+    image-rendering: pixelated;
+}
+
+.style-tenna .normal-loader-content {
+    display: none;
+}
+
+.style-tenna .tenna-loader {
+    display: block;
+}
+
+
+/* ================================================================
+   TENNA PIXEL TEXT
+
+   Text itself is rendered by JS as 5x7 pixel glyphs.
+   This avoids relying on fonts installed on the TV.
+================================================================ */
+
+.pixel-text {
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    flex-wrap: nowrap;
+}
+
+.pixel-letter {
+    position: relative;
+
+    display: inline-block;
+
+    flex: 0 0 auto;
+}
+
+.pixel-cell {
+    position: absolute;
+
+    display: block;
+}
+
+.tenna-title {
+    height: 35px;
+
+    margin-bottom: 22px;
+
+    color: #ff3038;
+}
+
+.tenna-title .pixel-letter {
+    width: 20px;
+    height: 28px;
+
+    margin-right: 4px;
+}
+
+.tenna-title .pixel-cell {
+    width: 4px;
+    height: 4px;
+
+    background: #ff3038;
+
+    box-shadow:
+        2px 2px 0 #72080d;
+}
+
+
+.tenna-percent {
+    height: 40px;
+
+    margin-top: 25px;
+
+    color: #ffd629;
+}
+
+.tenna-percent .pixel-letter {
+    width: 25px;
+    height: 35px;
+
+    margin-right: 4px;
+}
+
+.tenna-percent .pixel-cell {
+    width: 5px;
+    height: 5px;
+
+    background: #ffd629;
+
+    box-shadow:
+        2px 2px 0 #76100e;
+}
+
+
+/* ================================================================
+   TENNA FRAME
+================================================================ */
+
+.tenna-frame {
+    position: relative;
+
+    width: 100%;
+    height: 82px;
+
+    padding: 17px 20px;
+
+    background: #171717;
+
+    border: 8px solid #f1252d;
+
+    box-shadow:
+        0 6px 0 #861015,
+        6px 0 0 #861015,
+        -6px 0 0 #861015,
+        0 -3px 0 #ff4348;
+
+    image-rendering: pixelated;
+}
+
+.tenna-track {
+    position: relative;
+
+    width: 100%;
+    height: 100%;
+
+    /*
+     * IMPORTANT:
+     *
+     * Overflow must become visible so the gold bar can
+     * physically escape the loading frame.
+     */
+
+    overflow: visible;
+
+    background: #111;
+
+    border: 4px solid #390506;
+}
+
+.tenna-fill {
+    position: relative;
+
+    width: 30%;
+    height: 100%;
+
+    background:
+        linear-gradient(
+            to bottom,
+            #fff77c 0%,
+            #fff77c 16%,
+            #ffe52f 17%,
+            #ffc315 52%,
+            #d87b00 82%,
+            #ffb20c 100%
+        );
+
+    box-shadow:
+        inset 0 6px 0 #fffca5,
+        inset 0 -7px 0 #9e5100,
+        0 0 12px #ffd11c;
+
+    image-rendering: pixelated;
+}
+
+.tenna-fill:after {
+    content: "";
+
+    position: absolute;
+
+    top: 5px;
+    left: 7px;
+
+    width: 72%;
+    height: 5px;
+
+    background: #ffffb1;
+}
+
+
+/* ================================================================
+   OVERLOAD MODE
+================================================================ */
+
+.tenna-fill.overloading {
+    z-index: 20;
+
+    animation:
+        overloadFill
+        0.11s
+        steps(2,end)
+        infinite;
+}
+
+.tenna-frame.overloading {
+    animation:
+        overloadFrame
+        0.14s
+        steps(2,end)
+        infinite;
+}
+
+.tenna-percent.overloading .pixel-cell {
+    animation:
+        overloadText
+        0.1s
+        steps(2,end)
+        infinite;
+}
+
+@keyframes overloadFill {
+
+    0% {
+        filter:
+            brightness(1.15);
+
+        box-shadow:
+            inset 0 6px 0 #fffca5,
+            inset 0 -7px 0 #9e5100,
+            0 0 12px #ffd11c;
+    }
+
+    50% {
+        filter:
+            brightness(2.2);
+
+        box-shadow:
+            inset 0 6px 0 white,
+            inset 0 -7px 0 #ff9900,
+            0 0 18px #fff46a,
+            0 0 35px #ffd000,
+            0 0 70px #ff9d00;
+    }
+
+    100% {
+        filter:
+            brightness(1.15);
+
+        box-shadow:
+            inset 0 6px 0 #fffca5,
+            inset 0 -7px 0 #9e5100,
+            0 0 12px #ffd11c;
+    }
+}
+
+@keyframes overloadFrame {
+
+    0% {
+        transform:
+            translate(0,0);
+    }
+
+    25% {
+        transform:
+            translate(-2px,1px);
+    }
+
+    50% {
+        transform:
+            translate(2px,-1px);
+    }
+
+    75% {
+        transform:
+            translate(-1px,-1px);
+    }
+
+    100% {
+        transform:
+            translate(0,0);
+    }
+}
+
+@keyframes overloadText {
+
+    0% {
+        background: #ffd629;
+
+        box-shadow:
+            2px 2px 0 #76100e;
+    }
+
+    50% {
+        background: #fff8a0;
+
+        box-shadow:
+            2px 2px 0 #b42913,
+            0 0 8px #ffe228;
+    }
+
+    100% {
+        background: #ffd629;
+
+        box-shadow:
+            2px 2px 0 #76100e;
+    }
+}
+
+
+/* ================================================================
+   TENNA BULBS
+================================================================ */
+
+.bulb-rail {
+    position: absolute;
+
+    pointer-events: none;
+}
+
+.bulb-top,
+.bulb-bottom {
+    left: 18px;
+    right: 18px;
+
+    height: 10px;
+}
+
+.bulb-top {
+    top: -19px;
+}
+
+.bulb-bottom {
+    bottom: -19px;
+}
+
+.bulb-left,
+.bulb-right {
+    top: 10px;
+    bottom: 10px;
+
+    width: 10px;
+}
+
+.bulb-left {
+    left: -19px;
+}
+
+.bulb-right {
+    right: -19px;
+}
+
+.bulb {
+    position: absolute;
+
+    width: 7px;
+    height: 7px;
+
+    background: #ffe72c;
+
+    border-radius: 50%;
+
+    box-shadow:
+        0 0 4px #ffe72c;
+}
+
+
+/* horizontal */
+
+.bulb-horizontal .bulb:nth-child(1)  { left: 0%; }
+.bulb-horizontal .bulb:nth-child(2)  { left: 8%; }
+.bulb-horizontal .bulb:nth-child(3)  { left: 16%; }
+.bulb-horizontal .bulb:nth-child(4)  { left: 24%; }
+.bulb-horizontal .bulb:nth-child(5)  { left: 32%; }
+.bulb-horizontal .bulb:nth-child(6)  { left: 40%; }
+.bulb-horizontal .bulb:nth-child(7)  { left: 48%; }
+.bulb-horizontal .bulb:nth-child(8)  { left: 56%; }
+.bulb-horizontal .bulb:nth-child(9)  { left: 64%; }
+.bulb-horizontal .bulb:nth-child(10) { left: 72%; }
+.bulb-horizontal .bulb:nth-child(11) { left: 80%; }
+.bulb-horizontal .bulb:nth-child(12) { left: 88%; }
+.bulb-horizontal .bulb:nth-child(13) { left: 98%; }
+
+
+/* vertical */
+
+.bulb-vertical .bulb:nth-child(1) {
+    top: 0%;
+}
+
+.bulb-vertical .bulb:nth-child(2) {
+    top: 31%;
+}
+
+.bulb-vertical .bulb:nth-child(3) {
+    top: 62%;
+}
+
+.bulb-vertical .bulb:nth-child(4) {
+    top: 94%;
+}
+
+
+.bulb:nth-child(odd) {
+    animation:
+        bulbOdd
+        0.36s
+        steps(2,end)
+        infinite;
+}
+
+.bulb:nth-child(even) {
+    animation:
+        bulbEven
+        0.36s
+        steps(2,end)
+        infinite;
+}
+
+.tenna-frame.overloading .bulb {
+    animation-duration: 0.09s;
+}
+
+
+@keyframes bulbOdd {
+
+    0% {
+        opacity: 1;
+
+        background: #fff34b;
+
+        box-shadow:
+            0 0 6px #fff34b;
+    }
+
+    50% {
+        opacity: 0.25;
+
+        background: #8c7610;
+
+        box-shadow: none;
+    }
+
+    100% {
+        opacity: 1;
+
+        background: #fff34b;
+
+        box-shadow:
+            0 0 6px #fff34b;
+    }
+}
+
+@keyframes bulbEven {
+
+    0% {
+        opacity: 0.25;
+
+        background: #8c7610;
+
+        box-shadow: none;
+    }
+
+    50% {
+        opacity: 1;
+
+        background: #fff34b;
+
+        box-shadow:
+            0 0 6px #fff34b;
+    }
+
+    100% {
+        opacity: 0.25;
+
+        background: #8c7610;
+
+        box-shadow: none;
+    }
+}
+
+
+/* ================================================================
+   BLACKOUT
+================================================================ */
+
+.broadcast-blackout {
+    position: fixed;
+
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+
+    z-index: 1000;
+
+    display: none;
+
+    align-items: center;
+    justify-content: center;
+
+    background: #000;
+
+    overflow: hidden;
+}
+
+.broadcast-blackout.active {
+    display: flex;
+}
+
+
+/* ================================================================
+   TV TIME REVEAL
+================================================================ */
+
+.tv-time {
+    position: relative;
+
+    width: 100%;
+
+    text-align: center;
+}
+
+.tv-line {
+    display: none;
+
+    height: 120px;
+
+    margin: 4px 0;
+
+    align-items: center;
+    justify-content: center;
+}
+
+.tv-line.visible {
+    display: flex;
+}
+
+.tv-line .pixel-letter {
+    width: 65px;
+    height: 91px;
+
+    margin-right: 10px;
+}
+
+.tv-line .pixel-cell {
+    width: 13px;
+    height: 13px;
+
+    background: #f42631;
+
+    box-shadow:
+        5px 5px 0 #71070b;
+
+    animation:
+        tvLetterHit
+        0.18s
+        steps(2,end);
+}
+
+.tv-line-small .pixel-letter {
+    width: 75px;
+    height: 105px;
+}
+
+.tv-line-small .pixel-cell {
+    width: 15px;
+    height: 15px;
+}
+
+.tv-line-final .pixel-letter {
+    width: 72px;
+    height: 98px;
+}
+
+.tv-line-final .pixel-cell {
+    width: 14px;
+    height: 14px;
+
+    background: #ff2b34;
+
+    box-shadow:
+        6px 6px 0 #78080c,
+        0 0 10px #e81720;
+}
+
+@keyframes tvLetterHit {
+
+    0% {
+        transform:
+            scale(1.7);
+
+        opacity: 0;
+    }
+
+    50% {
+        transform:
+            scale(0.88);
+
+        opacity: 1;
+    }
+
+    100% {
+        transform:
+            scale(1);
+
+        opacity: 1;
+    }
+}
+
+
+/* ================================================================
+   AMBIENT EFFECTS
+================================================================ */
+
+.scanlines {
+    position: fixed;
+
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+
+    z-index: 100;
+
+    pointer-events: none;
+
+    opacity: 0.055;
+
+    background:
+        repeating-linear-gradient(
+            to bottom,
+            transparent 0,
+            transparent 3px,
+            rgba(255,255,255,0.025) 4px,
+            transparent 5px
+        );
+}
+
+.vignette {
+    position: fixed;
+
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+
+    z-index: 90;
+
+    pointer-events: none;
+
+    background:
+        radial-gradient(
+            ellipse at center,
+            transparent 45%,
+            rgba(0,0,0,0.18) 75%,
+            rgba(0,0,0,0.38) 100%
+        );
+}
+
+.terminal-flicker {
+    position: fixed;
+
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+
+    z-index: 80;
+
+    pointer-events: none;
+
+    background:
+        rgba(255,255,255,0.018);
+
+    opacity: 0;
+
+    animation:
+        terminalFlicker
+        17s
+        linear
+        infinite;
+}
+
+@keyframes terminalFlicker {
+
+    0%,
+    93%,
+    93.8%,
+    95%,
+    100% {
+        opacity: 0;
+    }
+
+    93.2% {
+        opacity: 0.45;
+    }
+
+    93.35% {
+        opacity: 0;
+    }
+
+    93.55% {
+        opacity: 0.2;
+    }
+
+    94.2% {
+        opacity: 0.1;
+    }
+}
+
+
+/* ================================================================
+   SMALL DISPLAY FALLBACK
+================================================================ */
+
+@media (max-width: 600px) {
+
+    .archive {
+        width: 100%;
+    }
+
+    h1 {
+        font-size: 32px;
+
+        letter-spacing: 6px;
+    }
+
+    .section {
+        padding: 15px 10px;
+
+        font-size: 13px;
+    }
+
+    .loader {
+        max-width: 86vw;
+    }
+
+    .tenna-frame {
+        height: 65px;
+
+        padding: 12px 15px;
+
+        border-width: 6px;
+    }
+
+    .tv-line .pixel-letter {
+        width: 40px;
+        height: 56px;
+    }
+
+    .tv-line .pixel-cell {
+        width: 8px;
+        height: 8px;
+    }
+}
+
+
+
+/* ================================================================
+   DEV TRANSPORT + FINAL TV MARQUEE PASS
+================================================================ */
+.broadcast-blackout { background:#000; }
+.tv-time {
+    position: relative; width: 760px; max-width: 88vw; height: 520px;
+    display: flex; flex-direction: column; align-items:center; justify-content:center;
+    image-rendering: pixelated;
+}
+.tv-marquee-frame {
+    position:absolute; left:0; right:0; top:50%; height:430px;
+    transform:translateY(-50%); border:8px solid #f1252d; background:#171717;
+    box-shadow: 0 7px 0 #7e0c11, 7px 0 0 #7e0c11, -7px 0 0 #7e0c11, 0 -4px 0 #ff454c;
+    opacity:0;
+}
+.tv-time.marquee-live .tv-marquee-frame { opacity:1; }
+.tv-bulbs { position:absolute; inset:-22px; pointer-events:none; }
+.tv-bulb { position:absolute; width:9px; height:9px; border-radius:50%; background:#ffe42b; box-shadow:0 0 6px #ffe42b; }
+.tv-bulb.dim { animation:tvBulbA .28s steps(2,end) infinite; }
+.tv-bulb.bright { animation:tvBulbB .28s steps(2,end) infinite; }
+@keyframes tvBulbA { 0%,100%{opacity:1} 50%{opacity:.22} }
+@keyframes tvBulbB { 0%,100%{opacity:.22} 50%{opacity:1} }
+
+.tv-line {
+    position:relative; z-index:3; display:none; height:auto; margin:5px 0;
+    align-items:center; justify-content:center; transform-origin:center;
+}
+.tv-line.visible { display:flex; animation:tvLineSlam .28s steps(3,end); }
+.tv-line .pixel-letter { width:55px; height:77px; margin-right:8px; transform:skew(-4deg); }
+.tv-line .pixel-cell {
+    width:11px; height:11px; background:#f52a32;
+    box-shadow: 4px 4px 0 #76080d, 0 0 1px #ff6267;
+    animation:none;
+}
+.tv-line-small .pixel-letter { width:62px; height:87px; }
+.tv-line-small .pixel-cell { width:12.4px; height:12.4px; }
+.tv-line-final .pixel-letter { width:55px; height:77px; }
+.tv-line-final .pixel-cell { width:11px; height:11px; background:#f52a32; box-shadow:4px 4px 0 #76080d; }
+@keyframes tvLineSlam {
+    0% { transform:scale(2.2) rotate(-4deg); opacity:0; }
+    55% { transform:scale(.88) rotate(1deg); opacity:1; }
+    100% { transform:scale(1) rotate(0); opacity:1; }
+}
+.tv-time.hit1 { animation:tvShake1 .18s steps(2,end); }
+.tv-time.hit2 { animation:tvShake2 .22s steps(2,end); }
+.tv-time.hit3 { animation:tvShake3 .28s steps(2,end); }
+.tv-time.hit4 { animation:tvShake4 .42s steps(2,end); }
+@keyframes tvShake1 { 0%,100%{transform:translate(0)} 50%{transform:translate(-4px,2px)} }
+@keyframes tvShake2 { 0%,100%{transform:translate(0)} 25%{transform:translate(6px,-2px)} 75%{transform:translate(-5px,3px)} }
+@keyframes tvShake3 { 0%,100%{transform:translate(0)} 20%{transform:translate(-9px,4px)} 45%{transform:translate(8px,-4px)} 70%{transform:translate(-5px,-2px)} }
+@keyframes tvShake4 { 0%,100%{transform:translate(0)} 15%{transform:translate(-12px,5px)} 30%{transform:translate(11px,-5px)} 48%{transform:translate(-8px,-3px)} 66%{transform:translate(7px,4px)} 82%{transform:translate(-4px,2px)} }
+.tv-time.final-glow .tv-marquee-frame { box-shadow:0 7px 0 #7e0c11,7px 0 0 #7e0c11,-7px 0 0 #7e0c11,0 -4px 0 #ff454c,0 0 32px rgba(255,36,45,.48); }
+
+/* Final handoff: the completed marquee rushes into the camera. */
+.tv-time.zoom-handoff {
+    animation: tvZoomHandoff 1.05s cubic-bezier(.72,.02,.88,.58) forwards;
+}
+.tv-time.zoom-handoff .tv-marquee-frame {
+    opacity: 1;
+    box-shadow: 0 7px 0 #7e0c11, 7px 0 0 #7e0c11, -7px 0 0 #7e0c11, 0 -4px 0 #ff454c, 0 0 42px rgba(255,36,45,.62);
+}
+@keyframes tvZoomHandoff {
+    0%   { transform: scale(1); opacity:1; }
+    18%  { transform: scale(.97); opacity:1; }
+    100% { transform: scale(7.5); opacity:1; }
+}
+
+@media (max-width:600px){ .tv-time{height:390px}.tv-marquee-frame{height:340px}.tv-line .pixel-letter,.tv-line-final .pixel-letter{width:36px;height:50px}.tv-line .pixel-cell,.tv-line-final .pixel-cell{width:7.2px;height:7.2px}.tv-line-small .pixel-letter{width:42px;height:59px}.tv-line-small .pixel-cell{width:8.4px;height:8.4px} }
+
+</style>
+</head>
+
+
+<body>
+
+
+<!-- ==============================================================
+     LANDING
+============================================================== -->
+
+<div
+    class="screen active"
+    id="landingScreen"
+>
+
+    <main class="archive">
+
+        <h1>
+            MERIDIAN
+        </h1>
+
+        <div class="subtitle">
+            ACCESS TERMINAL
+        </div>
+
+        <hr>
+
+        <button
+            class="section selected"
+            id="m07Button"
+            type="button"
+        >
+            [07] FINAL — AVAILABLE
+        </button>
+
+        <hr>
+
+        <div class="footer">
+            MERIDIAN SYSTEM // M07
+        </div>
+
+    </main>
+
+</div>
+
+
+<!-- ==============================================================
+     LOADING
+============================================================== -->
+
+<div
+    class="screen loading-screen"
+    id="loadingScreen"
+>
+
+    <div
+        class="loader"
+        id="loader"
+    >
+
+
+        <div
+            class="normal-loader-content"
+            id="normalLoaderContent"
+        >
+
+            <div
+                class="loading-title"
+                id="loadingTitle"
+            >
+                LOADING M07
+            </div>
+
+
+            <div
+                class="loading-bar-area"
+                id="loadingBarArea"
+            >
+
+                <div
+                    class="loading-bar-shell"
+                    id="loadingBarShell"
+                >
+
+                    <div
+                        class="loading-bar"
+                        id="loadingBar"
+                    ></div>
+
+                </div>
+
+            </div>
+
+
+            <div
+                class="loading-percentage"
+                id="loadingPercentage"
+            >
+                0%
+            </div>
+
+
+            <div
+                class="interception"
+                id="interception"
+            >
+
+                <div class="error-title">
+                    ERROR
+                </div>
+
+                <div class="error-message">
+                    EXTERNAL BROADCAST INTERCEPTED
+                </div>
+
+                <button
+                    class="exit-button"
+                    id="exitButton"
+                    type="button"
+                >
+                    EXIT
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <!-- ======================================================
+             TENNA LOADER
+        ======================================================= -->
+
+        <div
+            class="tenna-loader"
+            id="tennaLoader"
+        >
+
+            <div
+                class="tenna-title pixel-text"
+                id="tennaTitle"
+            ></div>
+
+
+            <div
+                class="tenna-frame"
+                id="tennaFrame"
+            >
+
+
+                <div class="bulb-rail bulb-top bulb-horizontal">
+
+                    <span class="bulb"></span>
+                    <span class="bulb"></span>
+                    <span class="bulb"></span>
+                    <span class="bulb"></span>
+                    <span class="bulb"></span>
+                    <span class="bulb"></span>
+                    <span class="bulb"></span>
+                    <span class="bulb"></span>
+                    <span class="bulb"></span>
+                    <span class="bulb"></span>
+                    <span class="bulb"></span>
+                    <span class="bulb"></span>
+                    <span class="bulb"></span>
+
+                </div>
+
+
+                <div class="bulb-rail bulb-bottom bulb-horizontal">
+
+                    <span class="bulb"></span>
+                    <span class="bulb"></span>
+                    <span class="bulb"></span>
+                    <span class="bulb"></span>
+                    <span class="bulb"></span>
+                    <span class="bulb"></span>
+                    <span class="bulb"></span>
+                    <span class="bulb"></span>
+                    <span class="bulb"></span>
+                    <span class="bulb"></span>
+                    <span class="bulb"></span>
+                    <span class="bulb"></span>
+                    <span class="bulb"></span>
+
+                </div>
+
+
+                <div class="bulb-rail bulb-left bulb-vertical">
+
+                    <span class="bulb"></span>
+                    <span class="bulb"></span>
+                    <span class="bulb"></span>
+                    <span class="bulb"></span>
+
+                </div>
+
+
+                <div class="bulb-rail bulb-right bulb-vertical">
+
+                    <span class="bulb"></span>
+                    <span class="bulb"></span>
+                    <span class="bulb"></span>
+                    <span class="bulb"></span>
+
+                </div>
+
+
+                <div class="tenna-track">
+
+                    <div
+                        class="tenna-fill"
+                        id="tennaFill"
+                    ></div>
+
+                </div>
+
+            </div>
+
+
+            <div
+                class="tenna-percent pixel-text"
+                id="tennaPercentage"
+            ></div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- ==============================================================
+     BLACKOUT / REVEAL
+============================================================== -->
+
+<div
+    class="broadcast-blackout"
+    id="broadcastBlackout"
+>
+
+    <div class="tv-time" id="tvTimeCard">
+
+        <div class="tv-marquee-frame" id="tvMarqueeFrame"><div class="tv-bulbs" id="tvBulbs"></div></div>
+
+        <div
+            class="tv-line pixel-text"
+            id="tvIts"
+        ></div>
+
+        <div
+            class="tv-line tv-line-small pixel-text"
+            id="tvT"
+        ></div>
+
+        <div
+            class="tv-line tv-line-small pixel-text"
+            id="tvV"
+        ></div>
+
+        <div
+            class="tv-line tv-line-final pixel-text"
+            id="tvTime"
+        ></div>
+
+    </div>
+
+</div>
+
+
+<!-- ==============================================================
+     EFFECTS
+============================================================== -->
+
+<div class="terminal-flicker"></div>
+<div class="vignette"></div>
+<div class="scanlines"></div>
+
+<div
+    class="error-flash"
+    id="errorFlash"
+></div>
+
+
+<script>
+
+/*
+ * ================================================================
+ * M07
+ *
+ * Conservative JavaScript for older smart-TV browsers.
+ * ================================================================
+ */
+
+
+/* ================================================================
+   ELEMENTS
+================================================================ */
+
+var landingScreen =
+    document.getElementById("landingScreen");
+
+var loadingScreen =
+    document.getElementById("loadingScreen");
+
+var loader =
+    document.getElementById("loader");
+
+var loadingBarArea =
+    document.getElementById("loadingBarArea");
+
+var loadingBar =
+    document.getElementById("loadingBar");
+
+var loadingPercentage =
+    document.getElementById("loadingPercentage");
+
+var m07Button =
+    document.getElementById("m07Button");
+
+var interception =
+    document.getElementById("interception");
+
+var exitButton =
+    document.getElementById("exitButton");
+
+var errorFlash =
+    document.getElementById("errorFlash");
+
+var tennaFrame =
+    document.getElementById("tennaFrame");
+
+var tennaFill =
+    document.getElementById("tennaFill");
+
+var tennaTitle =
+    document.getElementById("tennaTitle");
+
+var tennaPercentage =
+    document.getElementById("tennaPercentage");
+
+var broadcastBlackout =
+    document.getElementById("broadcastBlackout");
+
+var tvIts =
+    document.getElementById("tvIts");
+
+var tvT =
+    document.getElementById("tvT");
+
+var tvV =
+    document.getElementById("tvV");
+
+var tvTime =
+    document.getElementById("tvTime");
+
+var tvTimeCard = document.getElementById("tvTimeCard");
+var tvBulbs = document.getElementById("tvBulbs");
+
+/* ================================================================
+   FINAL PAGE HANDOFF
+
+   Change only this value when the game-show page has its final name.
+   Set it to an empty string ("") if you temporarily want to disable
+   the redirect while working on this intro.
+================================================================ */
+var M07_REDIRECT_URL = "m07-show.html";
+
+
+
+
+var loadingStarted =
+    false;
+
+var exitSequenceStarted =
+    false;
+
+var corruptionStarted =
+    false;
+
+
+/* ================================================================
+   PIXEL FONT
+
+   5 columns x 7 rows.
+
+   Deliberately chunky rather than using an installed font.
+================================================================ */
+
+var pixelFont = {
+
+    "A": [
+        "01110",
+        "10001",
+        "10001",
+        "11111",
+        "10001",
+        "10001",
+        "10001"
+    ],
+
+    "D": [
+        "11110",
+        "10001",
+        "10001",
+        "10001",
+        "10001",
+        "10001",
+        "11110"
+    ],
+
+    "E": [
+        "11111",
+        "10000",
+        "10000",
+        "11110",
+        "10000",
+        "10000",
+        "11111"
+    ],
+
+    "G": [
+        "01111",
+        "10000",
+        "10000",
+        "10111",
+        "10001",
+        "10001",
+        "01110"
+    ],
+
+    "I": [
+        "11111",
+        "00100",
+        "00100",
+        "00100",
+        "00100",
+        "00100",
+        "11111"
+    ],
+
+    "L": [
+        "10000",
+        "10000",
+        "10000",
+        "10000",
+        "10000",
+        "10000",
+        "11111"
+    ],
+
+    "M": [
+        "10001",
+        "11011",
+        "10101",
+        "10101",
+        "10001",
+        "10001",
+        "10001"
+    ],
+
+    "N": [
+        "10001",
+        "11001",
+        "11001",
+        "10101",
+        "10011",
+        "10011",
+        "10001"
+    ],
+
+    "O": [
+        "01110",
+        "10001",
+        "10001",
+        "10001",
+        "10001",
+        "10001",
+        "01110"
+    ],
+
+    "S": [
+        "01111",
+        "10000",
+        "10000",
+        "01110",
+        "00001",
+        "00001",
+        "11110"
+    ],
+
+    "T": [
+        "11111",
+        "00100",
+        "00100",
+        "00100",
+        "00100",
+        "00100",
+        "00100"
+    ],
+
+    "V": [
+        "10001",
+        "10001",
+        "10001",
+        "10001",
+        "10001",
+        "01010",
+        "00100"
+    ],
+
+    "0": [
+        "01110",
+        "10001",
+        "10011",
+        "10101",
+        "11001",
+        "10001",
+        "01110"
+    ],
+
+    "1": [
+        "00100",
+        "01100",
+        "00100",
+        "00100",
+        "00100",
+        "00100",
+        "01110"
+    ],
+
+    "2": [
+        "01110",
+        "10001",
+        "00001",
+        "00010",
+        "00100",
+        "01000",
+        "11111"
+    ],
+
+    "3": [
+        "11110",
+        "00001",
+        "00001",
+        "01110",
+        "00001",
+        "00001",
+        "11110"
+    ],
+
+    "4": [
+        "00010",
+        "00110",
+        "01010",
+        "10010",
+        "11111",
+        "00010",
+        "00010"
+    ],
+
+    "5": [
+        "11111",
+        "10000",
+        "10000",
+        "11110",
+        "00001",
+        "00001",
+        "11110"
+    ],
+
+    "6": [
+        "01110",
+        "10000",
+        "10000",
+        "11110",
+        "10001",
+        "10001",
+        "01110"
+    ],
+
+    "7": [
+        "11111",
+        "00001",
+        "00010",
+        "00100",
+        "01000",
+        "01000",
+        "01000"
+    ],
+
+    "8": [
+        "01110",
+        "10001",
+        "10001",
+        "01110",
+        "10001",
+        "10001",
+        "01110"
+    ],
+
+    "9": [
+        "01110",
+        "10001",
+        "10001",
+        "01111",
+        "00001",
+        "00001",
+        "01110"
+    ],
+
+    "%": [
+        "11001",
+        "11010",
+        "00100",
+        "01000",
+        "10110",
+        "00110",
+        "00000"
+    ],
+
+    "'": [
+        "00100",
+        "00100",
+        "01000",
+        "00000",
+        "00000",
+        "00000",
+        "00000"
+    ],
+
+    ".": [
+        "00000",
+        "00000",
+        "00000",
+        "00000",
+        "00000",
+        "00110",
+        "00110"
+    ],
+
+    "!": [
+        "00100",
+        "00100",
+        "00100",
+        "00100",
+        "00100",
+        "00000",
+        "00100"
+    ],
+
+    " ": [
+        "00000",
+        "00000",
+        "00000",
+        "00000",
+        "00000",
+        "00000",
+        "00000"
+    ]
+
+};
+
+
+/* ================================================================
+   RENDER PIXEL TEXT
+================================================================ */
+
+function renderPixelText(
+    element,
+    text
+) {
+
+    element.innerHTML =
+        "";
+
+
+    var i;
+    var row;
+    var col;
+
+
+    for (
+        i = 0;
+        i < text.length;
+        i++
+    ) {
+
+        var character =
+            text.charAt(i).toUpperCase();
+
+
+        var glyph =
+            pixelFont[character];
+
+
+        if (!glyph) {
+            glyph = pixelFont[" "];
+        }
+
+
+        var letter =
+            document.createElement(
+                "span"
+            );
+
+
+        letter.className =
+            "pixel-letter";
+
+
+        for (
+            row = 0;
+            row < 7;
+            row++
+        ) {
+
+            for (
+                col = 0;
+                col < 5;
+                col++
+            ) {
+
+                if (
+                    glyph[row].charAt(col)
+                    ===
+                    "1"
+                ) {
+
+                    var cell =
+                        document.createElement(
+                            "span"
+                        );
+
+
+                    cell.className =
+                        "pixel-cell";
+
+
+                    cell.style.left =
+                        (col * 20) + "%";
+
+
+                    cell.style.top =
+                        (row * 14.2857) + "%";
+
+
+                    letter.appendChild(
+                        cell
+                    );
+                }
+            }
+        }
+
+
+        element.appendChild(
+            letter
+        );
+    }
+}
+
+
+/* ================================================================
+   INITIAL PIXEL TEXT
+================================================================ */
+
+renderPixelText(
+    tennaTitle,
+    "LOADING M07"
+);
+
+renderPixelText(
+    tennaPercentage,
+    "30%"
+);
+
+
+/* ================================================================
+   START
+================================================================ */
+
+function beginM07() {
+
+    if (loadingStarted) {
+        return;
+    }
+
+
+    loadingStarted =
+        true;
+
+
+    landingScreen.className =
+        "screen";
+
+
+    loadingScreen.className =
+        "screen loading-screen active";
+
+
+    startLoading();
+}
+
+
+/* ================================================================
+   ORIGINAL SLOW 0 -> 30
+================================================================ */
+
+function startLoading() {
+
+    loadingBar.style.width =
+        "0%";
+
+
+    loadingPercentage.innerHTML =
+        "0%";
+
+
+    window.setTimeout(
+        function () {
+
+            advanceLoading(
+                0
+            );
+
+        },
+        450
+    );
+}
+
+
+function advanceLoading(progress) {
+
+    if (progress >= 30) {
+
+        loadingBar.style.width =
+            "30%";
+
+
+        loadingPercentage.innerHTML =
+            "30%";
+
+
+        window.setTimeout(
+            function () {
+
+                triggerInterception();
+
+            },
+            1600
+        );
+
+
+        return;
+    }
+
+
+    var delay =
+        1400 +
+        Math.floor(
+            Math.random() * 1700
+        );
+
+
+    if (progress === 13) {
+
+        progress =
+            22;
+
+
+        loadingBar.style.width =
+            "22%";
+
+
+        loadingPercentage.innerHTML =
+            "22%";
+
+
+        window.setTimeout(
+            function () {
+
+                advanceLoading(
+                    progress
+                );
+
+            },
+            2100
+        );
+
+
+        return;
+    }
+
+
+    progress +=
+        1;
+
+
+    loadingBar.style.width =
+        progress + "%";
+
+
+    loadingPercentage.innerHTML =
+        progress + "%";
+
+
+    window.setTimeout(
+        function () {
+
+            advanceLoading(
+                progress
+            );
+
+        },
+        delay
+    );
+}
+
+
+/* ================================================================
+   INTERCEPTION
+================================================================ */
+
+function triggerInterception() {
+
+    flashScreen();
+
+
+    interception.className =
+        "interception visible urgent";
+
+
+    exitButton.className =
+        "exit-button visible";
+
+
+    window.setTimeout(
+        flashScreen,
+        750
+    );
+
+    window.setTimeout(
+        flashScreen,
+        1600
+    );
+
+    window.setTimeout(
+        flashScreen,
+        2700
+    );
+
+    window.setTimeout(
+        flashScreen,
+        4200
+    );
+
+    window.setTimeout(
+        flashScreen,
+        6100
+    );
+}
+
+
+function flashScreen() {
+
+    errorFlash.className =
+        "error-flash";
+
+
+    errorFlash.offsetWidth;
+
+
+    errorFlash.className =
+        "error-flash active";
+}
+
+
+/* ================================================================
+   EXIT
+================================================================ */
+
+function attemptExit() {
+
+    if (corruptionStarted) {
+        return;
+    }
+
+
+    exitButton.className =
+        "exit-button visible pressed";
+
+
+    window.setTimeout(
+        function () {
+
+            exitButton.className =
+                "exit-button visible";
+
+        },
+        100
+    );
+
+
+    flashScreen();
+
+
+    if (!exitSequenceStarted) {
+
+        exitSequenceStarted =
+            true;
+
+
+        window.setTimeout(
+            function () {
+
+                beginCorruption();
+
+            },
+            10000
+        );
+    }
+}
+
+
+/* ================================================================
+   39 CORRUPTION STYLES
+================================================================ */
+
+var corruptionStyles = [
+
+    "style-ascii",
+    "style-terminal",
+    "style-bubble",
+    "style-rainbow",
+    "style-unicorn",
+    "style-tropical",
+    "style-flowers",
+    "style-stripes",
+    "style-rpg",
+    "style-fire",
+    "style-electric",
+    "style-arcade",
+    "style-candy",
+    "style-win95",
+    "style-xp",
+    "style-amber",
+    "style-construction",
+    "style-lava",
+    "style-ice",
+    "style-ocean",
+    "style-sky",
+    "style-space",
+    "style-synth",
+    "style-hearts",
+    "style-fantasy",
+    "style-horse",
+    "style-casino",
+    "style-disco",
+    "style-comic",
+    "style-magic",
+    "style-industrial",
+    "style-slime",
+    "style-tvbars",
+    "style-vhs",
+    "style-luxury",
+    "style-checker",
+    "style-pastel",
+    "style-toxic",
+    "style-alert"
+
+];
+
+
+var corruptionWidths = [
+
+    78,65,91,74,95,
+    71,86,62,89,76,
+    96,68,83,72,94,
+    61,87,79,97,70,
+    85,63,92,75,98,
+    69,88,80,95,66,
+    90,73,99,64,84,
+    77,93,71,100
+
+];
+
+
+/* ================================================================
+   CORRUPTION
+================================================================ */
+
+function beginCorruption() {
+
+    if (corruptionStarted) {
+        return;
+    }
+
+
+    corruptionStarted =
+        true;
+
+
+    exitButton.style.display =
+        "none";
+
+
+    interception.style.display =
+        "none";
+
+
+    cycleCorruptionStyle(
+        0
+    );
+}
+
+
+function cycleCorruptionStyle(index) {
+
+    if (
+        index >=
+        corruptionStyles.length
+    ) {
+
+        showTennaStyle();
+
+        return;
+    }
+
+
+    showStyle(
+        corruptionStyles[index],
+        corruptionWidths[index]
+    );
+
+
+    var delay;
+
+
+    if (index < 4) {
+        delay = 520;
+    }
+
+    else if (index < 9) {
+        delay = 390;
+    }
+
+    else if (index < 15) {
+        delay = 300;
+    }
+
+    else if (index < 22) {
+        delay = 240;
+    }
+
+    else if (index < 30) {
+        delay = 200;
+    }
+
+    else {
+        delay = 170;
+    }
+
+
+    window.setTimeout(
+        function () {
+
+            cycleCorruptionStyle(
+                index + 1
+            );
+
+        },
+        delay
+    );
+}
+
+
+function showStyle(
+    styleName,
+    width
+) {
+
+    loader.className =
+        "loader corrupting " +
+        styleName;
+
+
+    loadingBarArea.style.width =
+        width + "%";
+
+
+    loadingPercentage.innerHTML =
+        "30%";
+
+
+    loadingBar.style.width =
+        "30%";
+}
+
+
+/* ================================================================
+   TENNA ARRIVES
+================================================================ */
+
+function showTennaStyle() {
+
+    loader.className =
+        "loader corrupting style-tenna";
+
+
+    tennaFill.style.width =
+        "30%";
+
+
+    renderPixelText(
+        tennaPercentage,
+        "30%"
+    );
+
+
+    /*
+     * Let the player register the new stable visual identity.
+     */
+
+    window.setTimeout(
+        function () {
+
+            continueTennaLoading(
+                30
+            );
+
+        },
+        1000
+    );
+}
+
+
+/* ================================================================
+   30 -> 100
+
+   Three distinct acceleration bands.
+================================================================ */
+
+function continueTennaLoading(
+    progress
+) {
+
+    if (progress >= 100) {
+
+        tennaFill.style.width =
+            "100%";
+
+
+        renderPixelText(
+            tennaPercentage,
+            "100%"
+        );
+
+
+        /*
+         * Very important pause.
+         *
+         * It appears to have successfully completed.
+         */
+
+        window.setTimeout(
+            function () {
+
+                beginOverload();
+
+            },
+            1250
+        );
+
+
+        return;
+    }
+
+
+    progress +=
+        1;
+
+
+    tennaFill.style.width =
+        progress + "%";
+
+
+    renderPixelText(
+        tennaPercentage,
+        progress + "%"
+    );
+
+
+    var delay;
+
+
+    /*
+     * 30 -> 50
+     *
+     * Reasonable loading speed.
+     */
+
+    if (progress < 50) {
+
+        delay =
+            330 +
+            Math.floor(
+                Math.random() * 170
+            );
+    }
+
+
+    /*
+     * 50 -> 80
+     *
+     * Clearly accelerating.
+     */
+
+    else if (progress < 80) {
+
+        delay =
+            95 +
+            Math.floor(
+                Math.random() * 85
+            );
+    }
+
+
+    /*
+     * 80 -> 100
+     *
+     * Now it is running away.
+     */
+
+    else {
+
+        delay =
+            35 +
+            Math.floor(
+                Math.random() * 45
+            );
+    }
+
+
+    window.setTimeout(
+        function () {
+
+            continueTennaLoading(
+                progress
+            );
+
+        },
+        delay
+    );
+}
+
+
+/* ================================================================
+   OVERLOAD
+
+   The progress bar stops behaving like a percentage.
+================================================================ */
+
+var overloadValues = [
+
+    104,
+    111,
+    123,
+    141,
+    168,
+    207,
+    281,
+    394,
+    604,
+    921,
+
+    1430,
+    2388,
+    4822,
+    8174,
+    18901,
+    36117,
+    94120,
+    184992,
+
+    611492,
+    1482117,
+    8104882,
+    27199104,
+    104882991,
+    682144207,
+
+    2194882104,
+    10000000000
+
+];
+
+
+function beginOverload() {
+
+    tennaFill.className =
+        "tenna-fill overloading";
+
+
+    tennaFrame.className =
+        "tenna-frame overloading";
+
+
+    tennaPercentage.className =
+        "tenna-percent pixel-text overloading";
+
+
+    runOverload(
+        0
+    );
+}
+
+
+function runOverload(index) {
+
+    if (
+        index >=
+        overloadValues.length
+    ) {
+
+        /*
+         * Hold the completely absurd state for a fraction
+         * of a second before killing everything.
+         */
+
+        window.setTimeout(
+            blackout,
+            380
+        );
+
+
+        return;
+    }
+
+
+    var value =
+        overloadValues[index];
+
+
+    /*
+     * The width is intentionally NOT capped at 100.
+     *
+     * It escapes the frame.
+     *
+     * We don't use the actual numerical percentage as CSS width
+     * because a 10-billion-percent DOM element is unnecessary.
+     *
+     * Instead it accelerates visually to 420% of the track.
+     */
+
+    var visualWidth;
+
+
+    if (index < 4) {
+
+        visualWidth =
+            100 +
+            (index * 12);
+    }
+
+    else if (index < 9) {
+
+        visualWidth =
+            150 +
+            ((index - 4) * 25);
+    }
+
+    else if (index < 15) {
+
+        visualWidth =
+            275 +
+            ((index - 9) * 22);
+    }
+
+    else {
+
+        visualWidth =
+            407 +
+            ((index - 15) * 7);
+    }
+
+
+    if (visualWidth > 470) {
+        visualWidth = 470;
+    }
+
+
+    tennaFill.style.width =
+        visualWidth + "%";
+
+
+    renderPixelText(
+        tennaPercentage,
+        formatNumber(value) + "%"
+    );
+
+
+    /*
+     * Numbers themselves accelerate too.
+     */
+
+    var delay;
+
+
+    if (index < 5) {
+
+        delay = 115;
+    }
+
+    else if (index < 12) {
+
+        delay = 80;
+    }
+
+    else if (index < 19) {
+
+        delay = 55;
+    }
+
+    else {
+
+        delay = 38;
+    }
+
+
+    window.setTimeout(
+        function () {
+
+            runOverload(
+                index + 1
+            );
+
+        },
+        delay
+    );
+}
+
+
+/* ================================================================
+   NUMBER FORMAT
+
+   Manual implementation rather than relying on locale formatting
+   in an old browser.
+================================================================ */
+
+function formatNumber(number) {
+
+    var string =
+        String(number);
+
+
+    var result =
+        "";
+
+
+    var count =
+        0;
+
+
+    var i;
+
+
+    for (
+        i = string.length - 1;
+        i >= 0;
+        i--
+    ) {
+
+        result =
+            string.charAt(i) +
+            result;
+
+
+        count +=
+            1;
+
+
+        if (
+            count === 3 &&
+            i !== 0
+        ) {
+
+            result =
+                "," +
+                result;
+
+
+            count =
+                0;
+        }
+    }
+
+
+    return result;
+}
+
+
+/* ================================================================
+   BLACKOUT
+================================================================ */
+
+function blackout() {
+
+    broadcastBlackout.className =
+        "broadcast-blackout active";
+
+
+    /*
+     * Proper dead-black pause.
+     *
+     * Nothing immediately happens.
+     */
+
+    window.setTimeout(
+        function () {
+
+            beginTVTime();
+
+        },
+        950
+    );
+}
+
+
+/* ================================================================
+   TV TIME
+================================================================ */
+
+function buildTVBulbs() {
+    if (tvBulbs.innerHTML !== "") { return; }
+    var i, bulb, count = 18;
+    for (i = 0; i < count; i++) {
+        bulb = document.createElement("span"); bulb.className = "tv-bulb " + (i % 2 ? "bright" : "dim");
+        bulb.style.left = ((i / (count - 1)) * 100) + "%"; bulb.style.top = "0"; tvBulbs.appendChild(bulb);
+        bulb = document.createElement("span"); bulb.className = "tv-bulb " + (i % 2 ? "dim" : "bright");
+        bulb.style.left = ((i / (count - 1)) * 100) + "%"; bulb.style.bottom = "0"; tvBulbs.appendChild(bulb);
+    }
+    for (i = 1; i < 8; i++) {
+        bulb = document.createElement("span"); bulb.className = "tv-bulb " + (i % 2 ? "bright" : "dim");
+        bulb.style.left = "0"; bulb.style.top = ((i / 8) * 100) + "%"; tvBulbs.appendChild(bulb);
+        bulb = document.createElement("span"); bulb.className = "tv-bulb " + (i % 2 ? "dim" : "bright");
+        bulb.style.right = "0"; bulb.style.top = ((i / 8) * 100) + "%"; tvBulbs.appendChild(bulb);
+    }
+}
+function hitCard(name) {
+    tvTimeCard.className = "tv-time marquee-live " + name;
+    window.setTimeout(function(){ tvTimeCard.className = "tv-time marquee-live"; }, 430);
+}
+function beginTVTime() {
+    buildTVBulbs();
+    tvTimeCard.className = "tv-time marquee-live";
+
+    renderPixelText(tvIts,"ITS!");
+    tvIts.className="tv-line pixel-text visible";
+    hitCard("hit1");
+
+    /* MERIDIAN TV. MTV. Stupid enough to be perfect. */
+    window.setTimeout(function(){
+        renderPixelText(tvT,"M.T.V.");
+        tvT.className="tv-line tv-line-small pixel-text visible";
+        hitCard("hit3");
+    },430);
+
+    window.setTimeout(function(){
+        renderPixelText(tvTime,"TIME!!!");
+        tvTime.className="tv-line tv-line-final pixel-text visible";
+        hitCard("hit4");
+
+        window.setTimeout(function(){
+            tvTimeCard.className="tv-time marquee-live final-glow";
+
+            /* Let the completed sign sit on-screen before the handoff. */
+            window.setTimeout(function(){
+                beginShowHandoff();
+            },2200);
+        },430);
+    },900);
+}
+
+function beginShowHandoff() {
+    tvTimeCard.className = "tv-time marquee-live final-glow zoom-handoff";
+
+    window.setTimeout(function(){
+        broadcastBlackout.style.background = "#000";
+        tvTimeCard.style.visibility = "hidden";
+
+        if (M07_REDIRECT_URL !== "") {
+            window.location.href = M07_REDIRECT_URL;
+        }
+    },1050);
+}
+
+/* ================================================================
+   SMART-TV ACCESS GATE
+
+   The landing page itself is intentionally available everywhere.
+   M07 only begins after the user selects it from a recognised TV
+   browser. Smart-TV user-agent detection is heuristic, so the list
+   is deliberately broad and easy to extend after testing the final
+   television.
+================================================================ */
+
+function isSmartTVBrowser() {
+
+    var userAgent =
+        navigator.userAgent
+        ?
+        navigator.userAgent.toLowerCase()
+        :
+        "";
+
+    var tvIdentifiers = [
+        "smart-tv",
+        "smarttv",
+        "tizen",
+        "webos",
+        "web0s",
+        "netcast",
+        "android tv",
+        "googletv",
+        "google tv",
+        "crkey",
+        "aftb",
+        "aftm",
+        "aftt",
+        "afts",
+        "aftmm",
+        "aftka",
+        "aftkm",
+        "aftss",
+        "roku",
+        "hbbtv",
+        "viera",
+        "bravia",
+        "tv safari",
+        "inettvbrowser",
+        "dtv"
+    ];
+
+    var i;
+
+    for (i = 0; i < tvIdentifiers.length; i++) {
+
+        if (
+            userAgent.indexOf(
+                tvIdentifiers[i]
+            ) !== -1
+        ) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+
+function denyM07Access() {
+
+    m07Button.innerHTML =
+        "INACCESSIBLE. TRY LARGER TERMINAL.";
+
+    m07Button.className =
+        "section selected inaccessible";
+
+    window.setTimeout(
+        function () {
+            m07Button.className =
+                "section selected";
+        },
+        180
+    );
+}
+
+
+function attemptM07Access() {
+
+    if (isSmartTVBrowser()) {
+        beginM07();
+    }
+    else {
+        denyM07Access();
+    }
+}
+
+
+/* ================================================================
+   INPUT
+================================================================ */
+
+m07Button.onclick =
+    function () {
+
+        attemptM07Access();
+    };
+
+
+exitButton.onclick =
+    function () {
+
+        attemptExit();
+    };
+
+
+document.onkeydown =
+    function (event) {
+
+        event =
+            event ||
+            window.event;
+
+
+        var keyCode =
+            event.keyCode ||
+            event.which;
+
+
+        if (keyCode === 13) {
+
+            if (!loadingStarted) {
+
+                attemptM07Access();
+
+                return;
+            }
+
+
+            if (
+                exitButton.className.indexOf(
+                    "visible"
+                ) !== -1
+            ) {
+
+                attemptExit();
+
+                return;
+            }
+        }
+
+
+        /*
+         * Desktop development shortcut.
+         */
+
+        if (
+            keyCode === 32 &&
+            !loadingStarted
+        ) {
+
+            attemptM07Access();
+        }
+    };
+
+</script>
+
+</body>
+</html>

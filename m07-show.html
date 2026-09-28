@@ -1,0 +1,2414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>M07 — TV TIME</title>
+
+<style>
+
+/* ================================================================
+   GLOBAL
+================================================================ */
+
+* {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    margin: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+
+    background: #000;
+}
+
+body {
+    color: #fff;
+
+    font-family:
+        "Courier New",
+        Courier,
+        monospace;
+}
+
+
+/* ================================================================
+   16:9 SHOW AREA
+
+   Everything lives inside one fixed-ratio stage so it scales
+   together on different displays / TVs.
+================================================================ */
+
+#show {
+    position: absolute;
+
+    left: 50%;
+    top: 50%;
+
+    width: 100vw;
+    height: 56.25vw;
+
+    max-width: 177.7778vh;
+    max-height: 100vh;
+
+    transform: translate(-50%, -50%);
+
+    overflow: hidden;
+
+    background: #090909;
+
+    image-rendering: pixelated;
+}
+
+
+/* ================================================================
+   BROADCAST BACKGROUND
+================================================================ */
+
+.back-wall {
+    position: absolute;
+
+    left: 0;
+    top: 0;
+
+    width: 100%;
+    height: 100%;
+
+    background:
+        repeating-linear-gradient(
+            90deg,
+            #080808 0,
+            #080808 7%,
+            #0d0d0d 7%,
+            #0d0d0d 14%
+        );
+}
+
+
+/* red broadcast glow behind the main sign */
+
+.back-glow {
+    position: absolute;
+
+    left: 18%;
+    top: 4%;
+
+    width: 64%;
+    height: 67%;
+
+    background: #29070a;
+
+    opacity: 0.72;
+}
+
+
+/* ================================================================
+   TOP DECORATION
+================================================================ */
+
+.top-line {
+    position: absolute;
+
+    left: 4%;
+    right: 4%;
+    top: 5%;
+
+    height: 5px;
+
+    background: #7e0c11;
+
+    box-shadow:
+        0 7px 0 #f1252d;
+}
+
+
+.corner-star {
+    position: absolute;
+
+    width: 16px;
+    height: 16px;
+
+    background: #ffe42b;
+
+    transform: rotate(45deg);
+
+    box-shadow:
+        0 0 8px #ffe42b;
+}
+
+.corner-star.left {
+    left: 5%;
+    top: 3.7%;
+}
+
+.corner-star.right {
+    right: 5%;
+    top: 3.7%;
+}
+
+
+/* ================================================================
+   HEADER
+================================================================ */
+
+.header {
+    position: absolute;
+
+    left: 0;
+    top: 8%;
+
+    width: 100%;
+
+    text-align: center;
+
+    z-index: 10;
+}
+
+.header-small {
+    color: #ffe42b;
+
+    font-size: clamp(10px, 1vw, 18px);
+    font-weight: bold;
+
+    letter-spacing: 0.35em;
+
+    text-shadow:
+        3px 3px 0 #76080d;
+}
+
+.header-big {
+    margin-top: 0.2em;
+
+    color: #f52a32;
+
+    font-size: clamp(30px, 5vw, 82px);
+    font-weight: 900;
+
+    letter-spacing: 0.05em;
+
+    line-height: 0.9;
+
+    text-shadow:
+        5px 5px 0 #76080d,
+        9px 9px 0 #260305;
+}
+
+
+/* ================================================================
+   MAIN MARQUEE
+================================================================ */
+
+.marquee {
+    position: absolute;
+
+    left: 19%;
+    top: 25%;
+
+    width: 62%;
+    height: 43%;
+
+    z-index: 20;
+
+    border: 8px solid #f1252d;
+
+    background: #171717;
+
+    box-shadow:
+        0 7px 0 #7e0c11,
+        7px 0 0 #7e0c11,
+        -7px 0 0 #7e0c11,
+        0 -4px 0 #ff454c,
+        0 0 32px rgba(255, 36, 45, 0.28);
+}
+
+
+/* ================================================================
+   MARQUEE BULBS
+================================================================ */
+
+.bulb {
+    position: absolute;
+
+    width: 10px;
+    height: 10px;
+
+    border-radius: 50%;
+
+    background: #ffe42b;
+
+    box-shadow:
+        0 0 6px #ffe42b;
+}
+
+.bulb.a {
+    animation:
+        bulbA
+        0.28s
+        steps(2, end)
+        infinite;
+}
+
+.bulb.b {
+    animation:
+        bulbB
+        0.28s
+        steps(2, end)
+        infinite;
+}
+
+@keyframes bulbA {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.22;
+    }
+}
+
+@keyframes bulbB {
+
+    0%,
+    100% {
+        opacity: 0.22;
+    }
+
+    50% {
+        opacity: 1;
+    }
+}
+
+
+/* ================================================================
+   FUN METER AREA
+================================================================ */
+
+.fun-title {
+    position: absolute;
+
+    left: 0;
+    top: 7%;
+
+    width: 100%;
+
+    text-align: center;
+
+    color: #f52a32;
+
+    font-size: clamp(20px, 3vw, 50px);
+    font-weight: 900;
+
+    letter-spacing: 0.15em;
+
+    text-shadow:
+        4px 4px 0 #76080d;
+}
+
+
+/* ================================================================
+   VERTICAL METER
+================================================================ */
+
+.meter-wrap {
+    position: absolute;
+
+    left: 50%;
+    top: 56%;
+
+    width: 18%;
+    height: 60%;
+
+    transform: translate(-50%, -50%);
+}
+
+
+/* little top cap */
+
+.meter-cap {
+    position: absolute;
+
+    left: 17%;
+    top: -7%;
+
+    width: 66%;
+    height: 9%;
+
+    background: #f1252d;
+
+    border: 3px solid #ff454c;
+
+    box-shadow:
+        4px 4px 0 #76080d;
+}
+
+
+/* outer meter */
+
+.meter-shell {
+    position: absolute;
+
+    left: 23%;
+    top: 4%;
+
+    width: 54%;
+    height: 83%;
+
+    padding: 6px;
+
+    border: 6px solid #f1252d;
+
+    background: #080808;
+
+    box-shadow:
+        5px 5px 0 #76080d,
+        0 0 15px rgba(241, 37, 45, 0.3);
+
+    overflow: hidden;
+}
+
+
+/* meter interior */
+
+.meter-track {
+    position: relative;
+
+    width: 100%;
+    height: 100%;
+
+    overflow: hidden;
+
+    background:
+        repeating-linear-gradient(
+            0deg,
+            #160305 0,
+            #160305 10px,
+            #210507 10px,
+            #210507 20px
+        );
+}
+
+
+/* actual rising FUN */
+
+.meter-fill {
+    position: absolute;
+
+    left: 0;
+    bottom: 0;
+
+    width: 100%;
+    height: 0%;
+
+    background:
+        repeating-linear-gradient(
+            0deg,
+            #f52a32 0,
+            #f52a32 12px,
+            #ffe42b 12px,
+            #ffe42b 24px
+        );
+
+    box-shadow:
+        0 0 10px #f52a32;
+
+    transition:
+        height
+        0.24s
+        steps(3, end);
+}
+
+
+/* little meter divisions */
+
+.meter-ticks {
+    position: absolute;
+
+    left: 84%;
+    top: 6%;
+
+    width: 30%;
+    height: 78%;
+}
+
+.tick {
+    position: absolute;
+
+    left: 0;
+
+    width: 100%;
+    height: 3px;
+
+    background: #7e0c11;
+}
+
+
+/* meter number */
+
+.fun-count {
+    position: absolute;
+
+    left: -30%;
+    bottom: -2%;
+
+    width: 160%;
+
+    text-align: center;
+
+    color: #ffe42b;
+
+    font-size: clamp(10px, 1.1vw, 18px);
+    font-weight: bold;
+
+    letter-spacing: 0.15em;
+
+    text-shadow:
+        2px 2px 0 #76080d;
+}
+
+
+/* ================================================================
+   FUN METER RESPONSE
+================================================================ */
+
+.meter-wrap.bump {
+    animation:
+        meterBump
+        0.26s
+        steps(3, end);
+}
+
+@keyframes meterBump {
+
+    0% {
+        transform:
+            translate(-50%, -50%)
+            scale(1);
+    }
+
+    45% {
+        transform:
+            translate(-50%, -50%)
+            scale(1.12);
+    }
+
+    100% {
+        transform:
+            translate(-50%, -50%)
+            scale(1);
+    }
+}
+
+
+/* ================================================================
+   SIDE DECORATIONS
+================================================================ */
+
+.side-text {
+    position: absolute;
+
+    top: 46%;
+
+    color: #7e0c11;
+
+    font-size: clamp(9px, 0.8vw, 14px);
+    font-weight: bold;
+
+    letter-spacing: 0.22em;
+}
+
+.side-text.left {
+    left: 5%;
+
+    transform: rotate(-90deg);
+}
+
+.side-text.right {
+    right: 5%;
+
+    transform: rotate(90deg);
+}
+
+
+/* ================================================================
+   CODE PANEL
+================================================================ */
+
+.code-panel {
+    position: absolute;
+
+    z-index: 30;
+
+    left: 10%;
+    bottom: 7%;
+
+    width: 80%;
+    height: 19%;
+
+    border: 6px solid #f1252d;
+
+    background: #141414;
+
+    box-shadow:
+        0 6px 0 #76080d,
+        6px 0 0 #76080d,
+        -6px 0 0 #76080d;
+}
+
+
+/* ================================================================
+   CODE LABEL
+================================================================ */
+
+.code-label {
+    position: absolute;
+
+    left: 0;
+    top: 8%;
+
+    width: 100%;
+
+    text-align: center;
+
+    color: #ffe42b;
+
+    font-size: clamp(9px, 1vw, 17px);
+    font-weight: bold;
+
+    letter-spacing: 0.24em;
+}
+
+
+/* ================================================================
+   SLOTS
+================================================================ */
+
+.slots {
+    position: absolute;
+
+    left: 4%;
+    right: 4%;
+    bottom: 13%;
+
+    height: 46%;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 1.2%;
+}
+
+.slot {
+    position: relative;
+
+    width: 6.5%;
+    height: 100%;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border: 3px solid #671014;
+
+    background: #080808;
+
+    color: #743035;
+
+    font-size: clamp(16px, 2.4vw, 40px);
+    font-weight: 900;
+
+    text-align: center;
+
+    box-shadow:
+        3px 3px 0 #300305;
+}
+
+
+/* current position */
+
+.slot.active {
+    border-color: #ffe42b;
+
+    color: #ffe42b;
+
+    background: #241d05;
+
+    box-shadow:
+        0 0 8px #ffe42b,
+        3px 3px 0 #76080d;
+
+    animation:
+        activeBlink
+        0.65s
+        steps(2, end)
+        infinite;
+}
+
+@keyframes activeBlink {
+
+    0%,
+    100% {
+        border-color: #ffe42b;
+    }
+
+    50% {
+        border-color: #9e7612;
+    }
+}
+
+
+/* filled but wrong */
+
+.slot.filled {
+    color: #f52a32;
+
+    border-color: #7e0c11;
+}
+
+
+/* correct */
+
+.slot.correct {
+    color: #ffe42b;
+
+    border-color: #f1252d;
+
+    background: #250608;
+
+    box-shadow:
+        inset 0 -4px 0 #76080d,
+        3px 3px 0 #300305;
+}
+
+
+/* wrong-character hit */
+
+.slot.wrong-flash {
+    animation:
+        wrongFlash
+        0.28s
+        steps(2, end)
+        2;
+}
+
+@keyframes wrongFlash {
+
+    0%,
+    100% {
+        background: #080808;
+    }
+
+    50% {
+        background: #8c1118;
+
+        border-color: #ff454c;
+
+        color: white;
+    }
+}
+
+
+/* ================================================================
+   FULL METER OVERLOAD
+================================================================ */
+
+.meter-wrap.overload {
+    animation:
+        overloadShake
+        0.1s
+        steps(2, end)
+        10;
+}
+
+@keyframes overloadShake {
+
+    0% {
+        transform:
+            translate(-52%, -50%);
+    }
+
+    100% {
+        transform:
+            translate(-48%, -50%);
+    }
+}
+
+.meter-wrap.overload .meter-fill {
+    height: 160% !important;
+
+    transition:
+        height
+        0.45s
+        steps(6, end);
+}
+
+
+/* ================================================================
+   METER SHOOTING THROUGH TOP
+================================================================ */
+
+.fun-launch {
+    position: absolute;
+
+    z-index: 100;
+
+    left: 48.5%;
+    bottom: 45%;
+
+    width: 3%;
+    height: 0;
+
+    opacity: 0;
+
+    background:
+        repeating-linear-gradient(
+            90deg,
+            #f52a32 0,
+            #f52a32 10px,
+            #ffe42b 10px,
+            #ffe42b 20px
+        );
+
+    box-shadow:
+        -8px 0 0 #76080d,
+        8px 0 0 #76080d,
+        0 0 18px #ffe42b;
+}
+
+.fun-launch.go {
+    opacity: 1;
+
+    height: 120%;
+
+    transition:
+        height
+        0.7s
+        steps(10, end);
+}
+
+
+/* ================================================================
+   SCREEN SHAKE
+================================================================ */
+
+#show.hit {
+    animation:
+        showHit
+        0.55s
+        steps(3, end);
+}
+
+@keyframes showHit {
+
+    0%,
+    100% {
+        transform:
+            translate(-50%, -50%);
+    }
+
+    20% {
+        transform:
+            translate(-51%, -49%);
+    }
+
+    40% {
+        transform:
+            translate(-49%, -51%);
+    }
+
+    60% {
+        transform:
+            translate(-51%, -51%);
+    }
+
+    80% {
+        transform:
+            translate(-49%, -49%);
+    }
+}
+
+
+/* ================================================================
+   WHITEOUT
+================================================================ */
+
+.whiteout {
+    position: absolute;
+
+    z-index: 200;
+
+    left: 0;
+    top: 0;
+
+    width: 100%;
+    height: 100%;
+
+    pointer-events: none;
+
+    background: white;
+
+    opacity: 0;
+}
+
+.whiteout.go {
+    animation:
+        whiteout
+        1.3s
+        steps(10, end)
+        forwards;
+}
+
+@keyframes whiteout {
+
+    0% {
+        opacity: 0;
+    }
+
+    35% {
+        opacity: 0.08;
+    }
+
+    55% {
+        opacity: 0.24;
+    }
+
+    75% {
+        opacity: 0.7;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}
+
+
+/* ================================================================
+   FINAL MESSAGE
+================================================================ */
+
+.final-screen {
+    display: none;
+
+    position: absolute;
+
+    z-index: 300;
+
+    left: 0;
+    top: 0;
+
+    width: 100%;
+    height: 100%;
+
+    background: #000;
+}
+
+.final-screen.show {
+    display: block;
+}
+
+
+/* ================================================================
+   FINAL MARQUEE
+================================================================ */
+
+.final-card {
+    position: absolute;
+
+    left: 13%;
+    top: 24%;
+
+    width: 74%;
+    height: 52%;
+
+    border: 8px solid #f1252d;
+
+    background: #171717;
+
+    box-shadow:
+        0 7px 0 #7e0c11,
+        7px 0 0 #7e0c11,
+        -7px 0 0 #7e0c11,
+        0 -4px 0 #ff454c,
+        0 0 38px rgba(255,36,45,0.5);
+
+    animation:
+        finalSlam
+        0.38s
+        steps(4, end);
+}
+
+@keyframes finalSlam {
+
+    0% {
+        transform:
+            scale(2.2)
+            rotate(-3deg);
+
+        opacity: 0;
+    }
+
+    55% {
+        transform:
+            scale(0.9)
+            rotate(1deg);
+
+        opacity: 1;
+    }
+
+    100% {
+        transform:
+            scale(1)
+            rotate(0deg);
+
+        opacity: 1;
+    }
+}
+
+
+/* ================================================================
+   FINAL MESSAGE TEXT
+================================================================ */
+
+.final-text {
+    position: absolute;
+
+    left: 8%;
+    right: 8%;
+
+    top: 50%;
+
+    transform:
+        translateY(-50%);
+
+    text-align: center;
+
+    color: #f52a32;
+
+    font-size: clamp(25px, 4.3vw, 72px);
+    font-weight: 900;
+
+    line-height: 1.05;
+
+    letter-spacing: 0.03em;
+
+    text-shadow:
+        5px 5px 0 #76080d,
+        9px 9px 0 #260305;
+}
+
+
+/* ================================================================
+   CRT / BROADCAST EFFECTS
+================================================================ */
+
+.scanlines {
+    position: absolute;
+
+    z-index: 500;
+
+    left: 0;
+    top: 0;
+
+    width: 100%;
+    height: 100%;
+
+    pointer-events: none;
+
+    background:
+        repeating-linear-gradient(
+            0deg,
+            rgba(0,0,0,0) 0,
+            rgba(0,0,0,0) 3px,
+            rgba(0,0,0,0.18) 4px
+        );
+}
+
+.vignette {
+    position: absolute;
+
+    z-index: 499;
+
+    left: 0;
+    top: 0;
+
+    width: 100%;
+    height: 100%;
+
+    pointer-events: none;
+
+    box-shadow:
+        inset 0 0 110px rgba(0,0,0,0.9);
+}
+
+
+/* occasional broadcast flicker */
+
+.flicker {
+    position: absolute;
+
+    z-index: 498;
+
+    left: 0;
+    top: 0;
+
+    width: 100%;
+    height: 100%;
+
+    pointer-events: none;
+
+    background: white;
+
+    opacity: 0;
+
+    animation:
+        flicker
+        7s
+        steps(2, end)
+        infinite;
+}
+
+@keyframes flicker {
+
+    0%,
+    91%,
+    93%,
+    100% {
+        opacity: 0;
+    }
+
+    91.5% {
+        opacity: 0.04;
+    }
+
+    92% {
+        opacity: 0;
+    }
+
+    92.4% {
+        opacity: 0.025;
+    }
+}
+
+
+/* ================================================================
+   SMALL SCREEN
+================================================================ */
+
+@media (max-width: 700px) {
+
+    .marquee {
+        left: 15%;
+        width: 70%;
+    }
+
+    .code-panel {
+        left: 4%;
+        width: 92%;
+    }
+
+    .slots {
+        gap: 0.6%;
+    }
+
+    .slot {
+        width: 7%;
+        border-width: 2px;
+    }
+
+    .meter-shell {
+        border-width: 4px;
+    }
+}
+
+</style>
+</head>
+
+
+<body>
+
+
+<div id="show">
+
+
+    <!-- ==========================================================
+         BACKGROUND
+    =========================================================== -->
+
+    <div class="back-wall"></div>
+
+    <div class="back-glow"></div>
+
+    <div class="top-line"></div>
+
+    <div class="corner-star left"></div>
+    <div class="corner-star right"></div>
+
+
+    <!-- ==========================================================
+         HEADER
+    =========================================================== -->
+
+    <div class="header">
+
+        <div class="header-small">
+            TONIGHT'S GRAND FINALE
+        </div>
+
+        <div class="header-big">
+            TV TIME!
+        </div>
+
+    </div>
+
+
+    <div class="side-text left">
+        LIVE BROADCAST
+    </div>
+
+    <div class="side-text right">
+        M07
+    </div>
+
+
+    <!-- ==========================================================
+         MAIN FUN METER MARQUEE
+    =========================================================== -->
+
+    <div
+        class="marquee"
+        id="mainMarquee"
+    >
+
+
+        <div
+            id="mainBulbs"
+        ></div>
+
+
+        <div class="fun-title">
+            FUN METER
+        </div>
+
+
+        <div
+            class="meter-wrap"
+            id="meterWrap"
+        >
+
+
+            <div class="meter-cap"></div>
+
+
+            <div class="meter-shell">
+
+                <div class="meter-track">
+
+                    <div
+                        class="meter-fill"
+                        id="meterFill"
+                    ></div>
+
+                </div>
+
+            </div>
+
+
+            <div
+                class="meter-ticks"
+                id="meterTicks"
+            ></div>
+
+
+            <div
+                class="fun-count"
+                id="funCount"
+            >
+                0 / 12
+            </div>
+
+
+        </div>
+
+
+    </div>
+
+
+    <!-- ==========================================================
+         CODE ENTRY
+    =========================================================== -->
+
+    <div class="code-panel">
+
+
+        <div class="code-label">
+            ENTER THE CODE
+        </div>
+
+
+        <div
+            class="slots"
+            id="slots"
+        >
+
+
+            <div class="slot active">?</div>
+            <div class="slot">?</div>
+            <div class="slot">?</div>
+            <div class="slot">?</div>
+            <div class="slot">?</div>
+            <div class="slot">?</div>
+
+            <div class="slot">?</div>
+            <div class="slot">?</div>
+            <div class="slot">?</div>
+            <div class="slot">?</div>
+            <div class="slot">?</div>
+            <div class="slot">?</div>
+
+
+        </div>
+
+
+    </div>
+
+
+    <!-- ==========================================================
+         ENDING EFFECTS
+    =========================================================== -->
+
+    <div
+        class="fun-launch"
+        id="funLaunch"
+    ></div>
+
+
+    <div
+        class="whiteout"
+        id="whiteout"
+    ></div>
+
+
+    <!-- ==========================================================
+         FINAL MESSAGE
+    =========================================================== -->
+
+    <div
+        class="final-screen"
+        id="finalScreen"
+    >
+
+
+        <div
+            class="final-card"
+            id="finalCard"
+        >
+
+
+            <div
+                id="finalBulbs"
+            ></div>
+
+
+            <div
+                class="final-text"
+                id="finalText"
+            ></div>
+
+
+        </div>
+
+
+    </div>
+
+
+    <!-- ==========================================================
+         CRT EFFECTS
+    =========================================================== -->
+
+    <div class="flicker"></div>
+    <div class="vignette"></div>
+    <div class="scanlines"></div>
+
+
+</div>
+
+
+<script>
+
+/*
+ * ================================================================
+ * M07 — GRAND FINALE
+ *
+ * Deliberately conservative JavaScript for smart-TV browsers.
+ *
+ * IMPORTANT:
+ *
+ * Change CORRECT_CODE to the real twelve-character Meridian code.
+ *
+ * Change FINAL_MESSAGE to whatever you want displayed after the
+ * player completes it.
+ * ================================================================
+ */
+
+
+/* ================================================================
+   CONFIG
+================================================================ */
+
+
+var CORRECT_CODE =
+    "KROASLNIDGEM";
+
+
+var FINAL_MESSAGE =
+    "CONGRATULATIONS!!!!!<br>YOU'VE SOLVED THE PUZZLE!!<br><br>NOW LOOK OUTSIDE!!!!";
+
+
+/*
+ * Characters available when using UP / DOWN on a TV remote.
+ */
+
+var CHARACTERS =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+
+
+/* ================================================================
+   STATE
+================================================================ */
+
+
+var values = [
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    ""
+];
+
+
+var activeIndex =
+    0;
+
+
+var finished =
+    false;
+
+
+CORRECT_CODE =
+    CORRECT_CODE.toUpperCase();
+
+
+/* ================================================================
+   ELEMENTS
+================================================================ */
+
+
+var show =
+    document.getElementById(
+        "show"
+    );
+
+
+var slots =
+    document.getElementsByClassName(
+        "slot"
+    );
+
+
+var meterWrap =
+    document.getElementById(
+        "meterWrap"
+    );
+
+
+var meterFill =
+    document.getElementById(
+        "meterFill"
+    );
+
+
+var funCount =
+    document.getElementById(
+        "funCount"
+    );
+
+
+var funLaunch =
+    document.getElementById(
+        "funLaunch"
+    );
+
+
+var whiteout =
+    document.getElementById(
+        "whiteout"
+    );
+
+
+var finalScreen =
+    document.getElementById(
+        "finalScreen"
+    );
+
+
+var finalText =
+    document.getElementById(
+        "finalText"
+    );
+
+
+/* ================================================================
+   BUILD MARQUEE BULBS
+================================================================ */
+
+
+function makeBulb(
+    parent,
+    x,
+    y,
+    alternate
+) {
+
+    var bulb =
+        document.createElement(
+            "span"
+        );
+
+
+    bulb.className =
+        "bulb "
+        +
+        (
+            alternate
+            ?
+            "b"
+            :
+            "a"
+        );
+
+
+    bulb.style.left =
+        x + "%";
+
+
+    bulb.style.top =
+        y + "%";
+
+
+    parent.appendChild(
+        bulb
+    );
+}
+
+
+/*
+ * Creates bulbs around all four sides.
+ */
+
+function buildMarqueeBulbs(
+    parent
+) {
+
+    var i;
+
+
+    /*
+     * top + bottom
+     */
+
+    for (
+        i = 0;
+        i < 18;
+        i++
+    ) {
+
+        var x =
+            2
+            +
+            (
+                i
+                *
+                96
+                /
+                17
+            );
+
+
+        makeBulb(
+            parent,
+            x,
+            -5,
+            i % 2
+        );
+
+
+        makeBulb(
+            parent,
+            x,
+            102,
+            (i + 1) % 2
+        );
+    }
+
+
+    /*
+     * sides
+     */
+
+    for (
+        i = 1;
+        i < 8;
+        i++
+    ) {
+
+        var y =
+            i
+            *
+            100
+            /
+            8;
+
+
+        makeBulb(
+            parent,
+            -2,
+            y,
+            i % 2
+        );
+
+
+        makeBulb(
+            parent,
+            100,
+            y,
+            (i + 1) % 2
+        );
+    }
+}
+
+
+buildMarqueeBulbs(
+    document.getElementById(
+        "mainBulbs"
+    )
+);
+
+
+buildMarqueeBulbs(
+    document.getElementById(
+        "finalBulbs"
+    )
+);
+
+
+/* ================================================================
+   METER TICKS
+================================================================ */
+
+
+function buildMeterTicks() {
+
+    var holder =
+        document.getElementById(
+            "meterTicks"
+        );
+
+
+    var i;
+
+
+    for (
+        i = 0;
+        i <= 12;
+        i++
+    ) {
+
+        var tick =
+            document.createElement(
+                "span"
+            );
+
+
+        tick.className =
+            "tick";
+
+
+        tick.style.top =
+            (
+                i
+                *
+                100
+                /
+                12
+            )
+            +
+            "%";
+
+
+        holder.appendChild(
+            tick
+        );
+    }
+}
+
+
+buildMeterTicks();
+
+
+/* ================================================================
+   ACTIVE SLOT
+================================================================ */
+
+
+function setActive(
+    index
+) {
+
+    if (finished) {
+        return;
+    }
+
+
+    if (index < 0) {
+        index = 0;
+    }
+
+
+    if (index > 11) {
+        index = 11;
+    }
+
+
+    activeIndex =
+        index;
+
+
+    var i;
+
+
+    for (
+        i = 0;
+        i < slots.length;
+        i++
+    ) {
+
+        drawSlot(
+            i
+        );
+    }
+}
+
+
+/* ================================================================
+   SLOT DISPLAY
+================================================================ */
+
+
+function drawSlot(
+    index
+) {
+
+    var slot =
+        slots[index];
+
+
+    var className =
+        "slot";
+
+
+    if (
+        values[index]
+        !==
+        ""
+    ) {
+
+        className +=
+            " filled";
+    }
+
+
+    if (
+        values[index]
+        !==
+        ""
+        &&
+        values[index]
+        ===
+        CORRECT_CODE.charAt(index)
+    ) {
+
+        className +=
+            " correct";
+    }
+
+
+    if (
+        index
+        ===
+        activeIndex
+    ) {
+
+        className +=
+            " active";
+    }
+
+
+    slot.className =
+        className;
+
+
+    slot.innerHTML =
+        values[index]
+        ||
+        "?";
+}
+
+
+/* ================================================================
+   CORRECT CHARACTER COUNT
+================================================================ */
+
+
+function countCorrect() {
+
+    var total =
+        0;
+
+
+    var i;
+
+
+    for (
+        i = 0;
+        i < 12;
+        i++
+    ) {
+
+        if (
+            values[i]
+            !==
+            ""
+            &&
+            values[i]
+            ===
+            CORRECT_CODE.charAt(i)
+        ) {
+
+            total++;
+        }
+    }
+
+
+    return total;
+}
+
+
+/* ================================================================
+   FUN METER
+================================================================ */
+
+
+function updateMeter() {
+
+    var correct =
+        countCorrect();
+
+
+    meterFill.style.height =
+        (
+            correct
+            /
+            12
+            *
+            100
+        )
+        +
+        "%";
+
+
+    funCount.innerHTML =
+        correct
+        +
+        " / 12";
+
+
+    /*
+     * Give it the chunky little impact animation from the
+     * TV TIME reveal whenever the amount changes.
+     */
+
+    meterWrap.className =
+        "meter-wrap";
+
+
+    window.setTimeout(
+        function () {
+
+            if (!finished) {
+
+                meterWrap.className =
+                    "meter-wrap bump";
+            }
+
+        },
+        20
+    );
+
+
+    if (
+        correct
+        ===
+        12
+    ) {
+
+        finishShow();
+    }
+}
+
+
+/* ================================================================
+   TYPE CHARACTER
+
+   IMPORTANT:
+   THERE IS NO ENTER / SUBMIT STEP.
+
+   Typing immediately enters the character and advances.
+================================================================ */
+
+
+function typeCharacter(
+    character
+) {
+
+    if (finished) {
+        return;
+    }
+
+
+    character =
+        character.toUpperCase();
+
+
+    if (
+        CHARACTERS.indexOf(
+            character
+        )
+        ===
+        -1
+    ) {
+
+        return;
+    }
+
+
+    var enteredIndex =
+        activeIndex;
+
+
+    values[enteredIndex] =
+        character;
+
+
+    drawSlot(
+        enteredIndex
+    );
+
+
+    /*
+     * Flash a wrong character briefly.
+     */
+
+    if (
+        character
+        !==
+        CORRECT_CODE.charAt(
+            enteredIndex
+        )
+    ) {
+
+        slots[enteredIndex].className +=
+            " wrong-flash";
+    }
+
+
+    updateMeter();
+
+
+    /*
+     * Immediately advance.
+     *
+     * No Enter key.
+     */
+
+    if (
+        !finished
+        &&
+        enteredIndex
+        <
+        11
+    ) {
+
+        setActive(
+            enteredIndex
+            +
+            1
+        );
+    }
+}
+
+
+/* ================================================================
+   TV REMOTE CHARACTER CYCLING
+
+   UP / DOWN changes the current character.
+   It does NOT require OK / Enter.
+================================================================ */
+
+
+function cycleCharacter(
+    direction
+) {
+
+    if (finished) {
+        return;
+    }
+
+
+    var current =
+        values[activeIndex];
+
+
+    var index =
+        CHARACTERS.indexOf(
+            current
+        );
+
+
+    if (
+        index
+        <
+        0
+    ) {
+
+        if (
+            direction
+            >
+            0
+        ) {
+
+            index =
+                0;
+        }
+
+        else {
+
+            index =
+                CHARACTERS.length
+                -
+                1;
+        }
+    }
+
+    else {
+
+        index +=
+            direction;
+
+
+        if (
+            index
+            >=
+            CHARACTERS.length
+        ) {
+
+            index =
+                0;
+        }
+
+
+        if (
+            index
+            <
+            0
+        ) {
+
+            index =
+                CHARACTERS.length
+                -
+                1;
+        }
+    }
+
+
+    values[activeIndex] =
+        CHARACTERS.charAt(
+            index
+        );
+
+
+    drawSlot(
+        activeIndex
+    );
+
+
+    updateMeter();
+}
+
+
+/* ================================================================
+   DELETE CURRENT CHARACTER
+================================================================ */
+
+
+function clearCurrent() {
+
+    if (finished) {
+        return;
+    }
+
+
+    values[activeIndex] =
+        "";
+
+
+    drawSlot(
+        activeIndex
+    );
+
+
+    updateMeter();
+}
+
+
+/* ================================================================
+   GRAND FINALE
+================================================================ */
+
+
+function finishShow() {
+
+    if (finished) {
+        return;
+    }
+
+
+    finished =
+        true;
+
+
+    /*
+     * FUN meter overload.
+     */
+
+    meterWrap.className =
+        "meter-wrap overload";
+
+
+    /*
+     * Whole broadcast takes a hit.
+     */
+
+    show.className =
+        "hit";
+
+
+    /*
+     * Meter launches through the roof.
+     */
+
+    window.setTimeout(
+        function () {
+
+            funLaunch.className =
+                "fun-launch go";
+
+        },
+        250
+    );
+
+
+    /*
+     * White begins eating the picture.
+     */
+
+    window.setTimeout(
+        function () {
+
+            whiteout.className =
+                "whiteout go";
+
+        },
+        500
+    );
+
+
+    /*
+     * After whiteout:
+     * hard cut back to black + final marquee.
+     */
+
+    window.setTimeout(
+        function () {
+
+            finalText.innerHTML =
+                FINAL_MESSAGE;
+
+
+            finalScreen.className =
+                "final-screen show";
+
+        },
+        1850
+    );
+}
+
+
+/* ================================================================
+   KEYBOARD / TV REMOTE INPUT
+================================================================ */
+
+
+document.onkeydown =
+    function (
+        event
+    ) {
+
+        if (finished) {
+            return;
+        }
+
+
+        event =
+            event
+            ||
+            window.event;
+
+
+        var key =
+            event.keyCode;
+
+
+        /*
+         * LEFT
+         */
+
+        if (
+            key
+            ===
+            37
+        ) {
+
+            setActive(
+                activeIndex
+                -
+                1
+            );
+
+
+            return false;
+        }
+
+
+        /*
+         * RIGHT
+         */
+
+        if (
+            key
+            ===
+            39
+        ) {
+
+            setActive(
+                activeIndex
+                +
+                1
+            );
+
+
+            return false;
+        }
+
+
+        /*
+         * UP
+         */
+
+        if (
+            key
+            ===
+            38
+        ) {
+
+            cycleCharacter(
+                1
+            );
+
+
+            return false;
+        }
+
+
+        /*
+         * DOWN
+         */
+
+        if (
+            key
+            ===
+            40
+        ) {
+
+            cycleCharacter(
+                -1
+            );
+
+
+            return false;
+        }
+
+
+        /*
+         * BACKSPACE
+         */
+
+        if (
+            key
+            ===
+            8
+        ) {
+
+            clearCurrent();
+
+
+            return false;
+        }
+
+
+        /*
+         * A-Z
+         */
+
+        if (
+            key
+            >=
+            65
+            &&
+            key
+            <=
+            90
+        ) {
+
+            typeCharacter(
+                String.fromCharCode(
+                    key
+                )
+            );
+
+
+            return false;
+        }
+
+
+        /*
+         * 0-9
+         */
+
+        if (
+            key
+            >=
+            48
+            &&
+            key
+            <=
+            57
+        ) {
+
+            typeCharacter(
+                String.fromCharCode(
+                    key
+                )
+            );
+
+
+            return false;
+        }
+
+
+        /*
+         * Numeric keypad 0-9
+         */
+
+        if (
+            key
+            >=
+            96
+            &&
+            key
+            <=
+            105
+        ) {
+
+            typeCharacter(
+                String(
+                    key
+                    -
+                    96
+                )
+            );
+
+
+            return false;
+        }
+
+
+        /*
+         * ENTER deliberately does nothing.
+         *
+         * There is no submission step.
+         */
+
+        if (
+            key
+            ===
+            13
+        ) {
+
+            return false;
+        }
+    };
+
+
+/* ================================================================
+   INITIAL DISPLAY
+================================================================ */
+
+
+setActive(
+    0
+);
+
+
+updateMeter();
+
+
+</script>
+
+
+</body>
+</html>
