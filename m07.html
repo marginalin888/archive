@@ -4839,95 +4839,14 @@ function beginShowHandoff() {
 }
 
 /* ================================================================
-   SMART-TV ACCESS GATE
+   M07 ACCESS
 
-   The landing page itself is intentionally available everywhere.
-   M07 only begins after the user selects it from a recognised TV
-   browser. Smart-TV user-agent detection is heuristic, so the list
-   is deliberately broad and easy to extend after testing the final
-   television.
+   M07 is available on all browsers and device types.
 ================================================================ */
-
-function isSmartTVBrowser() {
-
-    var userAgent =
-        navigator.userAgent
-        ?
-        navigator.userAgent.toLowerCase()
-        :
-        "";
-
-    var tvIdentifiers = [
-        "smart-tv",
-        "smarttv",
-        "tizen",
-        "webos",
-        "web0s",
-        "netcast",
-        "android tv",
-        "googletv",
-        "google tv",
-        "crkey",
-        "aftb",
-        "aftm",
-        "aftt",
-        "afts",
-        "aftmm",
-        "aftka",
-        "aftkm",
-        "aftss",
-        "roku",
-        "hbbtv",
-        "viera",
-        "bravia",
-        "tv safari",
-        "inettvbrowser",
-        "dtv"
-    ];
-
-    var i;
-
-    for (i = 0; i < tvIdentifiers.length; i++) {
-
-        if (
-            userAgent.indexOf(
-                tvIdentifiers[i]
-            ) !== -1
-        ) {
-            return true;
-        }
-    }
-
-    return false;
-}
-
-
-function denyM07Access() {
-
-    m07Button.innerHTML =
-        "INACCESSIBLE. TRY LARGER DISPLAY.";
-
-    m07Button.className =
-        "section selected inaccessible";
-
-    window.setTimeout(
-        function () {
-            m07Button.className =
-                "section selected";
-        },
-        180
-    );
-}
-
 
 function attemptM07Access() {
 
-    if (isSmartTVBrowser()) {
-        beginM07();
-    }
-    else {
-        denyM07Access();
-    }
+    beginM07();
 }
 
 
